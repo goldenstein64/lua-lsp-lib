@@ -1,0 +1,9 @@
+{
+	"Lua.workspace.library": [
+		"$LUA_LS_ADDONS/lpeg/module/library",
+		"$LUA_LS_ADDONS/dkjson/module/library"
+	],
+	"Lua.diagnostics.globals": [],
+	"Lua.workspace.checkThirdParty": false,
+	"Lua.runtime.version": "LuaJIT"
+}
