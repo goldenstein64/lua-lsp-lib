@@ -60,5 +60,6 @@ build = {
       ["lsp-lib.init"] = "lsp-lib/init.lua",
       ["lsp-lib.notify"] = "lsp-lib/notify.lua",
       ["lsp-lib.request"] = "lsp-lib/request.lua",
-   }
+   },
+   copy_directories = { "doc", "types" }
 }
