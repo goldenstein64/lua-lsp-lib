@@ -1,9 +1,9 @@
-local json = require("cjson.safe").new()
+local ok, inspect = pcall(require, "inspect")
+assert(ok, "inspect module is required for debug functionality")
 
-json.encode_invalid_numbers(true)
-json.encode_sparse_array(true)
+local json = require("cjson")
 
-local logMessage = require("routes.window.logMessage")
+local notify = require("lsp-lib.notify")
 
 local debug = {}
 
@@ -18,7 +18,7 @@ do
 		else
 			message = READ_NOTIFICATION_FORMAT:format(data.method)
 		end
-		logMessage.write(message, "info")
+		notify.log.info(message)
 	end
 end
 
@@ -46,8 +46,7 @@ do
 		local displayId = data.id == json.null and "null" or data.id
 
 		if data.result then
-			local displayResult = json.encode(data.result) or tostring(data.result)
-			message = WRITE_RESPONSE_RESULT_FORMAT:format(displayId, displayResult)
+			message = WRITE_RESPONSE_RESULT_FORMAT:format(displayId, inspect(data.result))
 		elseif data.error then
 			message = WRITE_RESPONSE_ERROR_FORMAT:format(displayId, data.error.message)
 		elseif data.method ~= "window/logMessage" then
@@ -56,7 +55,7 @@ do
 			return
 		end
 
-		logMessage.write(message, "info")
+		notify.log.info(message)
 	end
 end
 
