@@ -6,96 +6,82 @@ local response = {}
 ---A request to resolve the implementation locations of a symbol at a given text
 ---document position. The request's parameter is of type {@link TextDocumentPositionParams}
 ---the response is of type {@link Definition} or a Thenable that resolves to such.
----@param params lsp.Request.textDocument-implementation.params
----@return lsp.Response.textDocument-implementation.result
-response["textDocument/implementation"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-implementation.params): lsp.Response.textDocument-implementation.result
+response["textDocument/implementation"] = nil
 
 ---A request to resolve the type definition locations of a symbol at a given text
 ---document position. The request's parameter is of type {@link TextDocumentPositionParams}
 ---the response is of type {@link Definition} or a Thenable that resolves to such.
----@param params lsp.Request.textDocument-typeDefinition.params
----@return lsp.Response.textDocument-typeDefinition.result
-response["textDocument/typeDefinition"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-typeDefinition.params): lsp.Response.textDocument-typeDefinition.result
+response["textDocument/typeDefinition"] = nil
 
 ---A request to list all color symbols found in a given text document. The request's
 ---parameter is of type {@link DocumentColorParams} the
 ---response is of type {@link ColorInformation ColorInformation[]} or a Thenable
 ---that resolves to such.
----@param params lsp.Request.textDocument-documentColor.params
----@return lsp.Response.textDocument-documentColor.result
-response["textDocument/documentColor"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-documentColor.params): lsp.Response.textDocument-documentColor.result
+response["textDocument/documentColor"] = nil
 
 ---A request to list all presentation for a color. The request's
 ---parameter is of type {@link ColorPresentationParams} the
 ---response is of type {@link ColorInformation ColorInformation[]} or a Thenable
 ---that resolves to such.
----@param params lsp.Request.textDocument-colorPresentation.params
----@return lsp.Response.textDocument-colorPresentation.result
-response["textDocument/colorPresentation"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-colorPresentation.params): lsp.Response.textDocument-colorPresentation.result
+response["textDocument/colorPresentation"] = nil
 
 ---A request to provide folding ranges in a document. The request's
 ---parameter is of type {@link FoldingRangeParams}, the
 ---response is of type {@link FoldingRangeList} or a Thenable
 ---that resolves to such.
----@param params lsp.Request.textDocument-foldingRange.params
----@return lsp.Response.textDocument-foldingRange.result
-response["textDocument/foldingRange"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-foldingRange.params): lsp.Response.textDocument-foldingRange.result
+response["textDocument/foldingRange"] = nil
 
 ---A request to resolve the type definition locations of a symbol at a given text
 ---document position. The request's parameter is of type {@link TextDocumentPositionParams}
 ---the response is of type {@link Declaration} or a typed array of {@link DeclarationLink}
 ---or a Thenable that resolves to such.
----@param params lsp.Request.textDocument-declaration.params
----@return lsp.Response.textDocument-declaration.result
-response["textDocument/declaration"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-declaration.params): lsp.Response.textDocument-declaration.result
+response["textDocument/declaration"] = nil
 
 ---A request to provide selection ranges in a document. The request's
 ---parameter is of type {@link SelectionRangeParams}, the
 ---response is of type {@link SelectionRange SelectionRange[]} or a Thenable
 ---that resolves to such.
----@param params lsp.Request.textDocument-selectionRange.params
----@return lsp.Response.textDocument-selectionRange.result
-response["textDocument/selectionRange"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-selectionRange.params): lsp.Response.textDocument-selectionRange.result
+response["textDocument/selectionRange"] = nil
 
 ---A request to result a `CallHierarchyItem` in a document at a given position.
 ---Can be used as an input to an incoming or outgoing call hierarchy.
 ---@since 3.16.0
----@param params lsp.Request.textDocument-prepareCallHierarchy.params
----@return lsp.Response.textDocument-prepareCallHierarchy.result
-response["textDocument/prepareCallHierarchy"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-prepareCallHierarchy.params): lsp.Response.textDocument-prepareCallHierarchy.result
+response["textDocument/prepareCallHierarchy"] = nil
 
 ---A request to resolve the incoming calls for a given `CallHierarchyItem`.
 ---@since 3.16.0
----@param params lsp.Request.callHierarchy-incomingCalls.params
----@return lsp.Response.callHierarchy-incomingCalls.result
-response["callHierarchy/incomingCalls"] = function(params) end
+---@type fun(params: lsp.Request.callHierarchy-incomingCalls.params): lsp.Response.callHierarchy-incomingCalls.result
+response["callHierarchy/incomingCalls"] = nil
 
 ---A request to resolve the outgoing calls for a given `CallHierarchyItem`.
 ---@since 3.16.0
----@param params lsp.Request.callHierarchy-outgoingCalls.params
----@return lsp.Response.callHierarchy-outgoingCalls.result
-response["callHierarchy/outgoingCalls"] = function(params) end
+---@type fun(params: lsp.Request.callHierarchy-outgoingCalls.params): lsp.Response.callHierarchy-outgoingCalls.result
+response["callHierarchy/outgoingCalls"] = nil
 
 ---@since 3.16.0
----@param params lsp.Request.textDocument-semanticTokens-full.params
----@return lsp.Response.textDocument-semanticTokens-full.result
-response["textDocument/semanticTokens/full"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-semanticTokens-full.params): lsp.Response.textDocument-semanticTokens-full.result
+response["textDocument/semanticTokens/full"] = nil
 
 ---@since 3.16.0
----@param params lsp.Request.textDocument-semanticTokens-full-delta.params
----@return lsp.Response.textDocument-semanticTokens-full-delta.result
-response["textDocument/semanticTokens/full/delta"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-semanticTokens-full-delta.params): lsp.Response.textDocument-semanticTokens-full-delta.result
+response["textDocument/semanticTokens/full/delta"] = nil
 
 ---@since 3.16.0
----@param params lsp.Request.textDocument-semanticTokens-range.params
----@return lsp.Response.textDocument-semanticTokens-range.result
-response["textDocument/semanticTokens/range"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-semanticTokens-range.params): lsp.Response.textDocument-semanticTokens-range.result
+response["textDocument/semanticTokens/range"] = nil
 
 ---A request to provide ranges that can be edited together.
 ---@since 3.16.0
----@param params lsp.Request.textDocument-linkedEditingRange.params
----@return lsp.Response.textDocument-linkedEditingRange.result
-response["textDocument/linkedEditingRange"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-linkedEditingRange.params): lsp.Response.textDocument-linkedEditingRange.result
+response["textDocument/linkedEditingRange"] = nil
 
 ---The will create files request is sent from the client to the server before files are actually
 ---created as long as the creation is triggered from within the client.
@@ -103,111 +89,96 @@ response["textDocument/linkedEditingRange"] = function(params) end
 ---files are created. Hence the `WorkspaceEdit` can not manipulate the content of the file
 ---to be created.
 ---@since 3.16.0
----@param params lsp.Request.workspace-willCreateFiles.params
----@return lsp.Response.workspace-willCreateFiles.result
-response["workspace/willCreateFiles"] = function(params) end
+---@type fun(params: lsp.Request.workspace-willCreateFiles.params): lsp.Response.workspace-willCreateFiles.result
+response["workspace/willCreateFiles"] = nil
 
 ---The will rename files request is sent from the client to the server before files are actually
 ---renamed as long as the rename is triggered from within the client.
 ---@since 3.16.0
----@param params lsp.Request.workspace-willRenameFiles.params
----@return lsp.Response.workspace-willRenameFiles.result
-response["workspace/willRenameFiles"] = function(params) end
+---@type fun(params: lsp.Request.workspace-willRenameFiles.params): lsp.Response.workspace-willRenameFiles.result
+response["workspace/willRenameFiles"] = nil
 
 ---The did delete files notification is sent from the client to the server when
 ---files were deleted from within the client.
 ---@since 3.16.0
----@param params lsp.Request.workspace-willDeleteFiles.params
----@return lsp.Response.workspace-willDeleteFiles.result
-response["workspace/willDeleteFiles"] = function(params) end
+---@type fun(params: lsp.Request.workspace-willDeleteFiles.params): lsp.Response.workspace-willDeleteFiles.result
+response["workspace/willDeleteFiles"] = nil
 
 ---A request to get the moniker of a symbol at a given text document position.
 ---The request parameter is of type {@link TextDocumentPositionParams}.
 ---The response is of type {@link Moniker Moniker[]} or `null`.
----@param params lsp.Request.textDocument-moniker.params
----@return lsp.Response.textDocument-moniker.result
-response["textDocument/moniker"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-moniker.params): lsp.Response.textDocument-moniker.result
+response["textDocument/moniker"] = nil
 
 ---A request to result a `TypeHierarchyItem` in a document at a given position.
 ---Can be used as an input to a subtypes or supertypes type hierarchy.
 ---@since 3.17.0
----@param params lsp.Request.textDocument-prepareTypeHierarchy.params
----@return lsp.Response.textDocument-prepareTypeHierarchy.result
-response["textDocument/prepareTypeHierarchy"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-prepareTypeHierarchy.params): lsp.Response.textDocument-prepareTypeHierarchy.result
+response["textDocument/prepareTypeHierarchy"] = nil
 
 ---A request to resolve the supertypes for a given `TypeHierarchyItem`.
 ---@since 3.17.0
----@param params lsp.Request.typeHierarchy-supertypes.params
----@return lsp.Response.typeHierarchy-supertypes.result
-response["typeHierarchy/supertypes"] = function(params) end
+---@type fun(params: lsp.Request.typeHierarchy-supertypes.params): lsp.Response.typeHierarchy-supertypes.result
+response["typeHierarchy/supertypes"] = nil
 
 ---A request to resolve the subtypes for a given `TypeHierarchyItem`.
 ---@since 3.17.0
----@param params lsp.Request.typeHierarchy-subtypes.params
----@return lsp.Response.typeHierarchy-subtypes.result
-response["typeHierarchy/subtypes"] = function(params) end
+---@type fun(params: lsp.Request.typeHierarchy-subtypes.params): lsp.Response.typeHierarchy-subtypes.result
+response["typeHierarchy/subtypes"] = nil
 
 ---A request to provide inline values in a document. The request's parameter is of
 ---type {@link InlineValueParams}, the response is of type
 ---{@link InlineValue InlineValue[]} or a Thenable that resolves to such.
 ---@since 3.17.0
----@param params lsp.Request.textDocument-inlineValue.params
----@return lsp.Response.textDocument-inlineValue.result
-response["textDocument/inlineValue"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-inlineValue.params): lsp.Response.textDocument-inlineValue.result
+response["textDocument/inlineValue"] = nil
 
 ---A request to provide inlay hints in a document. The request's parameter is of
 ---type {@link InlayHintsParams}, the response is of type
 ---{@link InlayHint InlayHint[]} or a Thenable that resolves to such.
 ---@since 3.17.0
----@param params lsp.Request.textDocument-inlayHint.params
----@return lsp.Response.textDocument-inlayHint.result
-response["textDocument/inlayHint"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-inlayHint.params): lsp.Response.textDocument-inlayHint.result
+response["textDocument/inlayHint"] = nil
 
 ---A request to resolve additional properties for an inlay hint.
 ---The request's parameter is of type {@link InlayHint}, the response is
 ---of type {@link InlayHint} or a Thenable that resolves to such.
 ---@since 3.17.0
----@param params lsp.Request.inlayHint-resolve.params
----@return lsp.Response.inlayHint-resolve.result
-response["inlayHint/resolve"] = function(params) end
+---@type fun(params: lsp.Request.inlayHint-resolve.params): lsp.Response.inlayHint-resolve.result
+response["inlayHint/resolve"] = nil
 
 ---The document diagnostic request definition.
 ---@since 3.17.0
----@param params lsp.Request.textDocument-diagnostic.params
----@return lsp.Response.textDocument-diagnostic.result
-response["textDocument/diagnostic"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-diagnostic.params): lsp.Response.textDocument-diagnostic.result
+response["textDocument/diagnostic"] = nil
 
 ---The workspace diagnostic request definition.
 ---@since 3.17.0
----@param params lsp.Request.workspace-diagnostic.params
----@return lsp.Response.workspace-diagnostic.result
-response["workspace/diagnostic"] = function(params) end
+---@type fun(params: lsp.Request.workspace-diagnostic.params): lsp.Response.workspace-diagnostic.result
+response["workspace/diagnostic"] = nil
 
 ---A request to provide inline completions in a document. The request's parameter is of
 ---type {@link InlineCompletionParams}, the response is of type
 ---{@link InlineCompletion InlineCompletion[]} or a Thenable that resolves to such.
 ---@since 3.18.0
 ---@proposed
----@param params lsp.Request.textDocument-inlineCompletion.params
----@return lsp.Response.textDocument-inlineCompletion.result
-response["textDocument/inlineCompletion"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-inlineCompletion.params): lsp.Response.textDocument-inlineCompletion.result
+response["textDocument/inlineCompletion"] = nil
 
 ---The initialize request is sent from the client to the server.
 ---It is sent once as the request after starting up the server.
 ---The requests parameter is of type {@link InitializeParams}
 ---the response if of type {@link InitializeResult} of a Thenable that
 ---resolves to such.
----@param params lsp.Request.initialize.params
----@return lsp.Response.initialize.result
-response["initialize"] = function(params) end
+---@type fun(params: lsp.Request.initialize.params): lsp.Response.initialize.result
+response["initialize"] = nil
 
 ---A shutdown request is sent from the client to the server.
 ---It is sent once when the client decides to shutdown the
 ---server. The only notification that is sent after a shutdown request
 ---is the exit event.
----@param params lsp.Request.shutdown.params
----@return lsp.Response.shutdown.result
-response["shutdown"] = function(params) end
+---@type fun(params: lsp.Request.shutdown.params): lsp.Response.shutdown.result
+response["shutdown"] = nil
 
 ---A document will save request is sent from the client to the server before
 ---the document is actually saved. The request can return an array of TextEdits
@@ -215,9 +186,8 @@ response["shutdown"] = function(params) end
 ---clients might drop results if computing the text edits took too long or if a
 ---server constantly fails on this request. This is done to keep the save fast and
 ---reliable.
----@param params lsp.Request.textDocument-willSaveWaitUntil.params
----@return lsp.Response.textDocument-willSaveWaitUntil.result
-response["textDocument/willSaveWaitUntil"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-willSaveWaitUntil.params): lsp.Response.textDocument-willSaveWaitUntil.result
+response["textDocument/willSaveWaitUntil"] = nil
 
 ---Request to request completion at a given text document position. The request's
 ---parameter is of type {@link TextDocumentPosition} the response
@@ -227,71 +197,61 @@ response["textDocument/willSaveWaitUntil"] = function(params) end
 ---and {@link CompletionItem.documentation `documentation`} properties to the `completionItem/resolve`
 ---request. However, properties that are needed for the initial sorting and filtering, like `sortText`,
 ---`filterText`, `insertText`, and `textEdit`, must not be changed during resolve.
----@param params lsp.Request.textDocument-completion.params
----@return lsp.Response.textDocument-completion.result
-response["textDocument/completion"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-completion.params): lsp.Response.textDocument-completion.result
+response["textDocument/completion"] = nil
 
 ---Request to resolve additional information for a given completion item.The request's
 ---parameter is of type {@link CompletionItem} the response
 ---is of type {@link CompletionItem} or a Thenable that resolves to such.
----@param params lsp.Request.completionItem-resolve.params
----@return lsp.Response.completionItem-resolve.result
-response["completionItem/resolve"] = function(params) end
+---@type fun(params: lsp.Request.completionItem-resolve.params): lsp.Response.completionItem-resolve.result
+response["completionItem/resolve"] = nil
 
 ---Request to request hover information at a given text document position. The request's
 ---parameter is of type {@link TextDocumentPosition} the response is of
 ---type {@link Hover} or a Thenable that resolves to such.
----@param params lsp.Request.textDocument-hover.params
----@return lsp.Response.textDocument-hover.result
-response["textDocument/hover"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-hover.params): lsp.Response.textDocument-hover.result
+response["textDocument/hover"] = nil
 
----@param params lsp.Request.textDocument-signatureHelp.params
----@return lsp.Response.textDocument-signatureHelp.result
-response["textDocument/signatureHelp"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-signatureHelp.params): lsp.Response.textDocument-signatureHelp.result
+response["textDocument/signatureHelp"] = nil
 
 ---A request to resolve the definition location of a symbol at a given text
 ---document position. The request's parameter is of type {@link TextDocumentPosition}
 ---the response is of either type {@link Definition} or a typed array of
 ---{@link DefinitionLink} or a Thenable that resolves to such.
----@param params lsp.Request.textDocument-definition.params
----@return lsp.Response.textDocument-definition.result
-response["textDocument/definition"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-definition.params): lsp.Response.textDocument-definition.result
+response["textDocument/definition"] = nil
 
 ---A request to resolve project-wide references for the symbol denoted
 ---by the given text document position. The request's parameter is of
 ---type {@link ReferenceParams} the response is of type
 ---{@link Location Location[]} or a Thenable that resolves to such.
----@param params lsp.Request.textDocument-references.params
----@return lsp.Response.textDocument-references.result
-response["textDocument/references"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-references.params): lsp.Response.textDocument-references.result
+response["textDocument/references"] = nil
 
 ---Request to resolve a {@link DocumentHighlight} for a given
 ---text document position. The request's parameter is of type {@link TextDocumentPosition}
 ---the request response is an array of type {@link DocumentHighlight}
 ---or a Thenable that resolves to such.
----@param params lsp.Request.textDocument-documentHighlight.params
----@return lsp.Response.textDocument-documentHighlight.result
-response["textDocument/documentHighlight"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-documentHighlight.params): lsp.Response.textDocument-documentHighlight.result
+response["textDocument/documentHighlight"] = nil
 
 ---A request to list all symbols found in a given text document. The request's
 ---parameter is of type {@link TextDocumentIdentifier} the
 ---response is of type {@link SymbolInformation SymbolInformation[]} or a Thenable
 ---that resolves to such.
----@param params lsp.Request.textDocument-documentSymbol.params
----@return lsp.Response.textDocument-documentSymbol.result
-response["textDocument/documentSymbol"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-documentSymbol.params): lsp.Response.textDocument-documentSymbol.result
+response["textDocument/documentSymbol"] = nil
 
 ---A request to provide commands for the given text document and range.
----@param params lsp.Request.textDocument-codeAction.params
----@return lsp.Response.textDocument-codeAction.result
-response["textDocument/codeAction"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-codeAction.params): lsp.Response.textDocument-codeAction.result
+response["textDocument/codeAction"] = nil
 
 ---Request to resolve additional information for a given code action.The request's
 ---parameter is of type {@link CodeAction} the response
 ---is of type {@link CodeAction} or a Thenable that resolves to such.
----@param params lsp.Request.codeAction-resolve.params
----@return lsp.Response.codeAction-resolve.result
-response["codeAction/resolve"] = function(params) end
+---@type fun(params: lsp.Request.codeAction-resolve.params): lsp.Response.codeAction-resolve.result
+response["codeAction/resolve"] = nil
 
 ---A request to list project-wide symbols matching the query string given
 ---by the {@link WorkspaceSymbolParams}. The response is
@@ -300,140 +260,127 @@ response["codeAction/resolve"] = function(params) end
 ---@since 3.17.0 - support for WorkspaceSymbol in the returned data. Clients
 --- need to advertise support for WorkspaceSymbols via the client capability
 --- `workspace.symbol.resolveSupport`.
----@param params lsp.Request.workspace-symbol.params
----@return lsp.Response.workspace-symbol.result
-response["workspace/symbol"] = function(params) end
+---@type fun(params: lsp.Request.workspace-symbol.params): lsp.Response.workspace-symbol.result
+response["workspace/symbol"] = nil
 
 ---A request to resolve the range inside the workspace
 ---symbol's location.
 ---@since 3.17.0
----@param params lsp.Request.workspaceSymbol-resolve.params
----@return lsp.Response.workspaceSymbol-resolve.result
-response["workspaceSymbol/resolve"] = function(params) end
+---@type fun(params: lsp.Request.workspaceSymbol-resolve.params): lsp.Response.workspaceSymbol-resolve.result
+response["workspaceSymbol/resolve"] = nil
 
 ---A request to provide code lens for the given text document.
----@param params lsp.Request.textDocument-codeLens.params
----@return lsp.Response.textDocument-codeLens.result
-response["textDocument/codeLens"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-codeLens.params): lsp.Response.textDocument-codeLens.result
+response["textDocument/codeLens"] = nil
 
 ---A request to resolve a command for a given code lens.
----@param params lsp.Request.codeLens-resolve.params
----@return lsp.Response.codeLens-resolve.result
-response["codeLens/resolve"] = function(params) end
+---@type fun(params: lsp.Request.codeLens-resolve.params): lsp.Response.codeLens-resolve.result
+response["codeLens/resolve"] = nil
 
 ---A request to provide document links
----@param params lsp.Request.textDocument-documentLink.params
----@return lsp.Response.textDocument-documentLink.result
-response["textDocument/documentLink"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-documentLink.params): lsp.Response.textDocument-documentLink.result
+response["textDocument/documentLink"] = nil
 
 ---Request to resolve additional information for a given document link. The request's
 ---parameter is of type {@link DocumentLink} the response
 ---is of type {@link DocumentLink} or a Thenable that resolves to such.
----@param params lsp.Request.documentLink-resolve.params
----@return lsp.Response.documentLink-resolve.result
-response["documentLink/resolve"] = function(params) end
+---@type fun(params: lsp.Request.documentLink-resolve.params): lsp.Response.documentLink-resolve.result
+response["documentLink/resolve"] = nil
 
 ---A request to format a whole document.
----@param params lsp.Request.textDocument-formatting.params
----@return lsp.Response.textDocument-formatting.result
-response["textDocument/formatting"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-formatting.params): lsp.Response.textDocument-formatting.result
+response["textDocument/formatting"] = nil
 
 ---A request to format a range in a document.
----@param params lsp.Request.textDocument-rangeFormatting.params
----@return lsp.Response.textDocument-rangeFormatting.result
-response["textDocument/rangeFormatting"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-rangeFormatting.params): lsp.Response.textDocument-rangeFormatting.result
+response["textDocument/rangeFormatting"] = nil
 
 ---A request to format ranges in a document.
 ---@since 3.18.0
 ---@proposed
----@param params lsp.Request.textDocument-rangesFormatting.params
----@return lsp.Response.textDocument-rangesFormatting.result
-response["textDocument/rangesFormatting"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-rangesFormatting.params): lsp.Response.textDocument-rangesFormatting.result
+response["textDocument/rangesFormatting"] = nil
 
 ---A request to format a document on type.
----@param params lsp.Request.textDocument-onTypeFormatting.params
----@return lsp.Response.textDocument-onTypeFormatting.result
-response["textDocument/onTypeFormatting"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-onTypeFormatting.params): lsp.Response.textDocument-onTypeFormatting.result
+response["textDocument/onTypeFormatting"] = nil
 
 ---A request to rename a symbol.
----@param params lsp.Request.textDocument-rename.params
----@return lsp.Response.textDocument-rename.result
-response["textDocument/rename"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-rename.params): lsp.Response.textDocument-rename.result
+response["textDocument/rename"] = nil
 
 ---A request to test and perform the setup necessary for a rename.
 ---@since 3.16 - support for default behavior
----@param params lsp.Request.textDocument-prepareRename.params
----@return lsp.Response.textDocument-prepareRename.result
-response["textDocument/prepareRename"] = function(params) end
+---@type fun(params: lsp.Request.textDocument-prepareRename.params): lsp.Response.textDocument-prepareRename.result
+response["textDocument/prepareRename"] = nil
 
 ---A request send from the client to the server to execute a command. The request might return
 ---a workspace edit which the client will apply to the workspace.
----@param params lsp.Request.workspace-executeCommand.params
----@return lsp.Response.workspace-executeCommand.result
-response["workspace/executeCommand"] = function(params) end
+---@type fun(params: lsp.Request.workspace-executeCommand.params): lsp.Response.workspace-executeCommand.result
+response["workspace/executeCommand"] = nil
 
 ---The `workspace/didChangeWorkspaceFolders` notification is sent from the client to the server when the workspace
 ---folder configuration changes.
----@param params lsp.Notification.workspace-didChangeWorkspaceFolders.params
-response["workspace/didChangeWorkspaceFolders"] = function(params) end
+---@type fun(params: lsp.Notification.workspace-didChangeWorkspaceFolders.params)
+response["workspace/didChangeWorkspaceFolders"] = nil
 
 ---The `window/workDoneProgress/cancel` notification is sent from  the client to the server to cancel a progress
 ---initiated on the server side.
----@param params lsp.Notification.window-workDoneProgress-cancel.params
-response["window/workDoneProgress/cancel"] = function(params) end
+---@type fun(params: lsp.Notification.window-workDoneProgress-cancel.params)
+response["window/workDoneProgress/cancel"] = nil
 
 ---The did create files notification is sent from the client to the server when
 ---files were created from within the client.
 ---@since 3.16.0
----@param params lsp.Notification.workspace-didCreateFiles.params
-response["workspace/didCreateFiles"] = function(params) end
+---@type fun(params: lsp.Notification.workspace-didCreateFiles.params)
+response["workspace/didCreateFiles"] = nil
 
 ---The did rename files notification is sent from the client to the server when
 ---files were renamed from within the client.
 ---@since 3.16.0
----@param params lsp.Notification.workspace-didRenameFiles.params
-response["workspace/didRenameFiles"] = function(params) end
+---@type fun(params: lsp.Notification.workspace-didRenameFiles.params)
+response["workspace/didRenameFiles"] = nil
 
 ---The will delete files request is sent from the client to the server before files are actually
 ---deleted as long as the deletion is triggered from within the client.
 ---@since 3.16.0
----@param params lsp.Notification.workspace-didDeleteFiles.params
-response["workspace/didDeleteFiles"] = function(params) end
+---@type fun(params: lsp.Notification.workspace-didDeleteFiles.params)
+response["workspace/didDeleteFiles"] = nil
 
 ---A notification sent when a notebook opens.
 ---@since 3.17.0
----@param params lsp.Notification.notebookDocument-didOpen.params
-response["notebookDocument/didOpen"] = function(params) end
+---@type fun(params: lsp.Notification.notebookDocument-didOpen.params)
+response["notebookDocument/didOpen"] = nil
 
----@param params lsp.Notification.notebookDocument-didChange.params
-response["notebookDocument/didChange"] = function(params) end
+---@type fun(params: lsp.Notification.notebookDocument-didChange.params)
+response["notebookDocument/didChange"] = nil
 
 ---A notification sent when a notebook document is saved.
 ---@since 3.17.0
----@param params lsp.Notification.notebookDocument-didSave.params
-response["notebookDocument/didSave"] = function(params) end
+---@type fun(params: lsp.Notification.notebookDocument-didSave.params)
+response["notebookDocument/didSave"] = nil
 
 ---A notification sent when a notebook closes.
 ---@since 3.17.0
----@param params lsp.Notification.notebookDocument-didClose.params
-response["notebookDocument/didClose"] = function(params) end
+---@type fun(params: lsp.Notification.notebookDocument-didClose.params)
+response["notebookDocument/didClose"] = nil
 
 ---The initialized notification is sent from the client to the
 ---server after the client is fully initialized and the server
 ---is allowed to send requests from the server to the client.
----@param params lsp.Notification.initialized.params
-response["initialized"] = function(params) end
+---@type fun(params: lsp.Notification.initialized.params)
+response["initialized"] = nil
 
 ---The exit event is sent from the client to the server to
 ---ask the server to exit its process.
----@param params lsp.Notification.exit.params
-response["exit"] = function(params) end
+---@type fun(params: lsp.Notification.exit.params)
+response["exit"] = nil
 
 ---The configuration change notification is sent from the client to the server
 ---when the client's configuration has changed. The notification contains
 ---the changed configuration as defined by the language client.
----@param params lsp.Notification.workspace-didChangeConfiguration.params
-response["workspace/didChangeConfiguration"] = function(params) end
+---@type fun(params: lsp.Notification.workspace-didChangeConfiguration.params)
+response["workspace/didChangeConfiguration"] = nil
 
 ---The document open notification is sent from the client to the server to signal
 ---newly opened text documents. The document's truth is now managed by the client
@@ -443,13 +390,13 @@ response["workspace/didChangeConfiguration"] = function(params) end
 ---be sent more than once without a corresponding close notification send before.
 ---This means open and close notification must be balanced and the max open count
 ---is one.
----@param params lsp.Notification.textDocument-didOpen.params
-response["textDocument/didOpen"] = function(params) end
+---@type fun(params: lsp.Notification.textDocument-didOpen.params)
+response["textDocument/didOpen"] = nil
 
 ---The document change notification is sent from the client to the server to signal
 ---changes to a text document.
----@param params lsp.Notification.textDocument-didChange.params
-response["textDocument/didChange"] = function(params) end
+---@type fun(params: lsp.Notification.textDocument-didChange.params)
+response["textDocument/didChange"] = nil
 
 ---The document close notification is sent from the client to the server when
 ---the document got closed in the client. The document's truth now exists where
@@ -458,35 +405,34 @@ response["textDocument/didChange"] = function(params) end
 ---is about managing the document's content. Receiving a close notification
 ---doesn't mean that the document was open in an editor before. A close
 ---notification requires a previous open notification to be sent.
----@param params lsp.Notification.textDocument-didClose.params
-response["textDocument/didClose"] = function(params) end
+---@type fun(params: lsp.Notification.textDocument-didClose.params)
+response["textDocument/didClose"] = nil
 
 ---The document save notification is sent from the client to the server when
 ---the document got saved in the client.
----@param params lsp.Notification.textDocument-didSave.params
-response["textDocument/didSave"] = function(params) end
+---@type fun(params: lsp.Notification.textDocument-didSave.params)
+response["textDocument/didSave"] = nil
 
 ---A document will save notification is sent from the client to the server before
 ---the document is actually saved.
----@param params lsp.Notification.textDocument-willSave.params
-response["textDocument/willSave"] = function(params) end
+---@type fun(params: lsp.Notification.textDocument-willSave.params)
+response["textDocument/willSave"] = nil
 
 ---The watched files notification is sent from the client to the server when
 ---the client detects changes to file watched by the language client.
----@param params lsp.Notification.workspace-didChangeWatchedFiles.params
-response["workspace/didChangeWatchedFiles"] = function(params) end
+---@type fun(params: lsp.Notification.workspace-didChangeWatchedFiles.params)
+response["workspace/didChangeWatchedFiles"] = nil
 
----@param params lsp.Notification._-setTrace.params
-response["$/setTrace"] = function(params) end
+---@type fun(params: lsp.Notification._-setTrace.params)
+response["$/setTrace"] = nil
 
----@param params lsp.Notification._-cancelRequest.params
-response["$/cancelRequest"] = function(params) end
+---@type fun(params: lsp.Notification._-cancelRequest.params)
+response["$/cancelRequest"] = nil
 
----@param params lsp.Notification._-progress.params
-response["$/progress"] = function(params) end
+---@type fun(params: lsp.Notification._-progress.params)
+response["$/progress"] = nil
 
 ---@class lsp*.Request
----@overload fun(method: string, params: string): (ok: boolean, result: any)
 local request = {}
 
 ---The `workspace/workspaceFolders` is sent from the server to the client to fetch the open workspace folders.
@@ -590,7 +536,6 @@ request["workspace/codeLens/refresh"] = function(params) end
 request["workspace/applyEdit"] = function(params) end
 
 ---@class lsp*.Notify
----@overload fun(method: string, params: table)
 local notify = {}
 
 ---The show message notification is sent from a server to a client to ask

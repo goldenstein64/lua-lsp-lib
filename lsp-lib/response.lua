@@ -1,8 +1,9 @@
-local json = require("dkjson")
+local json = require("cjson")
 
-local response = {} --[[@as lsp*.Response]]
+---@type lsp*.Response
+local response = {}
 
-response["initialize"] = function (params)
+response["initialize"] = function(params)
 	return { capabilities = {} }
 end
 
@@ -14,4 +15,4 @@ response["exit"] = function(params)
 	os.exit(0)
 end
 
-return response --[[@as lsp*.Response]]
+return response
