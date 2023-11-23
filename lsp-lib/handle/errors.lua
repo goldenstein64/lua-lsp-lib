@@ -1,4 +1,4 @@
-local json = require("dkjson")
+local json = require("cjson")
 local ErrorCodes = require("lsp-lib.enum.ErrorCodes")
 
 local errors = {}
@@ -16,7 +16,7 @@ function errors.ParseError(msg)
 	}
 end
 
----@param id? string | number | dkjson.null
+---@param id? string | number | cjson.null
 ---@param methodName? string
 ---@return lsp.Response
 function errors.MethodNotFound(id, methodName)
@@ -30,7 +30,7 @@ function errors.MethodNotFound(id, methodName)
 	}
 end
 
----@param id? string | number | dkjson.null
+---@param id? string | number | cjson.null
 ---@param methodName? string
 ---@return lsp.Response
 function errors.InvalidRequest(id, methodName)
@@ -44,7 +44,7 @@ function errors.InvalidRequest(id, methodName)
 	}
 end
 
----@param id? string | number | dkjson.null
+---@param id? string | number | cjson.null
 ---@return lsp.Response
 function errors.ServerNotInitialized(id)
 	return {

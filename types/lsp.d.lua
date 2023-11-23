@@ -27,7 +27,7 @@
 ---signal a successful request.
 ---@class lsp.Response : lsp.Message
 ---The request id.
----@field id integer | string | dkjson.null
+---@field id integer | string | cjson.null
 ---The result of a request. This member is REQUIRED on success. This member MUST
 ---NOT exist if there was an error invoking the method.
 ---@field result? unknown
@@ -50,7 +50,7 @@
 ---@field message string
 ---A primitive or structured value that contains additional information about
 ---the error. Can be omitted.
----@field data? string | number | boolean | table | dkjson.null
+---@field data? string | number | boolean | table | cjson.null
 
 ---@class lsp.ImplementationParams : lsp.TextDocumentPositionParams, lsp.WorkDoneProgressParams, lsp.PartialResultParams
 
@@ -126,7 +126,7 @@
 ---@class lsp.TextDocumentRegistrationOptions
 ---A document selector to identify the scope of the registration. If set to null
 ---the document selector provided on the client side will be used.
----@field documentSelector lsp.DocumentSelector | dkjson.null
+---@field documentSelector lsp.DocumentSelector | cjson.null
 
 ---Parameters for a {@link FoldingRangeRequest}.
 ---@class lsp.FoldingRangeParams : lsp.WorkDoneProgressParams, lsp.PartialResultParams
@@ -1857,7 +1857,7 @@
 ---the server.
 ---Is `null` if the process has not been started by another process.
 ---If the parent process is not alive then the server should exit.
----@field processId integer | dkjson.null
+---@field processId integer | cjson.null
 ---Information about the client
 ---@since 3.15.0
 ---@field clientInfo? lsp._InitializeParams.clientInfo
@@ -1871,12 +1871,12 @@
 ---The rootPath of the workspace. Is null
 ---if no folder is open.
 ---@deprecated in favour of rootUri.
----@field rootPath? string | dkjson.null
+---@field rootPath? string | cjson.null
 ---The rootUri of the workspace. Is null if no
 ---folder is open. If both `rootPath` and `rootUri` are set
 ---`rootUri` wins.
 ---@deprecated in favour of workspaceFolders.
----@field rootUri lsp.DocumentUri | dkjson.null
+---@field rootUri lsp.DocumentUri | cjson.null
 ---The capabilities provided by the client (editor or tool)
 ---@field capabilities lsp.ClientCapabilities
 ---User provided initialization options.
@@ -1890,7 +1890,7 @@
 ---It can be `null` if the client supports workspace folders but none are
 ---configured.
 ---@since 3.6.0
----@field workspaceFolders? lsp.WorkspaceFolder[] | dkjson.null
+---@field workspaceFolders? lsp.WorkspaceFolder[] | cjson.null
 
 ---Defines the capabilities provided by a language
 ---server.
@@ -2287,7 +2287,7 @@
 ---(the server has not received an open notification before) the server can send
 ---`null` to indicate that the version is unknown and the content on disk is the
 ---truth (as specified with document content ownership).
----@field version integer | dkjson.null
+---@field version integer | cjson.null
 
 ---A special text edit with an additional change annotation.
 ---@since 3.16.0.
@@ -2349,7 +2349,7 @@
 ---@field uri lsp.DocumentUri
 ---The version number for which the diagnostics are reported.
 ---If the document is not marked as open `null` can be provided.
----@field version integer | dkjson.null
+---@field version integer | cjson.null
 
 ---An unchanged document diagnostic report for a workspace diagnostic result.
 ---@since 3.17.0
@@ -2358,7 +2358,7 @@
 ---@field uri lsp.DocumentUri
 ---The version number for which the diagnostics are reported.
 ---If the document is not marked as open `null` can be provided.
----@field version integer | dkjson.null
+---@field version integer | cjson.null
 
 ---A notebook cell.
 ---A cell's document URI must be unique across ALL notebook
@@ -3306,7 +3306,7 @@
 ---convenience it is allowed and assumed that all these properties are
 ---optional as well.
 ---@since 3.17.0
----@alias lsp.LSPAny lsp.LSPObject | lsp.LSPArray | string | integer | integer | number | boolean | dkjson.null
+---@alias lsp.LSPAny lsp.LSPObject | lsp.LSPArray | string | integer | integer | number | boolean | cjson.null
 
 ---The declaration of a symbol representation as one or many {@link Location locations}.
 ---@alias lsp.Declaration lsp.Location | lsp.Location[]
@@ -3564,7 +3564,7 @@
 ---ask the server to exit its process.
 ---
 ---Message Direction: Client --> Server
----@alias lsp.Notification.exit.params dkjson.null?
+---@alias lsp.Notification.exit.params cjson.null?
 
 ---The configuration change notification is sent from the client to the server
 ---when the client's configuration has changed. The notification contains
@@ -3854,7 +3854,7 @@
 ---The `workspace/workspaceFolders` is sent from the server to the client to fetch the open workspace folders.
 ---
 ---Message Direction: Client <-- Server
----@alias lsp.Request.workspace-workspaceFolders.params dkjson.null?
+---@alias lsp.Request.workspace-workspaceFolders.params cjson.null?
 
 ---The `workspace/workspaceFolders` is sent from the server to the client to fetch the open workspace folders.
 ---
@@ -4020,7 +4020,7 @@
 ---@proposed
 ---
 ---Message Direction: Client <-- Server
----@alias lsp.Request.workspace-foldingRange-refresh.params dkjson.null?
+---@alias lsp.Request.workspace-foldingRange-refresh.params cjson.null?
 
 ---@since 3.18.0
 ---@proposed
@@ -4307,7 +4307,7 @@
 ---@since 3.16.0
 ---
 ---Message Direction: Client <-- Server
----@alias lsp.Request.workspace-semanticTokens-refresh.params dkjson.null?
+---@alias lsp.Request.workspace-semanticTokens-refresh.params cjson.null?
 
 ---@since 3.16.0
 ---
@@ -4648,7 +4648,7 @@
 ---@since 3.17.0
 ---
 ---Message Direction: Client <-- Server
----@alias lsp.Request.workspace-inlineValue-refresh.params dkjson.null?
+---@alias lsp.Request.workspace-inlineValue-refresh.params cjson.null?
 
 ---@since 3.17.0
 ---
@@ -4732,7 +4732,7 @@
 ---@since 3.17.0
 ---
 ---Message Direction: Client <-- Server
----@alias lsp.Request.workspace-inlayHint-refresh.params dkjson.null?
+---@alias lsp.Request.workspace-inlayHint-refresh.params cjson.null?
 
 ---@since 3.17.0
 ---
@@ -4806,7 +4806,7 @@
 ---@since 3.17.0
 ---
 ---Message Direction: Client <-- Server
----@alias lsp.Request.workspace-diagnostic-refresh.params dkjson.null?
+---@alias lsp.Request.workspace-diagnostic-refresh.params cjson.null?
 
 ---The diagnostic refresh request definition.
 ---@since 3.17.0
@@ -4947,7 +4947,7 @@
 ---is the exit event.
 ---
 ---Message Direction: Client --> Server
----@alias lsp.Request.shutdown.params dkjson.null?
+---@alias lsp.Request.shutdown.params cjson.null?
 
 ---A shutdown request is sent from the client to the server.
 ---It is sent once when the client decides to shutdown the
@@ -5485,7 +5485,7 @@
 ---@since 3.16.0
 ---
 ---Message Direction: Client <-- Server
----@alias lsp.Request.workspace-codeLens-refresh.params dkjson.null?
+---@alias lsp.Request.workspace-codeLens-refresh.params cjson.null?
 
 ---A request to refresh all code actions
 ---@since 3.16.0
@@ -6137,15 +6137,15 @@
 ---A glob pattern.
 ---@field pattern string
 
----@alias lsp.Response.textDocument-implementation.result lsp.Definition | lsp.DefinitionLink[] | dkjson.null
+---@alias lsp.Response.textDocument-implementation.result lsp.Definition | lsp.DefinitionLink[] | cjson.null
 
 ---@alias lsp.Response.textDocument-implementation.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-typeDefinition.result lsp.Definition | lsp.DefinitionLink[] | dkjson.null
+---@alias lsp.Response.textDocument-typeDefinition.result lsp.Definition | lsp.DefinitionLink[] | cjson.null
 
 ---@alias lsp.Response.textDocument-typeDefinition.error lsp.ResponseError
 
----@alias lsp.Response.workspace-workspaceFolders.result lsp.WorkspaceFolder[] | dkjson.null
+---@alias lsp.Response.workspace-workspaceFolders.result lsp.WorkspaceFolder[] | cjson.null
 
 ---@alias lsp.Response.workspace-workspaceFolders.error lsp.ResponseError
 
@@ -6163,51 +6163,51 @@
 
 ---@alias lsp.Response.textDocument-colorPresentation.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-foldingRange.result lsp.FoldingRange[] | dkjson.null
+---@alias lsp.Response.textDocument-foldingRange.result lsp.FoldingRange[] | cjson.null
 
 ---@alias lsp.Response.textDocument-foldingRange.error lsp.ResponseError
 
----@alias lsp.Response.workspace-foldingRange-refresh.result dkjson.null
+---@alias lsp.Response.workspace-foldingRange-refresh.result cjson.null
 
 ---@alias lsp.Response.workspace-foldingRange-refresh.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-declaration.result lsp.Declaration | lsp.DeclarationLink[] | dkjson.null
+---@alias lsp.Response.textDocument-declaration.result lsp.Declaration | lsp.DeclarationLink[] | cjson.null
 
 ---@alias lsp.Response.textDocument-declaration.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-selectionRange.result lsp.SelectionRange[] | dkjson.null
+---@alias lsp.Response.textDocument-selectionRange.result lsp.SelectionRange[] | cjson.null
 
 ---@alias lsp.Response.textDocument-selectionRange.error lsp.ResponseError
 
----@alias lsp.Response.window-workDoneProgress-create.result dkjson.null
+---@alias lsp.Response.window-workDoneProgress-create.result cjson.null
 
 ---@alias lsp.Response.window-workDoneProgress-create.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-prepareCallHierarchy.result lsp.CallHierarchyItem[] | dkjson.null
+---@alias lsp.Response.textDocument-prepareCallHierarchy.result lsp.CallHierarchyItem[] | cjson.null
 
 ---@alias lsp.Response.textDocument-prepareCallHierarchy.error lsp.ResponseError
 
----@alias lsp.Response.callHierarchy-incomingCalls.result lsp.CallHierarchyIncomingCall[] | dkjson.null
+---@alias lsp.Response.callHierarchy-incomingCalls.result lsp.CallHierarchyIncomingCall[] | cjson.null
 
 ---@alias lsp.Response.callHierarchy-incomingCalls.error lsp.ResponseError
 
----@alias lsp.Response.callHierarchy-outgoingCalls.result lsp.CallHierarchyOutgoingCall[] | dkjson.null
+---@alias lsp.Response.callHierarchy-outgoingCalls.result lsp.CallHierarchyOutgoingCall[] | cjson.null
 
 ---@alias lsp.Response.callHierarchy-outgoingCalls.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-semanticTokens-full.result lsp.SemanticTokens | dkjson.null
+---@alias lsp.Response.textDocument-semanticTokens-full.result lsp.SemanticTokens | cjson.null
 
 ---@alias lsp.Response.textDocument-semanticTokens-full.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-semanticTokens-full-delta.result lsp.SemanticTokens | lsp.SemanticTokensDelta | dkjson.null
+---@alias lsp.Response.textDocument-semanticTokens-full-delta.result lsp.SemanticTokens | lsp.SemanticTokensDelta | cjson.null
 
 ---@alias lsp.Response.textDocument-semanticTokens-full-delta.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-semanticTokens-range.result lsp.SemanticTokens | dkjson.null
+---@alias lsp.Response.textDocument-semanticTokens-range.result lsp.SemanticTokens | cjson.null
 
 ---@alias lsp.Response.textDocument-semanticTokens-range.error lsp.ResponseError
 
----@alias lsp.Response.workspace-semanticTokens-refresh.result dkjson.null
+---@alias lsp.Response.workspace-semanticTokens-refresh.result cjson.null
 
 ---@alias lsp.Response.workspace-semanticTokens-refresh.error lsp.ResponseError
 
@@ -6215,47 +6215,47 @@
 
 ---@alias lsp.Response.window-showDocument.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-linkedEditingRange.result lsp.LinkedEditingRanges | dkjson.null
+---@alias lsp.Response.textDocument-linkedEditingRange.result lsp.LinkedEditingRanges | cjson.null
 
 ---@alias lsp.Response.textDocument-linkedEditingRange.error lsp.ResponseError
 
----@alias lsp.Response.workspace-willCreateFiles.result lsp.WorkspaceEdit | dkjson.null
+---@alias lsp.Response.workspace-willCreateFiles.result lsp.WorkspaceEdit | cjson.null
 
 ---@alias lsp.Response.workspace-willCreateFiles.error lsp.ResponseError
 
----@alias lsp.Response.workspace-willRenameFiles.result lsp.WorkspaceEdit | dkjson.null
+---@alias lsp.Response.workspace-willRenameFiles.result lsp.WorkspaceEdit | cjson.null
 
 ---@alias lsp.Response.workspace-willRenameFiles.error lsp.ResponseError
 
----@alias lsp.Response.workspace-willDeleteFiles.result lsp.WorkspaceEdit | dkjson.null
+---@alias lsp.Response.workspace-willDeleteFiles.result lsp.WorkspaceEdit | cjson.null
 
 ---@alias lsp.Response.workspace-willDeleteFiles.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-moniker.result lsp.Moniker[] | dkjson.null
+---@alias lsp.Response.textDocument-moniker.result lsp.Moniker[] | cjson.null
 
 ---@alias lsp.Response.textDocument-moniker.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-prepareTypeHierarchy.result lsp.TypeHierarchyItem[] | dkjson.null
+---@alias lsp.Response.textDocument-prepareTypeHierarchy.result lsp.TypeHierarchyItem[] | cjson.null
 
 ---@alias lsp.Response.textDocument-prepareTypeHierarchy.error lsp.ResponseError
 
----@alias lsp.Response.typeHierarchy-supertypes.result lsp.TypeHierarchyItem[] | dkjson.null
+---@alias lsp.Response.typeHierarchy-supertypes.result lsp.TypeHierarchyItem[] | cjson.null
 
 ---@alias lsp.Response.typeHierarchy-supertypes.error lsp.ResponseError
 
----@alias lsp.Response.typeHierarchy-subtypes.result lsp.TypeHierarchyItem[] | dkjson.null
+---@alias lsp.Response.typeHierarchy-subtypes.result lsp.TypeHierarchyItem[] | cjson.null
 
 ---@alias lsp.Response.typeHierarchy-subtypes.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-inlineValue.result lsp.InlineValue[] | dkjson.null
+---@alias lsp.Response.textDocument-inlineValue.result lsp.InlineValue[] | cjson.null
 
 ---@alias lsp.Response.textDocument-inlineValue.error lsp.ResponseError
 
----@alias lsp.Response.workspace-inlineValue-refresh.result dkjson.null
+---@alias lsp.Response.workspace-inlineValue-refresh.result cjson.null
 
 ---@alias lsp.Response.workspace-inlineValue-refresh.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-inlayHint.result lsp.InlayHint[] | dkjson.null
+---@alias lsp.Response.textDocument-inlayHint.result lsp.InlayHint[] | cjson.null
 
 ---@alias lsp.Response.textDocument-inlayHint.error lsp.ResponseError
 
@@ -6263,7 +6263,7 @@
 
 ---@alias lsp.Response.inlayHint-resolve.error lsp.ResponseError
 
----@alias lsp.Response.workspace-inlayHint-refresh.result dkjson.null
+---@alias lsp.Response.workspace-inlayHint-refresh.result cjson.null
 
 ---@alias lsp.Response.workspace-inlayHint-refresh.error lsp.ResponseError
 
@@ -6275,19 +6275,19 @@
 
 ---@alias lsp.Response.workspace-diagnostic.error lsp.DiagnosticServerCancellationData
 
----@alias lsp.Response.workspace-diagnostic-refresh.result dkjson.null
+---@alias lsp.Response.workspace-diagnostic-refresh.result cjson.null
 
 ---@alias lsp.Response.workspace-diagnostic-refresh.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-inlineCompletion.result lsp.InlineCompletionList | lsp.InlineCompletionItem[] | dkjson.null
+---@alias lsp.Response.textDocument-inlineCompletion.result lsp.InlineCompletionList | lsp.InlineCompletionItem[] | cjson.null
 
 ---@alias lsp.Response.textDocument-inlineCompletion.error lsp.ResponseError
 
----@alias lsp.Response.client-registerCapability.result dkjson.null
+---@alias lsp.Response.client-registerCapability.result cjson.null
 
 ---@alias lsp.Response.client-registerCapability.error lsp.ResponseError
 
----@alias lsp.Response.client-unregisterCapability.result dkjson.null
+---@alias lsp.Response.client-unregisterCapability.result cjson.null
 
 ---@alias lsp.Response.client-unregisterCapability.error lsp.ResponseError
 
@@ -6295,19 +6295,19 @@
 
 ---@alias lsp.Response.initialize.error lsp.InitializeError
 
----@alias lsp.Response.shutdown.result dkjson.null
+---@alias lsp.Response.shutdown.result cjson.null
 
 ---@alias lsp.Response.shutdown.error lsp.ResponseError
 
----@alias lsp.Response.window-showMessageRequest.result lsp.MessageActionItem | dkjson.null
+---@alias lsp.Response.window-showMessageRequest.result lsp.MessageActionItem | cjson.null
 
 ---@alias lsp.Response.window-showMessageRequest.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-willSaveWaitUntil.result lsp.TextEdit[] | dkjson.null
+---@alias lsp.Response.textDocument-willSaveWaitUntil.result lsp.TextEdit[] | cjson.null
 
 ---@alias lsp.Response.textDocument-willSaveWaitUntil.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-completion.result lsp.CompletionItem[] | lsp.CompletionList | dkjson.null
+---@alias lsp.Response.textDocument-completion.result lsp.CompletionItem[] | lsp.CompletionList | cjson.null
 
 ---@alias lsp.Response.textDocument-completion.error lsp.ResponseError
 
@@ -6315,31 +6315,31 @@
 
 ---@alias lsp.Response.completionItem-resolve.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-hover.result lsp.Hover | dkjson.null
+---@alias lsp.Response.textDocument-hover.result lsp.Hover | cjson.null
 
 ---@alias lsp.Response.textDocument-hover.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-signatureHelp.result lsp.SignatureHelp | dkjson.null
+---@alias lsp.Response.textDocument-signatureHelp.result lsp.SignatureHelp | cjson.null
 
 ---@alias lsp.Response.textDocument-signatureHelp.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-definition.result lsp.Definition | lsp.DefinitionLink[] | dkjson.null
+---@alias lsp.Response.textDocument-definition.result lsp.Definition | lsp.DefinitionLink[] | cjson.null
 
 ---@alias lsp.Response.textDocument-definition.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-references.result lsp.Location[] | dkjson.null
+---@alias lsp.Response.textDocument-references.result lsp.Location[] | cjson.null
 
 ---@alias lsp.Response.textDocument-references.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-documentHighlight.result lsp.DocumentHighlight[] | dkjson.null
+---@alias lsp.Response.textDocument-documentHighlight.result lsp.DocumentHighlight[] | cjson.null
 
 ---@alias lsp.Response.textDocument-documentHighlight.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-documentSymbol.result lsp.SymbolInformation[] | lsp.DocumentSymbol[] | dkjson.null
+---@alias lsp.Response.textDocument-documentSymbol.result lsp.SymbolInformation[] | lsp.DocumentSymbol[] | cjson.null
 
 ---@alias lsp.Response.textDocument-documentSymbol.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-codeAction.result lsp.Command | lsp.CodeAction[] | dkjson.null
+---@alias lsp.Response.textDocument-codeAction.result lsp.Command | lsp.CodeAction[] | cjson.null
 
 ---@alias lsp.Response.textDocument-codeAction.error lsp.ResponseError
 
@@ -6347,7 +6347,7 @@
 
 ---@alias lsp.Response.codeAction-resolve.error lsp.ResponseError
 
----@alias lsp.Response.workspace-symbol.result lsp.SymbolInformation[] | lsp.WorkspaceSymbol[] | dkjson.null
+---@alias lsp.Response.workspace-symbol.result lsp.SymbolInformation[] | lsp.WorkspaceSymbol[] | cjson.null
 
 ---@alias lsp.Response.workspace-symbol.error lsp.ResponseError
 
@@ -6355,7 +6355,7 @@
 
 ---@alias lsp.Response.workspaceSymbol-resolve.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-codeLens.result lsp.CodeLens[] | dkjson.null
+---@alias lsp.Response.textDocument-codeLens.result lsp.CodeLens[] | cjson.null
 
 ---@alias lsp.Response.textDocument-codeLens.error lsp.ResponseError
 
@@ -6363,11 +6363,11 @@
 
 ---@alias lsp.Response.codeLens-resolve.error lsp.ResponseError
 
----@alias lsp.Response.workspace-codeLens-refresh.result dkjson.null
+---@alias lsp.Response.workspace-codeLens-refresh.result cjson.null
 
 ---@alias lsp.Response.workspace-codeLens-refresh.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-documentLink.result lsp.DocumentLink[] | dkjson.null
+---@alias lsp.Response.textDocument-documentLink.result lsp.DocumentLink[] | cjson.null
 
 ---@alias lsp.Response.textDocument-documentLink.error lsp.ResponseError
 
@@ -6375,31 +6375,31 @@
 
 ---@alias lsp.Response.documentLink-resolve.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-formatting.result lsp.TextEdit[] | dkjson.null
+---@alias lsp.Response.textDocument-formatting.result lsp.TextEdit[] | cjson.null
 
 ---@alias lsp.Response.textDocument-formatting.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-rangeFormatting.result lsp.TextEdit[] | dkjson.null
+---@alias lsp.Response.textDocument-rangeFormatting.result lsp.TextEdit[] | cjson.null
 
 ---@alias lsp.Response.textDocument-rangeFormatting.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-rangesFormatting.result lsp.TextEdit[] | dkjson.null
+---@alias lsp.Response.textDocument-rangesFormatting.result lsp.TextEdit[] | cjson.null
 
 ---@alias lsp.Response.textDocument-rangesFormatting.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-onTypeFormatting.result lsp.TextEdit[] | dkjson.null
+---@alias lsp.Response.textDocument-onTypeFormatting.result lsp.TextEdit[] | cjson.null
 
 ---@alias lsp.Response.textDocument-onTypeFormatting.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-rename.result lsp.WorkspaceEdit | dkjson.null
+---@alias lsp.Response.textDocument-rename.result lsp.WorkspaceEdit | cjson.null
 
 ---@alias lsp.Response.textDocument-rename.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-prepareRename.result lsp.PrepareRenameResult | dkjson.null
+---@alias lsp.Response.textDocument-prepareRename.result lsp.PrepareRenameResult | cjson.null
 
 ---@alias lsp.Response.textDocument-prepareRename.error lsp.ResponseError
 
----@alias lsp.Response.workspace-executeCommand.result lsp.LSPAny | dkjson.null
+---@alias lsp.Response.workspace-executeCommand.result lsp.LSPAny | cjson.null
 
 ---@alias lsp.Response.workspace-executeCommand.error lsp.ResponseError
 
