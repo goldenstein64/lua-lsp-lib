@@ -18,8 +18,6 @@ local function logMessage(msg, severity)
 	notify("window/logMessage", params)
 end
 
-local handleState = "initialize"
-
 ---@operator call(): nil
 local handle = {
 	---@type { [thread]: lsp.Request | lsp.Notification }
@@ -27,6 +25,8 @@ local handle = {
 
 	---@type { [integer]: thread }
 	waitingThreads = {},
+
+	state = "initialize"
 }
 
 ---@return lsp*.AnyMessage?
@@ -210,7 +210,11 @@ handle.handlers = {
 			handleRoute(route, req)
 		end
 
-		handleState = "default"
+		if req.method == "exit" then
+			os.exit(1)
+		else
+			handle.state = "default"
+		end
 	end,
 
 	default = function()
@@ -230,7 +234,9 @@ handle.handlers = {
 		end
 
 		if req.method == "shutdown" then
-			handleState = "shutdown"
+			handle.state = "shutdown"
+		elseif req.method == "exit" then
+			os.exit(1)
 		end
 	end,
 
@@ -254,15 +260,16 @@ handle.handlers = {
 		if not route then return end
 
 		handleRoute(route, req)
+		os.exit(0)
 	end
 }
 
 local handleMt = {}
 
 function handleMt:__call()
-	local handler = handle.handlers[handleState]
+	local handler = handle.handlers[handle.state]
 	if not handler then
-		error(string.format("handler not found for state '%s'", handleState))
+		error(string.format("handler not found for state '%s'", handle.state))
 	end
 
 	handler()
