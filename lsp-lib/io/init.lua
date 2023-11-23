@@ -1,4 +1,4 @@
-local json = require("dkjson")
+local json = require("cjson")
 
 local RESPONSE_FMT = "Content-Length: %d\n\n%s"
 
@@ -88,9 +88,7 @@ end
 local function getData(self, len)
 	local content = assert(self.provider:read(len))
 
-	local object, pos, err = json.decode(content, 1, json.null)
-	assert(type(object) == "table", err)
-	assert(pos > len, "Parse error")
+	local object = json.decode(content)
 
 	local mt = getmetatable(object)
 	local jsonType = mt and mt.__jsontype

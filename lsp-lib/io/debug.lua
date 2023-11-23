@@ -1,4 +1,7 @@
-local json = require("dkjson")
+local json = require("cjson.safe").new()
+
+json.encode_invalid_numbers(true)
+json.encode_sparse_array(true)
 
 local logMessage = require("routes.window.logMessage")
 
@@ -43,7 +46,7 @@ do
 		local displayId = data.id == json.null and "null" or data.id
 
 		if data.result then
-			local displayResult = json.encode(data.result, displayResultOptions)
+			local displayResult = json.encode(data.result) or tostring(data.result)
 			message = WRITE_RESPONSE_RESULT_FORMAT:format(displayId, displayResult)
 		elseif data.error then
 			message = WRITE_RESPONSE_ERROR_FORMAT:format(displayId, data.error.message)
