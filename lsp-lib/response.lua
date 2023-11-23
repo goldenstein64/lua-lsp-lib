@@ -1,18 +1,14 @@
 local json = require("cjson")
 
 ---@type lsp*.Response
-local response = {}
+local defaults = {}
 
-response["initialize"] = function(params)
+defaults["initialize"] = function(params)
 	return { capabilities = {} }
 end
 
-response["shutdown"] = function(params)
+defaults["shutdown"] = function(params)
 	return json.null
 end
 
-response["exit"] = function(params)
-	os.exit(0)
-end
-
-return response
+return setmetatable({}, { __index = defaults }) --[[@as lsp*.Response]]
