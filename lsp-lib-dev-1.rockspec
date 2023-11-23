@@ -1,14 +1,16 @@
 package = "lsp-lib"
 version = "dev-1"
 source = {
-   url = "*** please add URL for source tarball, zip or repository here ***"
+   url = "https://github.com/goldenstein64/lua-lsp-lib",
+   dir = "lsp-lib"
 }
 description = {
-   homepage = "*** please enter a project homepage ***",
-   license = "*** please specify a license ***"
+   homepage = "https://github.com/goldenstein64/lua-lsp-lib",
+   license = "MIT",
 }
 dependencies = {
-   "lua ~> 5.1"
+   "lua >= 5.1",
+   "lua-cjson ~> 2.1",
 }
 build = {
    type = "builtin",
@@ -52,14 +54,15 @@ build = {
       ["lsp-lib.handle.errors"] = "lsp-lib/handle/errors.lua",
       ["lsp-lib.handle.init"] = "lsp-lib/handle/init.lua",
       ["lsp-lib.io.init"] = "lsp-lib/io/init.lua",
+      ["lsp-lib.io.stdio"] = "lsp-lib/io/stdio.lua",
+      ["lsp-lib.io.debug"] = "lsp-lib/io/debug.lua",
       ["lsp-lib.response"] = "lsp-lib/response.lua",
       ["lsp-lib.transform.position"] = "lsp-lib/transform/position.lua",
       ["lsp-lib.transform.range"] = "lsp-lib/transform/range.lua",
-      ["lsp-lib.io.stdio"] = "lsp-lib/io/stdio.lua",
       ["lsp-lib.error"] = "lsp-lib/error.lua",
       ["lsp-lib.init"] = "lsp-lib/init.lua",
       ["lsp-lib.notify"] = "lsp-lib/notify.lua",
       ["lsp-lib.request"] = "lsp-lib/request.lua",
    },
-   copy_directories = { "doc", "types" }
+   copy_directories = { "types" }
 }
