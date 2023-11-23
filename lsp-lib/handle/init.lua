@@ -5,7 +5,6 @@ local notify = require("lsp-lib.notify")
 local response = require("lsp-lib.response")
 
 local errors = require("lsp-lib.handle.errors")
-local inspect = require("inspect")
 
 ---@param msg string
 ---@param severity lsp.MessageType
@@ -79,7 +78,7 @@ local function handleRouteError(result)
 		return { msg = debug.traceback(result) }
 	else
 		-- messier error
-		return { msg = debug.traceback("non-string error: " .. inspect(result)) }
+		return { msg = debug.traceback("non-string error: " .. tostring(result)) }
 	end
 end
 
