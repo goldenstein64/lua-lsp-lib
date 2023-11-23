@@ -21,7 +21,7 @@ local transformPosition = {}
 ---takes an LSP Position and converts it to a byte position in the range of
 ---`[1, n + 1]`
 ---
----`n + 1` represents the end of the last line
+---`n + 1` represents the end of the last line.
 ---@param text string
 ---@param position lsp.Position
 ---@return integer position
@@ -52,7 +52,7 @@ end
 ---takes a byte position in the range of `[1, n + 1]` and converts it into an
 ---LSP Position
 ---
----`n + 1` represents the end of the last line
+---`n + 1` represents the end of the last line.
 ---@param text string
 ---@param position integer
 ---@return lsp.Position position
