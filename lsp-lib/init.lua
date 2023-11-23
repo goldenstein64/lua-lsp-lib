@@ -1,6 +1,3 @@
--- overrides assert and error so they log error messages to the language client
-require("lsp-lib.error")
-
 local handle = require("lsp-lib.handle")
 local ioLSP = require("lsp-lib.io")
 
