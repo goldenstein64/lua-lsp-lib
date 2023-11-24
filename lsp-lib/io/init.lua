@@ -1,4 +1,6 @@
-local json = require("cjson")
+local json = require("cjson").new()
+
+json.decode_array_with_array_mt(true)
 
 local RESPONSE_FMT = "Content-Length: %d\n\n%s"
 
@@ -89,10 +91,10 @@ local function getData(self, len)
 	local content = assert(self.provider:read(len))
 
 	local object = json.decode(content)
+	assert(type(object) == "table", "object is not a table")
 
 	local mt = getmetatable(object)
-	local jsonType = mt and mt.__jsontype
-	if jsonType == 'array' then
+	if mt == json.array_mt then
 		---@diagnostic disable-next-line:deprecated
 		table.move(object, 2, #object, #self.requestQueue + 1, self.requestQueue)
 		return object[1]
