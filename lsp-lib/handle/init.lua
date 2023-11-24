@@ -1,5 +1,4 @@
 local ioLSP = require("lsp-lib.io")
-local MessageType = require("lsp-lib.enum.MessageType")
 
 local notify = require("lsp-lib.notify")
 local response = require("lsp-lib.response")
