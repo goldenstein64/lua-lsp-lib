@@ -11,14 +11,21 @@ local lsp = {
 	response = require("lsp-lib.response"),
 }
 
-function lsp.listen()
+---@param exit? boolean
+function lsp.listen(exit)
 	if lsp.debug then
 		local dbg = require("lsp-lib.io.debug")
 		ioLSP.readCallback = dbg.read
 		ioLSP.writeCallback = dbg.write
 	end
 
-	while true do handle() end
+	while handle.running do handle() end
+
+	if exit ~= false then
+		os.exit(handle.state == "shutdown" and 0 or 1)
+	else
+		assert(handle.state == "shutdown", "server left in unfinished state")
+	end
 end
 
 return lsp

@@ -26,7 +26,8 @@ local handle = {
 	---@type { [integer]: thread }
 	waitingThreads = {},
 
-	state = "initialize"
+	state = "initialize",
+	running = true,
 }
 
 ---@return lsp*.AnyMessage?
@@ -260,7 +261,8 @@ handle.handlers = {
 		if not route then return end
 
 		handleRoute(route, req)
-		os.exit(0)
+
+		handle.running = false
 	end
 }
 
