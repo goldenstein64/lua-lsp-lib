@@ -27,19 +27,6 @@ do
 	local WRITE_RESPONSE_ERROR_FORMAT = "<==!!= %s: %s"
 	local WRITE_NOTIFICATION_FORMAT = "<-- %s"
 
-	local displayResultOptions = {
-		indent = true,
-		exception = function(reason, value, _, defaultMessage)
-			if reason == "custom encoder failed" then
-				return tostring(value)
-			elseif reason == "unsupported type" then
-				return tostring(value)
-			else
-				return nil, defaultMessage
-			end
-		end
-	}
-
 	function debug.write(data)
 		local message
 
