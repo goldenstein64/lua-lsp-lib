@@ -129,9 +129,27 @@ function ioLSP:write(data)
 
 	data.jsonrpc = "2.0"
 
-	if data.id and not (data.result and not data.error or not data.result and data.error) then
-		error("malformed response")
-	elseif not data.id and not (data.params and data.method) then
+	if data.id then
+		local mutex = 0 do
+			if data.result then
+				mutex = mutex + 1
+			end
+			if data.error then
+				mutex = mutex + 1
+			end
+			if data.method then
+				mutex = mutex + 1
+			end
+		end
+
+		if mutex ~= 1 then
+			if data.method then
+				error("malformed request")
+			else
+				error("malformed response")
+			end
+		end
+	elseif not data.id and not data.method then
 		error("malformed notification")
 	end
 
