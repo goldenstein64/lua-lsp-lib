@@ -6,18 +6,6 @@ local response = require("lsp-lib.response")
 
 local errors = require("lsp-lib.handle.errors")
 
----@param msg string
----@param severity lsp.MessageType
-local function logMessage(msg, severity)
-	---@type lsp.Notification.window-logMessage.params
-	local params = {
-		message = msg,
-		type = severity,
-	}
-
-	notify("window/logMessage", params)
-end
-
 ---@operator call(): nil
 local handle = {
 	---@type { [thread]: lsp.Request | lsp.Notification }
@@ -52,10 +40,10 @@ local function getRoute(req)
 		if isRequest then
 			if isRequired then
 				ioLSP:write(errors.MethodNotFound(req.id, req.method))
-				logMessage(ERR_UNKNOWN_PROTOCOL:format(req.method), MessageType.Error)
+				notify.log.error(ERR_UNKNOWN_PROTOCOL:format(req.method))
 			end
 		else
-			logMessage(ERR_UNKNOWN_PROTOCOL:format(req.method), MessageType.Error)
+			notify.log.error(ERR_UNKNOWN_PROTOCOL:format(req.method))
 		end
 
 		return nil
@@ -94,7 +82,7 @@ local function handleRequestResult(req, result)
 		return { id = req.id, result = result }
 	else
 		local msg = NO_RESPONSE_ERROR:format(req.method)
-		logMessage(msg, MessageType.Error)
+		notify.log.error(msg)
 		return errors.general(req.id, msg)
 	end
 end
@@ -103,7 +91,7 @@ end
 ---@param err lsp*.RouteError
 ---@return lsp.Response
 local function handleRequestError(req, err)
-	logMessage("request error: " .. tostring(err.msg), MessageType.Error)
+	notify.log.error("request error: " .. tostring(err.msg))
 	if err.result then -- graceful error
 		return { id = req.id, error = err.result }
 	else -- messy error
@@ -133,10 +121,10 @@ local RESPONSE_ERROR = "notification '%s' was responded to"
 ---@param result unknown
 local function handleNotificationRoute(notif, ok, result)
 	if ok and result ~= nil then
-		logMessage(RESPONSE_ERROR:format(notif.method), MessageType.Error)
+		notify.log.error(RESPONSE_ERROR:format(notif.method))
 	elseif not ok then
 		---@cast result lsp*.RouteError
-		logMessage(result.msg, MessageType.Error)
+		notify.log.error(result.msg)
 	end
 end
 
