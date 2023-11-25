@@ -1,7 +1,7 @@
-local ioLSP = require("lsp-lib.io")
+local io_lsp = require("lsp-lib.io")
 local MessageType = require("lsp-lib.enum.MessageType")
 
-local notifSet = {
+local notif_set = {
 	["window/showMessage"] = true,
 	["window/logMessage"] = true,
 	["telemetry/event"] = true,
@@ -12,7 +12,7 @@ local notifSet = {
 }
 
 ---@enum (key) lsp*.MessageType
-local messageTypeMap = {
+local message_type_map = {
 	error = MessageType.Error,
 	warn = MessageType.Warning,
 	info = MessageType.Info,
@@ -39,7 +39,7 @@ local notify = {
 	show = {},
 }
 
-for k, type in pairs(messageTypeMap) do
+for k, type in pairs(message_type_map) do
 	notify.log[k] = function(message)
 		notify("window/logMessage", { message = message, type = type })
 	end
@@ -50,7 +50,7 @@ end
 
 ---@param message string
 ---@param verbose? string
-function notify.logTrace(message, verbose)
+function notify.log_trace(message, verbose)
 	notify("$/logTrace", { message = message, verbose = verbose })
 end
 
@@ -66,7 +66,7 @@ function notify.progress(token, data)
 end
 
 ---@param id string | integer
-function notify.cancelRequest(id)
+function notify.cancel_request(id)
 	notify("$/cancelRequest", { id = id })
 end
 
@@ -77,10 +77,10 @@ function notify.diagnostics(uri, diagnostics, version)
 	notify("textDocument/publishDiagnostics", { uri = uri, diagnostics = diagnostics, version = version })
 end
 
-local notifyMt = {}
+local notify_mt = {}
 
-function notifyMt:__index(method)
-	if not notifSet[method] then
+function notify_mt:__index(method)
+	if not notif_set[method] then
 		error(string.format("attempt to retrieve unknown notification method '%s'", method))
 	end
 	local v = function(params) notify(method, params) end
@@ -90,7 +90,7 @@ end
 
 ---@param method string
 ---@param params table
-function notifyMt:__call(method, params)
+function notify_mt:__call(method, params)
 	---@type lsp.Notification
 	local notif = {
 		jsonrpc = "2.0",
@@ -98,7 +98,7 @@ function notifyMt:__call(method, params)
 		params = params
 	}
 
-	ioLSP:write(notif)
+	io_lsp:write(notif)
 end
 
-return setmetatable(notify, notifyMt)
+return setmetatable(notify, notify_mt)

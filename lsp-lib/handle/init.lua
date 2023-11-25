@@ -1,4 +1,4 @@
-local ioLSP = require("lsp-lib.io")
+local io_lsp = require("lsp-lib.io")
 
 local notify = require("lsp-lib.notify")
 local response = require("lsp-lib.response")
@@ -8,20 +8,20 @@ local errors = require("lsp-lib.handle.errors")
 ---@operator call(): nil
 local handle = {
 	---@type { [thread]: lsp.Request | lsp.Notification }
-	waitingThreadToReq = {},
+	waiting_thread_to_req = {},
 
 	---@type { [integer]: thread }
-	waitingThreads = {},
+	waiting_threads = {},
 
 	state = "initialize",
 	running = true,
 }
 
 ---@return lsp*.AnyMessage?
-local function getRequest()
-	local s, req = pcall(ioLSP.read, ioLSP)
+local function get_request()
+	local s, req = pcall(io_lsp.read, io_lsp)
 	if not s then
-		ioLSP:write(errors.ParseError(req --[[@as string?]]))
+		io_lsp:write(errors.ParseError(req --[[@as string?]]))
 	end
 
 	return s and req or nil
@@ -31,14 +31,14 @@ local ERR_UNKNOWN_PROTOCOL = "invoked an unknown protocol '%s'"
 
 ---@param req lsp.Request | lsp.Notification
 ---@return nil | fun(params: any): any
-local function getRoute(req)
+local function get_route(req)
 	local route = response[req.method]
 	local isRequired = req.method:sub(1, 1) ~= "$"
 	if not route then
 		local isRequest = req.id ~= nil
 		if isRequest then
 			if isRequired then
-				ioLSP:write(errors.MethodNotFound(req.id, req.method))
+				io_lsp:write(errors.MethodNotFound(req.id, req.method))
 				notify.log.error(ERR_UNKNOWN_PROTOCOL:format(req.method))
 			end
 		else
@@ -57,7 +57,7 @@ end
 
 ---@param result lsp.ResponseError | string
 ---@return lsp*.RouteError
-local function handleRouteError(result)
+local function handle_route_error(result)
 	if type(result) == "table" and result.message and result.code then
 		-- graceful error, leave it alone
 		return { result = result, msg = debug.traceback(result.message) }
@@ -75,7 +75,7 @@ local NO_RESPONSE_ERROR = "request '%s' was not responded to"
 ---@param req lsp.Request
 ---@param result unknown
 ---@return lsp.Response
-local function handleRequestResult(req, result)
+local function handle_request_result(req, result)
 	if result ~= nil then
 		-- request handlers should always return a result on success
 		return { id = req.id, result = result }
@@ -89,7 +89,7 @@ end
 ---@param req lsp.Request
 ---@param err lsp*.RouteError
 ---@return lsp.Response
-local function handleRequestError(req, err)
+local function handle_request_error(req, err)
 	notify.log.error("request error: " .. tostring(err.msg))
 	if err.result then -- graceful error
 		return { id = req.id, error = err.result }
@@ -101,16 +101,16 @@ end
 ---@param req lsp.Request
 ---@param ok boolean
 ---@param result unknown
-local function handleRequestRoute(req, ok, result)
+local function handle_request_route(req, ok, result)
 	local res ---@type lsp.Response
 	if ok then -- successful request
-		res = handleRequestResult(req, result)
+		res = handle_request_result(req, result)
 	else
 		---@cast result lsp*.RouteError
-		res = handleRequestError(req, result)
+		res = handle_request_error(req, result)
 	end
 
-	ioLSP:write(res)
+	io_lsp:write(res)
 end
 
 local RESPONSE_ERROR = "notification '%s' was responded to"
@@ -118,7 +118,7 @@ local RESPONSE_ERROR = "notification '%s' was responded to"
 ---@param notif lsp.Notification
 ---@param ok boolean
 ---@param result unknown
-local function handleNotificationRoute(notif, ok, result)
+local function handle_notification_route(notif, ok, result)
 	if ok and result ~= nil then
 		notify.log.error(RESPONSE_ERROR:format(notif.method))
 	elseif not ok then
@@ -131,7 +131,7 @@ local NO_REQUEST_STORED_ERROR = "request not stored for thread '%s'"
 
 ---@param thread thread
 ---@param ... any
-local function executeThread(thread, ...)
+local function execute_thread(thread, ...)
 	local ok, result = coroutine.resume(thread, ...)
 	if coroutine.status(thread) == "suspended" then
 		-- waiting for a request to complete
@@ -140,62 +140,62 @@ local function executeThread(thread, ...)
 	end
 
 	if not ok then
-		result = handleRouteError(result)
+		result = handle_route_error(result)
 	end
 
-	local req = handle.waitingThreadToReq[thread]
+	local req = handle.waiting_thread_to_req[thread]
 	if not req then
 		error(NO_REQUEST_STORED_ERROR:format(thread))
 	end
-	handle.waitingThreadToReq[thread] = nil
+	handle.waiting_thread_to_req[thread] = nil
 	if req.id then
 		---@cast req lsp.Request
-		handleRequestRoute(req, ok, result)
+		handle_request_route(req, ok, result)
 	else
 		---@cast req lsp.Notification
-		handleNotificationRoute(req, ok, result)
+		handle_notification_route(req, ok, result)
 	end
 end
 
 ---@param route fun(params: any): any
 ---@param req lsp.Request | lsp.Notification
-local function handleRoute(route, req)
+local function handle_route(route, req)
 	local thread = coroutine.create(route)
-	handle.waitingThreadToReq[thread] = req
-	executeThread(thread, req.params)
+	handle.waiting_thread_to_req[thread] = req
+	execute_thread(thread, req.params)
 end
 
 ---@param res lsp.Response
-local function handleResponse(res)
-	local thread = handle.waitingThreads[res.id] ---@type thread
+local function handle_response(res)
+	local thread = handle.waiting_threads[res.id] ---@type thread
 	if not thread then
 		error(string.format("no listener for response id '%s'", tostring(res.id)))
 	end
 
-	executeThread(thread, res.result and true or false, res.result or res.error)
+	execute_thread(thread, res.result and true or false, res.result or res.error)
 end
 
 ---@enum (key) lsp*.handle.Handler
 handle.handlers = {
 	initialize = function()
-		local req = getRequest()
+		local req = get_request()
 		if not req then return end
 
 		if not req.method then
 			---@cast req lsp.Response
-			handleResponse(req)
+			handle_response(req)
 			return
 		end
 		---@cast req lsp.Request | lsp.Notification
 
 		if req.method ~= "initialize" and req.method ~= "exit" then
-			ioLSP:write(errors.ServerNotInitialized(req.id))
+			io_lsp:write(errors.ServerNotInitialized(req.id))
 			return
 		end
 
-		local route = getRoute(req)
+		local route = get_route(req)
 		if route then
-			handleRoute(route, req)
+			handle_route(route, req)
 		end
 
 		if req.method == "exit" then
@@ -206,19 +206,19 @@ handle.handlers = {
 	end,
 
 	default = function()
-		local req = getRequest()
+		local req = get_request()
 		if not req then return end
 
 		if not req.method then
 			---@cast req lsp.Response
-			handleResponse(req)
+			handle_response(req)
 			return
 		end
 		---@cast req lsp.Request | lsp.Notification
 
-		local route = getRoute(req)
+		local route = get_route(req)
 		if route then
-			handleRoute(route, req)
+			handle_route(route, req)
 		end
 
 		if req.method == "shutdown" then
@@ -229,33 +229,33 @@ handle.handlers = {
 	end,
 
 	shutdown = function()
-		local req = getRequest()
+		local req = get_request()
 		if not req then return end
 
 		if not req.method then
 			---@cast req lsp.Response
-			handleResponse(req)
+			handle_response(req)
 			return
 		end
 		---@cast req lsp.Request | lsp.Notification
 
 		if req.method ~= "exit" then
-			ioLSP:write(errors.InvalidRequest(req.id, req.method))
+			io_lsp:write(errors.InvalidRequest(req.id, req.method))
 			return
 		end
 
-		local route = getRoute(req)
+		local route = get_route(req)
 		if not route then return end
 
-		handleRoute(route, req)
+		handle_route(route, req)
 
 		handle.running = false
 	end
 }
 
-local handleMt = {}
+local handle_mt = {}
 
-function handleMt:__call()
+function handle_mt:__call()
 	local handler = handle.handlers[handle.state]
 	if not handler then
 		error(string.format("handler not found for state '%s'", handle.state))
@@ -264,4 +264,4 @@ function handleMt:__call()
 	handler()
 end
 
-return setmetatable(handle, handleMt)
+return setmetatable(handle, handle_mt)

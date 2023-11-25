@@ -1,16 +1,16 @@
 ---@class lsp*.io.provider.stdio : lsp*.io.provider
-local ioStd = {}
+local io_std = {}
 
 ---@param bytes integer
 ---@return string
-function ioStd:read(bytes)
+function io_std:read(bytes)
 	return io.read(bytes)
 end
 
 ---@param data string
-function ioStd:write(data)
+function io_std:write(data)
 	io.write(data)
 	io.flush()
 end
 
-return ioStd
+return io_std

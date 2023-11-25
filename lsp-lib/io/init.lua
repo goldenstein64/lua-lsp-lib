@@ -17,14 +17,14 @@ local NON_TABLE_ERROR = "sent a non-table, '%s'"
 
 ---@class lsp*.io
 ---@field provider lsp*.io.provider
----@field readCallback? fun(data: lsp*.AnyMessage)
----@field writeCallback? fun(data: lsp*.AnyMessage)
-local ioLSP = {
-	requestQueue = {}
+---@field read_callback? fun(data: lsp*.AnyMessage)
+---@field write_callback? fun(data: lsp*.AnyMessage)
+local io_lsp = {
+	request_queue = {}
 }
 
 ---@param self lsp*.io
-local function readHeaderLine(self)
+local function read_header_line(self)
 	local buffer = {}
 	while true do
 		local byte = assert(self.provider:read(1))
@@ -46,31 +46,31 @@ end
 
 ---@param self lsp*.io
 ---@return lsp*.io.headers
-local function decodeHeaders(self)
+local function decode_headers(self)
 	local headers = {}
-	local header = readHeaderLine(self)
+	local header = read_header_line(self)
 	while not header:match("^\r?\n$") do
 		---@type string, string
 		local key, value = header:match("^([%w%-]+): (.*)\r?\n$")
 		assert(key, "unable to parse header")
 		headers[string.lower(key)] = value
-		header = readHeaderLine(self)
+		header = read_header_line(self)
 	end
 
 	return headers
 end
 
 ---@param headers lsp*.io.headers
-local function validateHeaders(headers)
+local function validate_headers(headers)
 	local len = tonumber(headers["content-length"])
 	assert(len, "could not find length")
 	headers["content-length"] = len
 
-	local contentType = headers["content-type"] ---@type string?
+	local content_type = headers["content-type"] ---@type string?
 	assert(
-		not contentType or (
-			contentType:find("^application/vscode%-jsonrpc")
-			and contentType:find("charset=utf%-8$")
+		not content_type or (
+			content_type:find("^application/vscode%-jsonrpc")
+			and content_type:find("charset=utf%-8$")
 		),
 		"cannot handle content types other than 'application/vscode-jsonrpc; charset=utf-8'"
 	)
@@ -78,16 +78,16 @@ end
 
 ---@param self lsp*.io
 ---@return lsp*.io.headers
-local function getHeaders(self)
-	local headers = decodeHeaders(self)
-	validateHeaders(headers)
+local function get_headers(self)
+	local headers = decode_headers(self)
+	validate_headers(headers)
 	return headers
 end
 
 ---@param self lsp*.io
 ---@param len integer
 ---@return lsp*.AnyMessage
-local function getData(self, len)
+local function get_data(self, len)
 	local content = assert(self.provider:read(len))
 
 	local object = json.decode(content)
@@ -96,7 +96,7 @@ local function getData(self, len)
 	local mt = getmetatable(object)
 	if mt == json.array_mt then
 		---@diagnostic disable-next-line:deprecated
-		table.move(object, 2, #object, #self.requestQueue + 1, self.requestQueue)
+		table.move(object, 2, #object, #self.request_queue + 1, self.request_queue)
 		return object[1]
 	end
 
@@ -104,25 +104,25 @@ local function getData(self, len)
 end
 
 ---@return lsp*.AnyMessage
-function ioLSP:read()
-	if #self.requestQueue > 0 then
-		return table.remove(self.requestQueue, 1)
+function io_lsp:read()
+	if #self.request_queue > 0 then
+		return table.remove(self.request_queue, 1)
 	end
 
-	local headers = getHeaders(self)
+	local headers = get_headers(self)
 
 	local len = headers["content-length"]
-	local data = getData(self, len)
+	local data = get_data(self, len)
 
-	if self.readCallback then
-		self.readCallback(data)
+	if self.read_callback then
+		self.read_callback(data)
 	end
 
 	return data
 end
 
 ---@param data lsp*.AnyMessage
-function ioLSP:write(data)
+function io_lsp:write(data)
 	if type(data) ~= "table" then
 		error(NON_TABLE_ERROR:format(type(data)))
 	end
@@ -153,16 +153,16 @@ function ioLSP:write(data)
 		error("malformed notification")
 	end
 
-	if self.writeCallback then
-		self.writeCallback(data)
+	if self.write_callback then
+		self.write_callback(data)
 	end
 
 	local content = json.encode(data)
 
-	local contentLength = string.len(content)
-	local response = RESPONSE_FMT:format(contentLength, content)
+	local content_length = string.len(content)
+	local response = RESPONSE_FMT:format(content_length, content)
 
 	self.provider:write(response)
 end
 
-return ioLSP
+return io_lsp

@@ -1,7 +1,7 @@
 local handle = require("lsp-lib.handle")
-local ioLSP = require("lsp-lib.io")
+local io_lsp = require("lsp-lib.io")
 
-ioLSP.provider = require("lsp-lib.io.stdio")
+io_lsp.provider = require("lsp-lib.io.stdio")
 
 local lsp = {
 	debug = false,
@@ -15,8 +15,8 @@ local lsp = {
 function lsp.listen(exit)
 	if lsp.debug then
 		local dbg = require("lsp-lib.io.debug")
-		ioLSP.readCallback = dbg.read
-		ioLSP.writeCallback = dbg.write
+		io_lsp.read_callback = dbg.read
+		io_lsp.write_callback = dbg.write
 	end
 
 	while handle.running do handle() end

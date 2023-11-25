@@ -1,22 +1,21 @@
-local lpeg = require("lpeg")
-
 local ErrorCodes = require("lsp-lib.enum.ErrorCodes")
 local utf8 = require("compat53.module").utf8
 
 local LINE_OUT_OF_RANGE = "line %d is out of range"
 local POSITION_OUT_OF_RANGE = "position %d is not in the range of [1, %d]"
 
-local newLine = (lpeg.P("\r\n") + lpeg.S("\r\n")) * lpeg.Cp()
-local gNewLine = lpeg.P({ newLine + 1 * lpeg.V(1) })
-
 ---@param text string
 ---@param i? integer
 ---@return integer? position
-local function matchNextLine(text, i)
-	return gNewLine:match(text, i) --[[@as integer?]]
+local function match_next_line(text, i)
+	local result = math.min(
+		text:match("\r\n?()", i) or math.huge,
+		text:match("\n()", i) or math.huge
+	)
+	return result ~= math.huge and result or nil
 end
 
-local transformPosition = {}
+local transform_position = {}
 
 ---takes an LSP Position and converts it to a byte position in the range of
 ---`[1, n + 1]`
@@ -25,28 +24,27 @@ local transformPosition = {}
 ---@param text string
 ---@param position lsp.Position
 ---@return integer position
-function transformPosition.fromLSP(text, position)
-	local lineStart = 1
+function transform_position.from_lsp(text, position)
+	local line_start = 1 ---@type integer?
 	for _ = 1, position.line do
-		---@diagnostic disable-next-line: cast-local-type
-		lineStart = matchNextLine(text, lineStart)
-		if not lineStart then
-			error.object({
+		line_start = match_next_line(text, line_start)
+		if not line_start then
+			error({
 				code = ErrorCodes.InvalidParams,
 				message = LINE_OUT_OF_RANGE:format(position.line)
 			})
 		end
 	end
 
-	local newPosition = utf8.offset(text, position.character + 1, lineStart)
-	if newPosition < 1 or newPosition > text:len() + 1 then
-		error.object({
+	local new_position = utf8.offset(text, position.character + 1, line_start)
+	if new_position < 1 or new_position > text:len() + 1 then
+		error({
 			code = ErrorCodes.InvalidParams,
-			message = POSITION_OUT_OF_RANGE:format(newPosition, text:len() + 1),
+			message = POSITION_OUT_OF_RANGE:format(new_position, text:len() + 1),
 		})
 	end
 
-	return newPosition
+	return new_position
 end
 
 ---takes a byte position in the range of `[1, n + 1]` and converts it into an
@@ -56,27 +54,27 @@ end
 ---@param text string
 ---@param position integer
 ---@return lsp.Position position
-function transformPosition.toLSP(text, position)
+function transform_position.to_lsp(text, position)
 	if position < 1 or position > text:len() + 1 then
-		error.object({
+		error({
 			code = ErrorCodes.InternalError,
 			message = POSITION_OUT_OF_RANGE:format(position, text:len() + 1),
 		})
 	end
 
 	local line = 0
-	local lineStart = 1
-	local nextStart = matchNextLine(text)
-	while nextStart and nextStart <= position do
+	local line_start = 1
+	local next_start = match_next_line(text)
+	while next_start and next_start <= position do
 		line = line + 1
-		lineStart = nextStart
-		nextStart = matchNextLine(text, nextStart)
+		line_start = next_start
+		next_start = match_next_line(text, next_start)
 	end
 
 	return {
 		line = line,
-		character = utf8.len(text, lineStart, position - 1),
+		character = utf8.len(text, line_start, position - 1),
 	}
 end
 
-return transformPosition
+return transform_position

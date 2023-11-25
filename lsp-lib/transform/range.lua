@@ -1,6 +1,6 @@
-local transformPosition = require("lsp-lib.transform.position")
+local transform_position = require("lsp-lib.transform.position")
 
-local transformRange = {}
+local transform_range = {}
 
 ---takes an LSP range and converts it into a pair of byte positions
 ---`start, finish` in the range of `[1, n + 1]` such that
@@ -8,10 +8,10 @@ local transformRange = {}
 ---@param text string
 ---@param range lsp.Range
 ---@return integer start, integer finish
-function transformRange.fromLSP(text, range)
+function transform_range.from_lsp(text, range)
 	return
-		transformPosition.fromLSP(text, range.start),
-		transformPosition.fromLSP(text, range["end"])
+		transform_position.from_lsp(text, range.start),
+		transform_position.from_lsp(text, range["end"])
 end
 
 ---takes a pair of byte positions in the range of `[1, n + 1]` and converts
@@ -20,19 +20,19 @@ end
 ---@param start integer
 ---@param finish? integer
 ---@return lsp.Range range
-function transformRange.toLSP(text, start, finish)
+function transform_range.to_lsp(text, start, finish)
 	if finish then
 		return {
-			start = transformPosition.toLSP(text, start),
-			["end"] = transformPosition.toLSP(text, finish),
+			start = transform_position.to_lsp(text, start),
+			["end"] = transform_position.to_lsp(text, finish),
 		}
 	else
-		local lspStart = transformPosition.toLSP(text, start)
+		local lsp_start = transform_position.to_lsp(text, start)
 		return {
-			start = lspStart,
-			["end"] = { line = lspStart.line + 1, character = 0 }
+			start = lsp_start,
+			["end"] = { line = lsp_start.line + 1, character = 0 }
 		}
 	end
 end
 
-return transformRange
+return transform_range

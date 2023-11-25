@@ -1,9 +1,9 @@
-local ioLSP = require("lsp-lib.io")
+local io_lsp = require("lsp-lib.io")
 local handle = require("lsp-lib.handle")
 
 local INT_LIMIT = 2 ^ 53
 
-local requestSet = {
+local request_set = {
 	["workspace/workspaceFolders"] = true,
 	["workspace/configuration"] = true,
 	["workspace/foldingRange/refresh"] = true,
@@ -26,10 +26,10 @@ local id = 0
 ---@type lsp*.Request
 local request = {}
 
-local requestMt = {}
+local request_mt = {}
 
-function requestMt:__index(method)
-	if not requestSet[method] then
+function request_mt:__index(method)
+	if not request_set[method] then
 		error(string.format("attempt to retrieve unknown request method '%s'", method))
 	end
 
@@ -38,8 +38,8 @@ function requestMt:__index(method)
 	return v
 end
 
-function requestMt:__call(method, params)
-	handle.waitingThreads[id] = coroutine.running()
+function request_mt:__call(method, params)
+	handle.waiting_threads[id] = coroutine.running()
 
 	---@type lsp.Request
 	local req = {
@@ -51,9 +51,9 @@ function requestMt:__call(method, params)
 
 	id = (id + 1) % INT_LIMIT
 
-	ioLSP:write(req)
+	io_lsp:write(req)
 
 	return coroutine.yield()
 end
 
-return setmetatable(request, requestMt)
+return setmetatable(request, request_mt)
