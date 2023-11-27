@@ -1,5 +1,6 @@
 return {
 	_all = {
-		output = "plainTerminal"
+		output = "plainTerminal",
+		defer_print = true,
 	}
 }
