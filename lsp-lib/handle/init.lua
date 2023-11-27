@@ -19,12 +19,12 @@ local handle = {
 
 ---@return lsp*.AnyMessage?
 local function get_request()
-	local s, req = pcall(io_lsp.read, io_lsp)
-	if not s then
+	local ok, req = pcall(io_lsp.read, io_lsp)
+	if not ok then
 		io_lsp:write(errors.ParseError(req --[[@as string?]]))
 	end
 
-	return s and req or nil
+	return ok and req or nil
 end
 
 local ERR_UNKNOWN_PROTOCOL = "invoked an unknown protocol '%s'"
@@ -33,11 +33,11 @@ local ERR_UNKNOWN_PROTOCOL = "invoked an unknown protocol '%s'"
 ---@return nil | fun(params: any): any
 local function get_route(req)
 	local route = response[req.method]
-	local isRequired = req.method:sub(1, 1) ~= "$"
+	local is_required = req.method:sub(1, 1) ~= "$"
 	if not route then
-		local isRequest = req.id ~= nil
-		if isRequest then
-			if isRequired then
+		local is_request = req.id ~= nil
+		if is_request then
+			if is_required then
 				io_lsp:write(errors.MethodNotFound(req.id, req.method))
 				notify.log.error(ERR_UNKNOWN_PROTOCOL:format(req.method))
 			end
