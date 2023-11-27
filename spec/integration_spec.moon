@@ -12,8 +12,8 @@ import
 	request_of, notif_of, response_of
 from require 'spec.helpers.mock_io'
 
-describe 'integration', ->
-	after_each ->
+describe 'the system', ->
+	before_each ->
 		ioLSP.provider = nil
 		lsp.response[k] = nil for k in pairs lsp.response
 
@@ -29,10 +29,10 @@ describe 'integration', ->
 	exit_notif = notif_of 'exit', null
 
 	run = ->
-		thread = coroutine.create lsp.listen
-		ok = coroutine.resume thread, false
-		assert.is_true ok
-		thread
+		with @ = coroutine.create lsp.listen
+			ok, reason = coroutine.resume @, false
+			assert.is_true ok, reason
+
 
 	it 'works', ->
 		provider = MockProvider {
@@ -46,9 +46,10 @@ describe 'integration', ->
 		assert.equal 'dead', coroutine.status thread
 
 		responses = provider\mock_decode_output!
-		assert.equal 2, #responses
-		assert.same response_of(1, { capabilities: {} }), responses[1]
-		assert.same response_of(2, null), responses[2]
+		assert.same {
+			response_of 1, { capabilities: {} }
+			response_of 2, null
+		}, responses
 
 	it 'calls my custom function when requested', ->
 		provider = MockProvider {
@@ -65,7 +66,8 @@ describe 'integration', ->
 		assert.equal 'dead', coroutine.status thread
 
 		responses = provider\mock_decode_output!
-		assert.equal 3, #responses
-		assert.same response_of(1, { capabilities: {} }), responses[1]
-		assert.same response_of(2, { returned: 'test value' }), responses[2]
-		assert.same response_of(3, null), responses[3]
+		assert.same {
+			response_of 1, { capabilities: {} }
+			response_of 2, { returned: 'test value' }
+			response_of 3, null
+		}, responses
