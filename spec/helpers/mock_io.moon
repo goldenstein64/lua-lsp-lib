@@ -5,9 +5,7 @@ json = require 'cjson'
 http_encode = (content) -> "Content-Length: #{#content}\n\n#{content}"
 
 request_of = (id, method, params) -> { jsonrpc: '2.0', :id, :method, :params }
-
 notif_of = (method, params) -> { jsonrpc: '2.0', :method, :params }
-
 response_of = (id, result, err) -> { jsonrpc: '2.0', :id, :result, error: err }
 
 class MockProvider
@@ -49,7 +47,7 @@ class MockProvider
 
 			assert len, 'length not found for response'
 			response_content = content\sub index, index + len - 1
-			print response_content\gsub('\n', '\\n')\gsub('\r', '\\r')
+			-- print response_content\gsub('\n', '\\n')\gsub('\r', '\\r')
 			insert responses, response_content
 			index += len
 
