@@ -28,11 +28,11 @@ describe 'the system', ->
 
 	exit_notif = notif_of 'exit', null
 
-	run = ->
-		with @ = coroutine.create lsp.listen
-			ok, reason = coroutine.resume @, false
-			assert.is_true ok, reason
-
+	listen = ->
+		thread = coroutine.create lsp.listen
+		ok, reason = coroutine.resume thread, false
+		assert.is_true ok, reason
+		thread
 
 	it 'works', ->
 		provider = MockProvider {
@@ -42,7 +42,7 @@ describe 'the system', ->
 		}
 		ioLSP.provider = provider
 
-		thread = run!
+		thread = listen!
 		assert.equal 'dead', coroutine.status thread
 
 		responses = provider\mock_decode_output!
@@ -62,7 +62,7 @@ describe 'the system', ->
 
 		lsp.response['$/customRequest'] = (params) -> { returned: params.test_prop }
 
-		thread = run!
+		thread = listen!
 		assert.equal 'dead', coroutine.status thread
 
 		responses = provider\mock_decode_output!
