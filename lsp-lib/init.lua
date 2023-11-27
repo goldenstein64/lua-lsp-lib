@@ -19,6 +19,8 @@ function lsp.listen(exit)
 		io_lsp.write_callback = dbg.write
 	end
 
+	handle.state = 'initialize'
+	handle.running = true
 	while handle.running do handle() end
 
 	if exit ~= false then
