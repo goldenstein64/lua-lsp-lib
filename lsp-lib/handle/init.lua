@@ -199,7 +199,7 @@ handle.handlers = {
 		end
 
 		if req.method == "exit" then
-			os.exit(1)
+			handle.running = false
 		else
 			handle.state = "default"
 		end
@@ -224,7 +224,7 @@ handle.handlers = {
 		if req.method == "shutdown" then
 			handle.state = "shutdown"
 		elseif req.method == "exit" then
-			os.exit(1)
+			handle.running = false
 		end
 	end,
 
@@ -244,12 +244,12 @@ handle.handlers = {
 			return
 		end
 
+		handle.running = false
+
 		local route = get_route(req)
 		if not route then return end
 
 		handle_route(route, req)
-
-		handle.running = false
 	end
 }
 
