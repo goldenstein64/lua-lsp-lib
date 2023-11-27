@@ -181,14 +181,15 @@ handle.handlers = {
 		local req = get_request()
 		if not req then return end
 
-		if not req.method then
+		local method = req.method
+		if not method then
 			---@cast req lsp.Response
 			handle_response(req)
 			return
 		end
 		---@cast req lsp.Request | lsp.Notification
 
-		if req.method ~= "initialize" and req.method ~= "exit" then
+		if method ~= "initialize" and method ~= "exit" then
 			io_lsp:write(errors.ServerNotInitialized(req.id))
 			return
 		end
@@ -198,7 +199,7 @@ handle.handlers = {
 			handle_route(route, req)
 		end
 
-		if req.method == "exit" then
+		if method == "exit" then
 			handle.running = false
 		else
 			handle.state = "default"
@@ -209,7 +210,8 @@ handle.handlers = {
 		local req = get_request()
 		if not req then return end
 
-		if not req.method then
+		local method = req.method
+		if not method then
 			---@cast req lsp.Response
 			handle_response(req)
 			return
@@ -221,9 +223,9 @@ handle.handlers = {
 			handle_route(route, req)
 		end
 
-		if req.method == "shutdown" then
+		if method == "shutdown" then
 			handle.state = "shutdown"
-		elseif req.method == "exit" then
+		elseif method == "exit" then
 			handle.running = false
 		end
 	end,
@@ -232,15 +234,16 @@ handle.handlers = {
 		local req = get_request()
 		if not req then return end
 
-		if not req.method then
+		local method = req.method
+		if not method then
 			---@cast req lsp.Response
 			handle_response(req)
 			return
 		end
 		---@cast req lsp.Request | lsp.Notification
 
-		if req.method ~= "exit" then
-			io_lsp:write(errors.InvalidRequest(req.id, req.method))
+		if method ~= "exit" then
+			io_lsp:write(errors.InvalidRequest(req.id, method))
 			return
 		end
 
