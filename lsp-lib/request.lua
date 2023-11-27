@@ -21,7 +21,7 @@ local request_set = {
 }
 
 ---@type integer
-local id = 0
+local id = 1
 
 ---@type lsp*.Request
 local request = {}
