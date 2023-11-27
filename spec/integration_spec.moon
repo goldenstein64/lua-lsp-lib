@@ -51,6 +51,23 @@ describe 'the system', ->
 			response_of 2, null
 		}, responses
 
+	it 'works with string ids', ->
+		provider = MockProvider {
+			initialize_request 'init'
+			shutdown_request 'stop'
+			exit_notif
+		}
+		ioLSP.provider = provider
+
+		thread = listen!
+		assert.equal 'dead', coroutine.status thread
+
+		responses = provider\mock_decode_output!
+		assert.same {
+			response_of 'init', { capabilities: {} }
+			response_of 'stop', null
+		}, responses
+
 	it 'calls my custom function when requested', ->
 		provider = MockProvider {
 			initialize_request 1
@@ -70,4 +87,34 @@ describe 'the system', ->
 			response_of 1, { capabilities: {} }
 			response_of 2, { returned: 'test value' }
 			response_of 3, null
+		}, responses
+
+	it 'waits for a request asynchronously', ->
+		provider = MockProvider {
+			initialize_request 1
+			request_of 2, '$/asyncRequest', null
+			request_of 3, '$/noop', null
+			response_of 1, { test_prop: 'foo' }
+			shutdown_request 4
+			exit_notif
+		}
+		ioLSP.provider = provider
+
+		lsp.response['$/noop'] = (params) -> null
+
+		lsp.response['$/asyncRequest'] = (params) ->
+			ok, result = lsp.request '$/pendingRequest', null
+			{ :ok, :result }
+
+		thread = listen!
+		assert.equal 'dead', coroutine.status thread
+
+		responses = provider\mock_decode_output!
+		assert.same {
+			response_of 1, { capabilities: {} } -- initialize
+			-- receives '$/asyncRequest'
+			request_of 1, '$/pendingRequest', null
+			response_of 3, null -- '$/noop' is responded to in the meantime
+			response_of 2, { ok: true, result: { test_prop: 'foo' } } -- $/asyncRequest
+			response_of 4, null -- shutdown
 		}, responses
