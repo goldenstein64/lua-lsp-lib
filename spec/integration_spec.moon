@@ -43,7 +43,7 @@ describe 'the system', ->
 		io_lsp.provider = provider
 
 		thread = listen!
-		assert.equal 'dead', coroutine.status thread
+		assert.thread_dead thread
 
 		responses = provider\mock_decode_output!
 		assert.same {
@@ -60,7 +60,7 @@ describe 'the system', ->
 		io_lsp.provider = provider
 
 		thread = listen!
-		assert.equal 'dead', coroutine.status thread
+		assert.thread_dead thread
 
 		responses = provider\mock_decode_output!
 		assert.same {
@@ -80,7 +80,7 @@ describe 'the system', ->
 		lsp.response['$/customRequest'] = (params) -> { returned: params.test_prop }
 
 		thread = listen!
-		assert.equal 'dead', coroutine.status thread
+		assert.thread_dead thread
 
 		responses = provider\mock_decode_output!
 		assert.same {
@@ -107,7 +107,7 @@ describe 'the system', ->
 			{ :ok, :result }
 
 		thread = listen!
-		assert.equal 'dead', coroutine.status thread
+		assert.thread_dead thread
 
 		responses = provider\mock_decode_output!
 		assert.same {
