@@ -160,6 +160,11 @@ end
 ---@param route fun(params: any): any
 ---@param req lsp.Request | lsp.Notification
 local function handle_route(route, req)
+	if type(route) == "table" then
+		local old_route = route
+		route = function(...) return old_route(...) end
+	end
+
 	local thread = coroutine.create(route)
 	listen.waiting_thread_to_req[thread] = req
 	execute_thread(thread, req.params)
