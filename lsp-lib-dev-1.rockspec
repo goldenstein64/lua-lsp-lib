@@ -59,12 +59,15 @@ build = {
       ["lsp-lib.io.stdio"] = "lsp-lib/io/stdio.lua",
       ["lsp-lib.io.debug"] = "lsp-lib/io/debug.lua",
 
+      ["lsp-lib.request.init"] = "lsp-lib/request/init.lua",
+      ["lsp-lib.request.state"] = "lsp-lib/request/state.lua",
+
       ["lsp-lib.transform.position"] = "lsp-lib/transform/position.lua",
       ["lsp-lib.transform.range"] = "lsp-lib/transform/range.lua",
 
-      ["lsp-lib.response"] = "lsp-lib/response.lua",
       ["lsp-lib.notify"] = "lsp-lib/notify.lua",
-      ["lsp-lib.request"] = "lsp-lib/request.lua",
+      ["lsp-lib.response"] = "lsp-lib/response.lua",
+
       ["lsp-lib.init"] = "lsp-lib/init.lua",
    },
    copy_directories = { "types" }
