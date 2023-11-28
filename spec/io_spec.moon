@@ -3,7 +3,7 @@ io_lsp = require 'lsp-lib.io'
 import
 	MockProvider
 	request_of, notif_of, response_of
-from require 'spec.helpers.mock_io'
+from require 'spec.mocks.io'
 
 describe 'LSP I/O', ->
 	before_each ->

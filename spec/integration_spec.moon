@@ -10,7 +10,7 @@ io_lsp.provider = nil
 import
 	MockProvider
 	request_of, notif_of, response_of
-from require 'spec.helpers.mock_io'
+from require 'spec.mocks.io'
 
 describe 'the system', ->
 	before_each ->
