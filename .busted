@@ -1,6 +1,7 @@
 return {
 	_all = {
 		output = 'plainTerminal',
+		helper = "spec/helpers/helper.lua",
 		['defer-print'] = true,
 	}
 }
