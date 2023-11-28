@@ -7,6 +7,8 @@ lsp = require 'lsp-lib'
 io_lsp = require 'lsp-lib.io'
 io_lsp.provider = nil
 
+request_state = require 'lsp-lib.request.state'
+
 import
 	MockProvider
 	request_of, notif_of, response_of
@@ -16,6 +18,7 @@ describe 'the system', ->
 	before_each ->
 		io_lsp.provider = nil
 		lsp.response[k] = nil for k in pairs lsp.response
+		request_state.id = 1
 
 	initialize_request = (id) ->
 		request_of id, 'initialize', {
@@ -120,3 +123,6 @@ describe 'the system', ->
 			response_of 2, { ok: true, result: { test_prop: 'foo' } } -- $/asyncRequest
 			response_of 4, null -- shutdown
 		}, responses
+
+		assert.is_nil next request_state.waiting_threads
+		assert.is_nil next request_state.waiting_requests

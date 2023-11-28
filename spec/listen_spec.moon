@@ -1,8 +1,12 @@
 import null from require 'cjson'
 
+inspect = require 'inspect'
+
 io_lsp = require 'lsp-lib.io'
 listen = require 'lsp-lib.listen'
 response = require 'lsp-lib.response'
+request = require 'lsp-lib.request'
+request_state = require 'lsp-lib.request.state'
 
 match = require 'luassert.match'
 spy = require 'luassert.spy'
@@ -16,6 +20,8 @@ describe 'lsp.listen', ->
 		listen.state = 'initialize'
 		listen.running = true
 		listen.routes = response
+		request_state.waiting_threads[k] = nil for k in pairs request_state.waiting_threads
+		request_state.waiting_requests[k] = nil for k in pairs request_state.waiting_requests
 
 		io_lsp.provider = nil
 
@@ -29,19 +35,21 @@ describe 'lsp.listen', ->
 
 			assert.spy(s).called 1
 			assert.spy(s).called.with()
+
+			-- teardown
 			listen.handlers['foo_bar'] = nil
 
 		it 'errors in an unknown state', ->
 			listen.state = 'unknown'
 			assert.error -> listen.once!
 
-		it 'indexes routes when a request is received', ->
+		it 'indexes routes when called', ->
 			provider = MockProvider {
 				request_of 1, '$/stringify', { arg: 97 }
 			}
-			io_lsp.provider = provider
-
 			stringify = spy (params) -> { returned: tostring params.arg }
+
+			io_lsp.provider = provider
 
 			listen.state = 'default'
 			listen.routes = {
@@ -57,3 +65,20 @@ describe 'lsp.listen', ->
 			assert.same {
 				response_of 1, { returned: '97' }
 			}, responses
+
+		it 'resumes its thread when a response is received', ->
+			provider = MockProvider {
+				request_of 1, '$/startWait'
+				response_of 1, { returned: 'value' }
+			}
+			io_lsp.provider = provider
+
+			listen.routes = {
+				'$/startWait': -> request '$/waiting', null
+			}
+
+			listen.once!
+
+
+			print inspect request_state.waiting_threads
+			print inspect request_state.waiting_requests

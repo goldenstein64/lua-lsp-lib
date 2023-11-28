@@ -1,6 +1,7 @@
 local io_lsp = require("lsp-lib.io")
 
 local notify = require("lsp-lib.notify")
+local request_state = require("lsp-lib.request.state")
 
 local errors = require("lsp-lib.listen.errors")
 
@@ -8,12 +9,6 @@ local errors = require("lsp-lib.listen.errors")
 local listen = {
 	---@type { [string]: nil | fun(params: any): any }
 	routes = nil,
-
-	---@type { [thread]: lsp.Request | lsp.Notification }
-	waiting_thread_to_req = {},
-
-	---@type { [integer]: thread }
-	waiting_threads = {},
 
 	state = "initialize",
 	running = true,
@@ -129,11 +124,13 @@ end
 
 local NO_REQUEST_STORED_ERROR = "request not stored for thread '%s'"
 
+---@param req lsp.Request | lsp.Notification
 ---@param thread thread
 ---@param ... any
-local function execute_thread(thread, ...)
+local function execute_thread(req, thread, ...)
 	local ok, result = coroutine.resume(thread, ...)
 	if coroutine.status(thread) == "suspended" then
+		request_state.waiting_requests[thread] = req
 		-- waiting for a request to complete
 		-- all the book-keeping should've been finished before this, so just return
 		return
@@ -143,11 +140,6 @@ local function execute_thread(thread, ...)
 		result = handle_route_error(result)
 	end
 
-	local req = listen.waiting_thread_to_req[thread]
-	if not req then
-		error(NO_REQUEST_STORED_ERROR:format(thread))
-	end
-	listen.waiting_thread_to_req[thread] = nil
 	if req.id then
 		---@cast req lsp.Request
 		handle_request_route(req, ok, result)
@@ -166,18 +158,26 @@ local function handle_route(route, req)
 	end
 
 	local thread = coroutine.create(route)
-	listen.waiting_thread_to_req[thread] = req
-	execute_thread(thread, req.params)
+	execute_thread(req, thread, req.params)
 end
+
+local NO_THREAD_STORED_ERROR = "no thread found for response id '%s'"
 
 ---@param res lsp.Response
 local function handle_response(res)
-	local thread = listen.waiting_threads[res.id] ---@type thread
+	local thread = request_state.waiting_threads[res.id]
 	if not thread then
-		error(string.format("no listener for response id '%s'", tostring(res.id)))
+		error(NO_THREAD_STORED_ERROR:format(res.id))
 	end
+	request_state.waiting_threads[res.id] = nil
 
-	execute_thread(thread, res.result and true or false, res.result or res.error)
+	local req = request_state.waiting_requests[thread]
+	if not req then
+		error(NO_REQUEST_STORED_ERROR:format(thread))
+	end
+	request_state.waiting_requests[thread] = nil
+
+	execute_thread(req, thread, res.result and true or false, res.result or res.error)
 end
 
 ---@enum (key) lsp*.handle.Handler

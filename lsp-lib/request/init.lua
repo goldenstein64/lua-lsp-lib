@@ -1,5 +1,6 @@
 local io_lsp = require("lsp-lib.io")
-local listen = require("lsp-lib.listen")
+
+local request_state = require("lsp-lib.request.state")
 
 local INT_LIMIT = 2 ^ 53
 
@@ -20,9 +21,6 @@ local request_set = {
 	["workspace/applyEdit"] = true,
 }
 
----@type integer
-local id = 1
-
 ---@type lsp*.Request
 local request = {}
 
@@ -39,7 +37,8 @@ function request_mt:__index(method)
 end
 
 function request_mt:__call(method, params)
-	listen.waiting_threads[id] = coroutine.running()
+	local id = request_state.id
+	request_state.waiting_threads[id] = coroutine.running()
 
 	---@type lsp.Request
 	local req = {
@@ -49,7 +48,7 @@ function request_mt:__call(method, params)
 		params = params,
 	}
 
-	id = (id + 1) % INT_LIMIT
+	request_state.id = (id + 1) % INT_LIMIT
 
 	io_lsp:write(req)
 
