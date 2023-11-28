@@ -1,12 +1,11 @@
 import null from require 'cjson'
 
-inspect = require 'inspect'
-
 io_lsp = require 'lsp-lib.io'
 listen = require 'lsp-lib.listen'
 response = require 'lsp-lib.response'
 request = require 'lsp-lib.request'
 request_state = require 'lsp-lib.request.state'
+import waiting_threads, waiting_requests from request_state
 
 match = require 'luassert.match'
 spy = require 'luassert.spy'
@@ -20,8 +19,10 @@ describe 'lsp.listen', ->
 		listen.state = 'initialize'
 		listen.running = true
 		listen.routes = response
-		request_state.waiting_threads[k] = nil for k in pairs request_state.waiting_threads
-		request_state.waiting_requests[k] = nil for k in pairs request_state.waiting_requests
+
+		request_state.id = 1
+		waiting_threads[k] = nil for k in pairs waiting_threads
+		waiting_requests[k] = nil for k in pairs waiting_requests
 
 		io_lsp.provider = nil
 
@@ -80,5 +81,3 @@ describe 'lsp.listen', ->
 			listen.once!
 
 
-			print inspect request_state.waiting_threads
-			print inspect request_state.waiting_requests
