@@ -1,7 +1,7 @@
 return {
 	_all = {
 		output = 'plainTerminal',
-		helper = "spec/helpers/helper.lua",
+		helper = "spec/helper/init.lua",
 		['defer-print'] = true,
 		['exclude-tags'] = "skip",
 	}
