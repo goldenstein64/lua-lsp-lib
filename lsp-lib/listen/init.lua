@@ -1,12 +1,14 @@
 local io_lsp = require("lsp-lib.io")
 
 local notify = require("lsp-lib.notify")
-local response = require("lsp-lib.response")
 
 local errors = require("lsp-lib.listen.errors")
 
 ---@overload fun(exit?: boolean)
 local listen = {
+	---@type { [string]: nil | fun(params: any): any }
+	routes = nil,
+
 	---@type { [thread]: lsp.Request | lsp.Notification }
 	waiting_thread_to_req = {},
 
@@ -32,7 +34,7 @@ local ERR_UNKNOWN_PROTOCOL = "invoked an unknown protocol '%s'"
 ---@param req lsp.Request | lsp.Notification
 ---@return nil | fun(params: any): any
 local function get_route(req)
-	local route = response[req.method]
+	local route = listen.routes[req.method]
 	local is_required = req.method:sub(1, 1) ~= "$"
 	if not route then
 		local is_request = req.id ~= nil
@@ -44,8 +46,6 @@ local function get_route(req)
 		else
 			notify.log.error(ERR_UNKNOWN_PROTOCOL:format(req.method))
 		end
-
-		return nil
 	end
 
 	return route
