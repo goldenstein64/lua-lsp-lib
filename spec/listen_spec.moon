@@ -69,15 +69,42 @@ describe 'lsp.listen', ->
 
 		it 'resumes its thread when a response is received', ->
 			provider = MockProvider {
-				request_of 1, '$/startWait'
+				request_of 5, '$/startWait', null
 				response_of 1, { returned: 'value' }
 			}
 			io_lsp.provider = provider
 
+			waiting = spy ->
+				ok, result = request '$/waiting', null
+				{ :ok, :result }
+
+			listen.state = 'default'
 			listen.routes = {
-				'$/startWait': -> request '$/waiting', null
+				'$/startWait': waiting
 			}
 
 			listen.once!
 
+			assert.spy(waiting).called 1
+			assert.spy(waiting).called_with null
+
+			thread = waiting_threads[1]
+			assert.is_thread thread
+			assert.same(
+				request_of 5, '$/startWait', null
+				waiting_requests[thread]
+			)
+
+			listen.once!
+
+			assert.is_nil next waiting_threads
+			assert.is_nil next waiting_requests
+
+			assert.spy(waiting).called 1
+
+			responses = provider\mock_decode_output!
+			assert.same {
+				request_of 1, '$/waiting', null
+				response_of 5, { ok: true, result: { returned: 'value' } }
+			}, responses
 
