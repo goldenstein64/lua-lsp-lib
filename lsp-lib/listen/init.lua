@@ -130,9 +130,8 @@ local NO_REQUEST_STORED_ERROR = "request not stored for thread '%s'"
 local function execute_thread(req, thread, ...)
 	local ok, result = coroutine.resume(thread, ...)
 	if coroutine.status(thread) == "suspended" then
-		request_state.waiting_requests[thread] = req
 		-- waiting for a request to complete
-		-- all the book-keeping should've been finished before this, so just return
+		request_state.waiting_requests[thread] = req
 		return
 	end
 
