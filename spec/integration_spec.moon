@@ -28,11 +28,13 @@ describe 'the system', ->
 
 	exit_notif = notif_of 'exit', null
 
-	listen = ->
-		thread = coroutine.create lsp.listen
-		ok, reason = coroutine.resume thread, false
-		assert.is_true ok, reason
-		thread
+	listen = do
+		listen_wrapper = (...) -> lsp.listen ...
+		->
+			thread = coroutine.create listen_wrapper
+			ok, reason = coroutine.resume thread, false
+			assert.is_true ok, reason
+			thread
 
 	it 'works', ->
 		provider = MockProvider {

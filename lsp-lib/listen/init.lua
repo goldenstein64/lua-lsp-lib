@@ -256,15 +256,28 @@ listen.handlers = {
 	end
 }
 
-local listen_mt = {}
-
-function listen_mt:__call()
+function listen.once()
 	local handler = listen.handlers[listen.state]
 	if not handler then
 		error(string.format("handler not found for state '%s'", listen.state))
 	end
 
 	handler()
+end
+
+local listen_mt = {}
+
+---@param exit? boolean
+function listen_mt:__call(exit)
+	listen.state = "initialize"
+	listen.running = true
+	while listen.running do listen.once() end
+
+	if exit ~= false then
+		os.exit(listen.state == "shutdown" and 0 or 1)
+	else
+		assert(listen.state == "shutdown", "server left in unfinished state")
+	end
 end
 
 return setmetatable(listen, listen_mt)
