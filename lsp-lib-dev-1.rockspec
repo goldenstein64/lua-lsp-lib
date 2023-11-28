@@ -11,6 +11,11 @@ description = {
 dependencies = {
    "lua >= 5.1",
    "lua-cjson ~> 2.1",
+   "compat53 ~> 0.12",
+}
+test_dependencies = {
+   "busted ~> 2.2",
+   "moonscript ~> 0.5",
 }
 build = {
    type = "builtin",
