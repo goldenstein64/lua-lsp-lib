@@ -1,15 +1,15 @@
 import null from require 'cjson'
 
 io_lsp = require 'lsp-lib.io'
-handle = require 'lsp-lib.handle'
+listen = require 'lsp-lib.listen'
 request = require 'lsp-lib.request'
 
 import MockProvider, request_of from require 'spec.mocks.io'
 
 describe 'lsp.request', ->
 	before_each ->
-		handle.waiting_threads[k] = nil for k in pairs handle.waiting_threads
-		handle.waiting_thread_to_req[k] = nil for k in pairs handle.waiting_thread_to_req
+		listen.waiting_threads[k] = nil for k in pairs listen.waiting_threads
+		listen.waiting_thread_to_req[k] = nil for k in pairs listen.waiting_thread_to_req
 
 	it 'can make a request which yields the current thread', ->
 		provider = MockProvider!
@@ -21,7 +21,7 @@ describe 'lsp.request', ->
 		assert.truthy ok, result
 		assert.thread_suspended thread
 
-		assert.equal thread, (select 2, next handle.waiting_threads)
+		assert.equal thread, (select 2, next listen.waiting_threads)
 
 		responses = provider\mock_decode_output!
 		assert.same {

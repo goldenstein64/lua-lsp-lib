@@ -3,10 +3,10 @@ local io_lsp = require("lsp-lib.io")
 local notify = require("lsp-lib.notify")
 local response = require("lsp-lib.response")
 
-local errors = require("lsp-lib.handle.errors")
+local errors = require("lsp-lib.listen.errors")
 
 ---@operator call(): nil
-local handle = {
+local listen = {
 	---@type { [thread]: lsp.Request | lsp.Notification }
 	waiting_thread_to_req = {},
 
@@ -143,11 +143,11 @@ local function execute_thread(thread, ...)
 		result = handle_route_error(result)
 	end
 
-	local req = handle.waiting_thread_to_req[thread]
+	local req = listen.waiting_thread_to_req[thread]
 	if not req then
 		error(NO_REQUEST_STORED_ERROR:format(thread))
 	end
-	handle.waiting_thread_to_req[thread] = nil
+	listen.waiting_thread_to_req[thread] = nil
 	if req.id then
 		---@cast req lsp.Request
 		handle_request_route(req, ok, result)
@@ -161,13 +161,13 @@ end
 ---@param req lsp.Request | lsp.Notification
 local function handle_route(route, req)
 	local thread = coroutine.create(route)
-	handle.waiting_thread_to_req[thread] = req
+	listen.waiting_thread_to_req[thread] = req
 	execute_thread(thread, req.params)
 end
 
 ---@param res lsp.Response
 local function handle_response(res)
-	local thread = handle.waiting_threads[res.id] ---@type thread
+	local thread = listen.waiting_threads[res.id] ---@type thread
 	if not thread then
 		error(string.format("no listener for response id '%s'", tostring(res.id)))
 	end
@@ -176,7 +176,7 @@ local function handle_response(res)
 end
 
 ---@enum (key) lsp*.handle.Handler
-handle.handlers = {
+listen.handlers = {
 	initialize = function()
 		local req = get_request()
 		if not req then return end
@@ -200,9 +200,9 @@ handle.handlers = {
 		end
 
 		if method == "exit" then
-			handle.running = false
+			listen.running = false
 		else
-			handle.state = "default"
+			listen.state = "default"
 		end
 	end,
 
@@ -224,9 +224,9 @@ handle.handlers = {
 		end
 
 		if method == "shutdown" then
-			handle.state = "shutdown"
+			listen.state = "shutdown"
 		elseif method == "exit" then
-			handle.running = false
+			listen.running = false
 		end
 	end,
 
@@ -247,7 +247,7 @@ handle.handlers = {
 			return
 		end
 
-		handle.running = false
+		listen.running = false
 
 		local route = get_route(req)
 		if not route then return end
@@ -256,15 +256,15 @@ handle.handlers = {
 	end
 }
 
-local handle_mt = {}
+local listen_mt = {}
 
-function handle_mt:__call()
-	local handler = handle.handlers[handle.state]
+function listen_mt:__call()
+	local handler = listen.handlers[listen.state]
 	if not handler then
-		error(string.format("handler not found for state '%s'", handle.state))
+		error(string.format("handler not found for state '%s'", listen.state))
 	end
 
 	handler()
 end
 
-return setmetatable(handle, handle_mt)
+return setmetatable(listen, listen_mt)

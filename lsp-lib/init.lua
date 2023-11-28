@@ -1,4 +1,4 @@
-local handle = require("lsp-lib.handle")
+local listen = require("lsp-lib.listen")
 local io_lsp = require("lsp-lib.io")
 
 io_lsp.provider = require("lsp-lib.io.stdio")
@@ -19,14 +19,14 @@ function lsp.listen(exit)
 		io_lsp.write_callback = dbg.write
 	end
 
-	handle.state = 'initialize'
-	handle.running = true
-	while handle.running do handle() end
+	listen.state = "initialize"
+	listen.running = true
+	while listen.running do listen() end
 
 	if exit ~= false then
-		os.exit(handle.state == "shutdown" and 0 or 1)
+		os.exit(listen.state == "shutdown" and 0 or 1)
 	else
-		assert(handle.state == "shutdown", "server left in unfinished state")
+		assert(listen.state == "shutdown", "server left in unfinished state")
 	end
 end
 

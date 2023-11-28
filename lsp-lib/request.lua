@@ -1,5 +1,5 @@
 local io_lsp = require("lsp-lib.io")
-local handle = require("lsp-lib.handle")
+local listen = require("lsp-lib.listen")
 
 local INT_LIMIT = 2 ^ 53
 
@@ -39,7 +39,7 @@ function request_mt:__index(method)
 end
 
 function request_mt:__call(method, params)
-	handle.waiting_threads[id] = coroutine.running()
+	listen.waiting_threads[id] = coroutine.running()
 
 	---@type lsp.Request
 	local req = {
