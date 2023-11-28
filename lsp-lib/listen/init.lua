@@ -122,9 +122,7 @@ local function handle_notification_route(notif, ok, result)
 	end
 end
 
-local NO_REQUEST_STORED_ERROR = "request not stored for thread '%s'"
-
----@param req lsp.Request | lsp.Notification
+---@param req lsp.Request | lsp.Notification | nil
 ---@param thread thread
 ---@param ... any
 local function execute_thread(req, thread, ...)
@@ -139,6 +137,7 @@ local function execute_thread(req, thread, ...)
 		result = handle_route_error(result)
 	end
 
+	if not req then return end
 	if req.id then
 		---@cast req lsp.Request
 		handle_request_route(req, ok, result)
@@ -171,9 +170,6 @@ local function handle_response(res)
 	request_state.waiting_threads[res.id] = nil
 
 	local req = request_state.waiting_requests[thread]
-	if not req then
-		error(NO_REQUEST_STORED_ERROR:format(thread))
-	end
 	request_state.waiting_requests[thread] = nil
 
 	execute_thread(req, thread, res.result and true or false, res.result or res.error)

@@ -106,3 +106,39 @@ describe 'lsp.listen', ->
 				response_of 5, { ok: true, result: { returned: 'value' } }
 			}, responses
 
+		it 'resumes non-response threads that made a request', ->
+			provider = MockProvider {
+				request_of 5, '$/spawnWaiting', null
+				response_of 1, { returned: true }
+			}
+			io_lsp.provider = provider
+
+			local config
+
+			spawn_waiting = spy ->
+				thread = coroutine.create ->
+					ok, result = request '$/waiting', null
+					assert.truthy ok, result
+					config = result
+
+				coroutine.resume thread
+				null
+
+			listen.routes = {
+				'$/spawnWaiting': spawn_waiting
+			}
+
+			listen.once!
+
+			responses = provider\mock_decode_output!
+			assert.same {
+				request_of 1, '$/waiting', null
+				response_of 5, null
+			}, responses
+
+			assert.is_nil config
+
+			listen.once!
+
+			assert.same { returned: true }, config
+
