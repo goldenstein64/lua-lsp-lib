@@ -37,7 +37,7 @@ describe 'lsp.listen', ->
 
 		it 'indexes routes when a request is received', ->
 			provider = MockProvider {
-				request_of 1, '$/stringify', { arg: 3 }
+				request_of 1, '$/stringify', { arg: 97 }
 			}
 			io_lsp.provider = provider
 
@@ -51,9 +51,9 @@ describe 'lsp.listen', ->
 			listen.once!
 
 			assert.spy(stringify).called 1
-			assert.spy(stringify).called_with match.is_same { arg: 3 }
+			assert.spy(stringify).called_with match.is_same { arg: 97 }
 
 			responses = provider\mock_decode_output!
 			assert.same {
-				response_of 1, { returned: '3' }
+				response_of 1, { returned: '97' }
 			}, responses
