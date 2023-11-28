@@ -16,7 +16,7 @@ from require 'spec.mocks.io'
 
 describe 'lsp.listen', ->
 	before_each ->
-		listen.state = 'initialize'
+		listen.state = 'default'
 		listen.running = true
 		listen.routes = response
 
@@ -52,7 +52,6 @@ describe 'lsp.listen', ->
 
 			io_lsp.provider = provider
 
-			listen.state = 'default'
 			listen.routes = {
 				'$/stringify': stringify
 			}
@@ -78,7 +77,6 @@ describe 'lsp.listen', ->
 				ok, result = request '$/waiting', null
 				{ :ok, :result }
 
-			listen.state = 'default'
 			listen.routes = {
 				'$/startWait': waiting
 			}
