@@ -4,8 +4,8 @@ json = require 'cjson'
 import null from json
 
 lsp = require 'lsp-lib'
-ioLSP = require 'lsp-lib.io'
-ioLSP.provider = nil
+io_lsp = require 'lsp-lib.io'
+io_lsp.provider = nil
 
 import
 	MockProvider
@@ -14,7 +14,7 @@ from require 'spec.helpers.mock_io'
 
 describe 'the system', ->
 	before_each ->
-		ioLSP.provider = nil
+		io_lsp.provider = nil
 		lsp.response[k] = nil for k in pairs lsp.response
 
 	initialize_request = (id) ->
@@ -40,7 +40,7 @@ describe 'the system', ->
 			shutdown_request 2
 			exit_notif
 		}
-		ioLSP.provider = provider
+		io_lsp.provider = provider
 
 		thread = listen!
 		assert.equal 'dead', coroutine.status thread
@@ -57,7 +57,7 @@ describe 'the system', ->
 			shutdown_request 'stop'
 			exit_notif
 		}
-		ioLSP.provider = provider
+		io_lsp.provider = provider
 
 		thread = listen!
 		assert.equal 'dead', coroutine.status thread
@@ -75,7 +75,7 @@ describe 'the system', ->
 			shutdown_request 3
 			exit_notif
 		}
-		ioLSP.provider = provider
+		io_lsp.provider = provider
 
 		lsp.response['$/customRequest'] = (params) -> { returned: params.test_prop }
 
@@ -98,7 +98,7 @@ describe 'the system', ->
 			shutdown_request 4
 			exit_notif
 		}
-		ioLSP.provider = provider
+		io_lsp.provider = provider
 
 		lsp.response['$/noop'] = (params) -> null
 
