@@ -5,7 +5,7 @@ local response = require("lsp-lib.response")
 
 local errors = require("lsp-lib.listen.errors")
 
----@operator call(): nil
+---@overload fun(exit?: boolean)
 local listen = {
 	---@type { [thread]: lsp.Request | lsp.Notification }
 	waiting_thread_to_req = {},
@@ -280,4 +280,5 @@ function listen_mt:__call(exit)
 	end
 end
 
+---@diagnostic disable-next-line: param-type-mismatch
 return setmetatable(listen, listen_mt)
