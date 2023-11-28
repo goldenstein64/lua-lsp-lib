@@ -77,15 +77,15 @@ function notify.diagnostics(uri, diagnostics, version)
 	notify("textDocument/publishDiagnostics", { uri = uri, diagnostics = diagnostics, version = version })
 end
 
+for method in pairs(notif_set) do
+	---@diagnostic disable-next-line: assign-type-mismatch
+	notify[method] = function(params) notify(method, params) end
+end
+
 local notify_mt = {}
 
 function notify_mt:__index(method)
-	if not notif_set[method] then
-		error(string.format("attempt to retrieve unknown notification method '%s'", method))
-	end
-	local v = function(params) notify(method, params) end
-	rawset(self, method, v)
-	return v
+	error(string.format("attempt to retrieve unknown notification method '%s'", method))
 end
 
 ---@param method string

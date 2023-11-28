@@ -24,16 +24,14 @@ local request_set = {
 ---@type lsp*.Request
 local request = {}
 
+for method in pairs(request_set) do
+	request[method] = function(params) return request(method, params) end
+end
+
 local request_mt = {}
 
 function request_mt:__index(method)
-	if not request_set[method] then
-		error(string.format("attempt to retrieve unknown request method '%s'", method))
-	end
-
-	local v = function(params) return request(method, params) end
-	rawset(self, method, v)
-	return v
+	error(string.format("attempt to retrieve unknown request method '%s'", method))
 end
 
 function request_mt:__call(method, params)
