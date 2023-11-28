@@ -29,7 +29,7 @@ describe 'lsp.request', ->
 			request_of 1, '$/customRequest', null
 		}, responses
 
-	it 'succeeds when indexing with a known request #only', ->
+	it 'succeeds when indexing with a known request', ->
 		io_lsp.provider = MockProvider!
 		thread = coroutine.create () -> request['workspace/configuration'] null
 
