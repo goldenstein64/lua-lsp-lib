@@ -1,6 +1,6 @@
 return {
 	_all = {
-		output = "plainTerminal",
-		defer_print = true,
+		output = 'plainTerminal',
+		['defer-print'] = true,
 	}
 }
