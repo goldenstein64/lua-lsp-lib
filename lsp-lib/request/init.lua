@@ -49,26 +49,31 @@ request.refresh = {
 	folding_range = function()
 		return request["workspace/foldingRange/refresh"](null)
 	end,
+
 	---@return lsp.Response.workspace-semanticTokens-refresh.result? result
 	---@return lsp.Response.workspace-semanticTokens-refresh.error? error
 	semantic_tokens = function()
 		return request["workspace/semanticTokens/refresh"](null)
 	end,
+
 	---@return lsp.Response.workspace-inlineValue-refresh.result? result
 	---@return lsp.Response.workspace-inlineValue-refresh.error? error
 	inline_value = function()
 		return request["workspace/inlineValue/refresh"](null)
 	end,
+
 	---@return lsp.Response.workspace-inlayHint-refresh.result? result
 	---@return lsp.Response.workspace-inlayHint-refresh.error? error
 	inlay_hint = function()
 		return request["workspace/inlayHint/refresh"](null)
 	end,
+
 	---@return lsp.Response.workspace-diagnostic-refresh.result? result
 	---@return lsp.Response.workspace-diagnostic-refresh.error? error
 	diagnostic = function()
 		return request["workspace/diagnostic/refresh"](null)
 	end,
+
 	---@return lsp.Response.workspace-codeLens-refresh.result? result
 	---@return lsp.Response.workspace-codeLens-refresh.error? error
 	code_lens = function()
