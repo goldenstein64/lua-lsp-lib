@@ -93,6 +93,15 @@ local function handle_request_error(req, err)
 	end
 end
 
+---@param ok boolean
+---@param result unknown
+local function handle_async_route(ok, result)
+	if not ok then
+		---@cast result lsp*.RouteError
+		notify.log.error(result.msg)
+	end
+end
+
 ---@param req lsp.Request
 ---@param ok boolean
 ---@param result unknown
@@ -137,8 +146,9 @@ local function execute_thread(req, thread, ...)
 		result = handle_route_error(result)
 	end
 
-	if not req then return end
-	if req.id then
+	if not req then
+		handle_async_route(ok, result)
+	elseif req.id then
 		---@cast req lsp.Request
 		handle_request_route(req, ok, result)
 	else
