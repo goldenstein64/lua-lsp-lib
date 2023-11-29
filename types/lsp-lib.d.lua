@@ -437,8 +437,8 @@ local request = {}
 
 ---The `workspace/workspaceFolders` is sent from the server to the client to fetch the open workspace folders.
 ---@param params lsp.Request.workspace-workspaceFolders.params
----@return boolean ok
----@return lsp.Response.workspace-workspaceFolders.result | lsp.Response.workspace-workspaceFolders.error result
+---@return lsp.Response.workspace-workspaceFolders.result? result
+---@return lsp.Response.workspace-workspaceFolders.error? error
 request["workspace/workspaceFolders"] = function(params) end
 
 ---The 'workspace/configuration' request is sent from the server to the client to fetch a certain
@@ -448,28 +448,28 @@ request["workspace/workspaceFolders"] = function(params) end
 ---result of `workspace/configuration` requests) the server should register for an empty configuration
 ---change event and empty the cache if such an event is received.
 ---@param params lsp.Request.workspace-configuration.params
----@return boolean ok
----@return lsp.Response.workspace-configuration.result | lsp.Response.workspace-configuration.error result
+---@return lsp.Response.workspace-configuration.result? result
+---@return lsp.Response.workspace-configuration.error? error
 request["workspace/configuration"] = function(params) end
 
 ---@since 3.18.0
 ---@proposed
 ---@param params lsp.Request.workspace-foldingRange-refresh.params
----@return boolean ok
----@return lsp.Response.workspace-foldingRange-refresh.result | lsp.Response.workspace-foldingRange-refresh.error result
+---@return lsp.Response.workspace-foldingRange-refresh.result? result
+---@return lsp.Response.workspace-foldingRange-refresh.error? error
 request["workspace/foldingRange/refresh"] = function(params) end
 
 ---The `window/workDoneProgress/create` request is sent from the server to the client to initiate progress
 ---reporting from the server.
 ---@param params lsp.Request.window-workDoneProgress-create.params
----@return boolean ok
----@return lsp.Response.window-workDoneProgress-create.result | lsp.Response.window-workDoneProgress-create.error result
+---@return lsp.Response.window-workDoneProgress-create.result? result
+---@return lsp.Response.window-workDoneProgress-create.error? error
 request["window/workDoneProgress/create"] = function(params) end
 
 ---@since 3.16.0
 ---@param params lsp.Request.workspace-semanticTokens-refresh.params
----@return boolean ok
----@return lsp.Response.workspace-semanticTokens-refresh.result | lsp.Response.workspace-semanticTokens-refresh.error result
+---@return lsp.Response.workspace-semanticTokens-refresh.result? result
+---@return lsp.Response.workspace-semanticTokens-refresh.error? error
 request["workspace/semanticTokens/refresh"] = function(params) end
 
 ---A request to show a document. This request might open an
@@ -478,61 +478,61 @@ request["workspace/semanticTokens/refresh"] = function(params) end
 ---will very likely open the URI in a WEB browser.
 ---@since 3.16.0
 ---@param params lsp.Request.window-showDocument.params
----@return boolean ok
----@return lsp.Response.window-showDocument.result | lsp.Response.window-showDocument.error result
+---@return lsp.Response.window-showDocument.result? result
+---@return lsp.Response.window-showDocument.error? error
 request["window/showDocument"] = function(params) end
 
 ---@since 3.17.0
 ---@param params lsp.Request.workspace-inlineValue-refresh.params
----@return boolean ok
----@return lsp.Response.workspace-inlineValue-refresh.result | lsp.Response.workspace-inlineValue-refresh.error result
+---@return lsp.Response.workspace-inlineValue-refresh.result? result
+---@return lsp.Response.workspace-inlineValue-refresh.error? error
 request["workspace/inlineValue/refresh"] = function(params) end
 
 ---@since 3.17.0
 ---@param params lsp.Request.workspace-inlayHint-refresh.params
----@return boolean ok
----@return lsp.Response.workspace-inlayHint-refresh.result | lsp.Response.workspace-inlayHint-refresh.error result
+---@return lsp.Response.workspace-inlayHint-refresh.result? result
+---@return lsp.Response.workspace-inlayHint-refresh.error? error
 request["workspace/inlayHint/refresh"] = function(params) end
 
 ---The diagnostic refresh request definition.
 ---@since 3.17.0
 ---@param params lsp.Request.workspace-diagnostic-refresh.params
----@return boolean ok
----@return lsp.Response.workspace-diagnostic-refresh.result | lsp.Response.workspace-diagnostic-refresh.error result
+---@return lsp.Response.workspace-diagnostic-refresh.result? result
+---@return lsp.Response.workspace-diagnostic-refresh.error? error
 request["workspace/diagnostic/refresh"] = function(params) end
 
 ---The `client/registerCapability` request is sent from the server to the client to register a new capability
 ---handler on the client side.
 ---@param params lsp.Request.client-registerCapability.params
----@return boolean ok
----@return lsp.Response.client-registerCapability.result | lsp.Response.client-registerCapability.error result
+---@return lsp.Response.client-registerCapability.result? result
+---@return lsp.Response.client-registerCapability.error? error
 request["client/registerCapability"] = function(params) end
 
 ---The `client/unregisterCapability` request is sent from the server to the client to unregister a previously registered capability
 ---handler on the client side.
 ---@param params lsp.Request.client-unregisterCapability.params
----@return boolean ok
----@return lsp.Response.client-unregisterCapability.result | lsp.Response.client-unregisterCapability.error result
+---@return lsp.Response.client-unregisterCapability.result? result
+---@return lsp.Response.client-unregisterCapability.error? error
 request["client/unregisterCapability"] = function(params) end
 
 ---The show message request is sent from the server to the client to show a message
 ---and a set of options actions to the user.
 ---@param params lsp.Request.window-showMessageRequest.params
----@return boolean ok
----@return lsp.Response.window-showMessageRequest.result | lsp.Response.window-showMessageRequest.error result
+---@return lsp.Response.window-showMessageRequest.result? result
+---@return lsp.Response.window-showMessageRequest.error? error
 request["window/showMessageRequest"] = function(params) end
 
 ---A request to refresh all code actions
 ---@since 3.16.0
 ---@param params lsp.Request.workspace-codeLens-refresh.params
----@return boolean ok
----@return lsp.Response.workspace-codeLens-refresh.result | lsp.Response.workspace-codeLens-refresh.error result
+---@return lsp.Response.workspace-codeLens-refresh.result? result
+---@return lsp.Response.workspace-codeLens-refresh.error? error
 request["workspace/codeLens/refresh"] = function(params) end
 
 ---A request sent from the server to the client to modified certain resources.
 ---@param params lsp.Request.workspace-applyEdit.params
----@return boolean ok
----@return lsp.Response.workspace-applyEdit.result | lsp.Response.workspace-applyEdit.error result
+---@return lsp.Response.workspace-applyEdit.result? result
+---@return lsp.Response.workspace-applyEdit.error? error
 request["workspace/applyEdit"] = function(params) end
 
 ---@class lsp*.Notify

@@ -172,7 +172,7 @@ local function handle_response(res)
 	local req = request_state.waiting_requests[thread]
 	request_state.waiting_requests[thread] = nil
 
-	execute_thread(req, thread, res.result and true or false, res.result or res.error)
+	execute_thread(req, thread, res.result, res.error)
 end
 
 ---@enum (key) lsp*.handle.Handler

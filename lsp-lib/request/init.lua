@@ -44,33 +44,33 @@ local request = {
 }
 
 request.refresh = {
-	---@return boolean ok
-	---@return lsp.Response.workspace-foldingRange-refresh.result | lsp.Response.workspace-foldingRange-refresh.error
+	---@return lsp.Response.workspace-foldingRange-refresh.result? result
+	---@return lsp.Response.workspace-foldingRange-refresh.error? error
 	folding_range = function()
 		return request["workspace/foldingRange/refresh"](null)
 	end,
-	---@return boolean ok
-	---@return lsp.Response.workspace-semanticTokens-refresh.result | lsp.Response.workspace-semanticTokens-refresh.error
+	---@return lsp.Response.workspace-semanticTokens-refresh.result? result
+	---@return lsp.Response.workspace-semanticTokens-refresh.error? error
 	semantic_tokens = function()
 		return request["workspace/semanticTokens/refresh"](null)
 	end,
-	---@return boolean ok
-	---@return lsp.Response.workspace-inlineValue-refresh.result | lsp.Response.workspace-inlineValue-refresh.error
+	---@return lsp.Response.workspace-inlineValue-refresh.result? result
+	---@return lsp.Response.workspace-inlineValue-refresh.error? error
 	inline_value = function()
 		return request["workspace/inlineValue/refresh"](null)
 	end,
-	---@return boolean ok
-	---@return lsp.Response.workspace-inlayHint-refresh.result | lsp.Response.workspace-inlayHint-refresh.error
+	---@return lsp.Response.workspace-inlayHint-refresh.result? result
+	---@return lsp.Response.workspace-inlayHint-refresh.error? error
 	inlay_hint = function()
 		return request["workspace/inlayHint/refresh"](null)
 	end,
-	---@return boolean ok
-	---@return lsp.Response.workspace-diagnostic-refresh.result | lsp.Response.workspace-diagnostic-refresh.error
+	---@return lsp.Response.workspace-diagnostic-refresh.result? result
+	---@return lsp.Response.workspace-diagnostic-refresh.error? error
 	diagnostic = function()
 		return request["workspace/diagnostic/refresh"](null)
 	end,
-	---@return boolean ok
-	---@return lsp.Response.workspace-codeLens-refresh.result | lsp.Response.workspace-codeLens-refresh.error
+	---@return lsp.Response.workspace-codeLens-refresh.result? result
+	---@return lsp.Response.workspace-codeLens-refresh.error? error
 	code_lens = function()
 		return request["workspace/codeLens/refresh"](null)
 	end,
@@ -94,15 +94,15 @@ end
 ---result of `workspace/configuration` requests) the server should register for an empty configuration
 ---change event and empty the cache if such an event is received.
 ---@param ... lsp.ConfigurationItem
----@return boolean ok
----@return lsp.Response.workspace-configuration.error | lsp.Response.workspace-configuration.result result
+---@return lsp.Response.workspace-configuration.result? result
+---@return lsp.Response.workspace-configuration.error? error
 function request.config(...)
 	return request("workspace/configuration", { items = { ... } })
 end
 
 ---The `workspace/workspaceFolders` is sent from the server to the client to fetch the open workspace folders.
----@return boolean ok
----@return lsp.Response.workspace-workspaceFolders.error | lsp.Response.workspace-workspaceFolders.result result
+---@return lsp.Response.workspace-workspaceFolders.result? result
+---@return lsp.Response.workspace-workspaceFolders.error? error
 function request.workspace_folders()
 	return request("workspace/workspaceFolders", null)
 end
