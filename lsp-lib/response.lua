@@ -1,4 +1,4 @@
-local json = require("cjson")
+local null = require("cjson").null
 
 local noop = function() end
 
@@ -12,7 +12,7 @@ end
 defaults["initialized"] = noop
 
 defaults["shutdown"] = function(params)
-	return json.null
+	return null
 end
 
 defaults["exit"] = noop
