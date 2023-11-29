@@ -15,21 +15,21 @@ local message_type_map = {
 
 local INT_LIMIT = 2 ^ 53
 
-local request_set = {
-	["workspace/workspaceFolders"] = true,
-	["workspace/configuration"] = true,
-	["workspace/foldingRange/refresh"] = true,
-	["window/workDoneProgress/create"] = true,
-	["workspace/semanticTokens/refresh"] = true,
-	["window/showDocument"] = true,
-	["workspace/inlineValue/refresh"] = true,
-	["workspace/inlayHint/refresh"] = true,
-	["workspace/diagnostic/refresh"] = true,
-	["client/registerCapability"] = true,
-	["client/unregisterCapability"] = true,
-	["window/showMessageRequest"] = true,
-	["workspace/codeLens/refresh"] = true,
-	["workspace/applyEdit"] = true,
+local requests = {
+	"workspace/workspaceFolders",
+	"workspace/configuration",
+	"workspace/foldingRange/refresh",
+	"window/workDoneProgress/create",
+	"workspace/semanticTokens/refresh",
+	"window/showDocument",
+	"workspace/inlineValue/refresh",
+	"workspace/inlayHint/refresh",
+	"workspace/diagnostic/refresh",
+	"client/registerCapability",
+	"client/unregisterCapability",
+	"window/showMessageRequest",
+	"workspace/codeLens/refresh",
+	"workspace/applyEdit",
 }
 
 ---@class lsp*.Request
@@ -73,7 +73,7 @@ function request.workspace_folders()
 	return request("workspace/workspaceFolders", null)
 end
 
-for method in pairs(request_set) do
+for _, method in ipairs(requests) do
 	request[method] = function(params) return request(method, params) end
 end
 

@@ -1,14 +1,14 @@
 local io_lsp = require("lsp-lib.io")
 local MessageType = require("lsp-lib.enum.MessageType")
 
-local notif_set = {
-	["window/showMessage"] = true,
-	["window/logMessage"] = true,
-	["telemetry/event"] = true,
-	["textDocument/publishDiagnostics"] = true,
-	["$/logTrace"] = true,
-	["$/cancelRequest"] = true,
-	["$/progress"] = true,
+local notifications = {
+	"window/showMessage",
+	"window/logMessage",
+	"telemetry/event",
+	"textDocument/publishDiagnostics",
+	"$/logTrace",
+	"$/cancelRequest",
+	"$/progress",
 }
 
 ---@enum (key) lsp*.MessageType
@@ -77,7 +77,7 @@ function notify.diagnostics(uri, diagnostics, version)
 	notify("textDocument/publishDiagnostics", { uri = uri, diagnostics = diagnostics, version = version })
 end
 
-for method in pairs(notif_set) do
+for _, method in pairs(notifications) do
 	---@diagnostic disable-next-line: assign-type-mismatch
 	notify[method] = function(params) notify(method, params) end
 end
