@@ -8,7 +8,8 @@ local lsp = {
 	notify = require("lsp-lib.notify"),
 	request = require("lsp-lib.request"),
 	response = require("lsp-lib.response"),
-	listen = require("lsp-lib.listen")
+	listen = require("lsp-lib.listen"),
+	async = require("lsp-lib.async"),
 }
 
 function lsp.debug(setting)
