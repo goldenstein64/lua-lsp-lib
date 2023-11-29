@@ -16,20 +16,20 @@ local message_type_map = {
 local INT_LIMIT = 2 ^ 53
 
 local requests = {
-	"workspace/workspaceFolders",
-	"workspace/configuration",
-	"workspace/foldingRange/refresh",
+	"workspace/workspaceFolders", -- .workspace_folders
+	"workspace/configuration", -- .config
+	"window/showMessageRequest", -- .show.*
 	"window/workDoneProgress/create",
-	"workspace/semanticTokens/refresh",
 	"window/showDocument",
+	"client/registerCapability",
+	"client/unregisterCapability",
+	"workspace/applyEdit",
+	"workspace/foldingRange/refresh",
+	"workspace/semanticTokens/refresh",
 	"workspace/inlineValue/refresh",
 	"workspace/inlayHint/refresh",
 	"workspace/diagnostic/refresh",
-	"client/registerCapability",
-	"client/unregisterCapability",
-	"window/showMessageRequest",
 	"workspace/codeLens/refresh",
-	"workspace/applyEdit",
 }
 
 ---@class lsp*.Request
@@ -42,6 +42,40 @@ local request = {
 	---@field debug fun(message: string, actions: lsp.MessageActionItem[]): lsp.MessageActionItem
 	show = {},
 }
+
+request.refresh = {
+	---@return boolean ok
+	---@return lsp.Response.workspace-foldingRange-refresh.result | lsp.Response.workspace-foldingRange-refresh.error
+	folding_range = function()
+		return request["workspace/foldingRange/refresh"](null)
+	end,
+	---@return boolean ok
+	---@return lsp.Response.workspace-semanticTokens-refresh.result | lsp.Response.workspace-semanticTokens-refresh.error
+	semantic_tokens = function()
+		return request["workspace/semanticTokens/refresh"](null)
+	end,
+	---@return boolean ok
+	---@return lsp.Response.workspace-inlineValue-refresh.result | lsp.Response.workspace-inlineValue-refresh.error
+	inline_value = function()
+		return request["workspace/inlineValue/refresh"](null)
+	end,
+	---@return boolean ok
+	---@return lsp.Response.workspace-inlayHint-refresh.result | lsp.Response.workspace-inlayHint-refresh.error
+	inlay_hint = function()
+		return request["workspace/inlayHint/refresh"](null)
+	end,
+	---@return boolean ok
+	---@return lsp.Response.workspace-diagnostic-refresh.result | lsp.Response.workspace-diagnostic-refresh.error
+	diagnostic = function()
+		return request["workspace/diagnostic/refresh"](null)
+	end,
+	---@return boolean ok
+	---@return lsp.Response.workspace-codeLens-refresh.result | lsp.Response.workspace-codeLens-refresh.error
+	code_lens = function()
+		return request["workspace/codeLens/refresh"](null)
+	end,
+}
+
 
 for k, type in pairs(message_type_map) do
 	request.show[k] = function(message, actions)
