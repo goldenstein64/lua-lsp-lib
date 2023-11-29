@@ -18,8 +18,8 @@ describe 'lsp.request', ->
 
 		thread = coroutine.create () -> request '$/customRequest', null
 
-		ok, result = coroutine.resume thread
-		assert.truthy ok, result
+		ok, err = coroutine.resume thread
+		assert.truthy ok, err
 		assert.thread_suspended thread
 
 		assert.equal thread, (select 2, next request_state.waiting_threads)
@@ -33,14 +33,14 @@ describe 'lsp.request', ->
 		io_lsp.provider = MockProvider!
 		thread = coroutine.create () -> request['workspace/configuration'] null
 
-		ok, result = coroutine.resume thread
-		assert.truthy ok, result
+		ok, err = coroutine.resume thread
+		assert.truthy ok, err
 		assert.thread_suspended thread
 
 	it 'errors when indexing with an unknown request', ->
 		io_lsp.provider = MockProvider!
 		thread = coroutine.create () -> request['$/unknownRequest'] null
 
-		ok, result = coroutine.resume thread
-		assert.falsy ok
+		ok, err = coroutine.resume thread
+		assert.falsy ok, err
 		assert.thread_dead thread

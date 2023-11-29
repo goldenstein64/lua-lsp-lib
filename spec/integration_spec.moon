@@ -108,8 +108,8 @@ describe 'the system', ->
 		lsp.response['$/noop'] = (params) -> null
 
 		lsp.response['$/asyncRequest'] = (params) ->
-			ok, result = lsp.request '$/pendingRequest', null
-			{ :ok, :result }
+			result, err = lsp.request '$/pendingRequest', null
+			{ :result, :err }
 
 		thread = listen!
 		assert.thread_dead thread
@@ -120,7 +120,7 @@ describe 'the system', ->
 			-- receives '$/asyncRequest'
 			request_of 1, '$/pendingRequest', null
 			response_of 3, null -- '$/noop' is responded to in the meantime
-			response_of 2, { ok: true, result: { test_prop: 'foo' } } -- $/asyncRequest
+			response_of 2, { result: { test_prop: 'foo' } } -- $/asyncRequest
 			response_of 4, null -- shutdown
 		}, responses
 

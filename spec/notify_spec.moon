@@ -13,8 +13,8 @@ describe 'lsp.notify', ->
 
 		thread = coroutine.create () -> notify 'window/logMessage', { message: "bar" }
 
-		ok, result = coroutine.resume thread
-		assert.truthy ok
+		ok, err = coroutine.resume thread
+		assert.truthy ok, err
 		assert.thread_dead thread
 
 		responses = provider\mock_decode_output!
@@ -28,8 +28,8 @@ describe 'lsp.notify', ->
 
 		thread = coroutine.create () -> notify['$/unknownNotification']
 
-		ok, result = coroutine.resume thread
-		assert.falsy ok
+		ok, err = coroutine.resume thread
+		assert.falsy ok, err
 		assert.thread_dead thread
 
 		responses = provider\mock_decode_output!
@@ -42,8 +42,8 @@ describe 'lsp.notify', ->
 		thread = coroutine.create () ->
 			notify['window/showMessage'] { message: 'telnet' }
 
-		ok, result = coroutine.resume thread
-		assert.truthy ok
+		ok, err = coroutine.resume thread
+		assert.truthy ok, err
 		assert.thread_dead thread
 
 		responses = provider\mock_decode_output!

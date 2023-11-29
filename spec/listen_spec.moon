@@ -74,8 +74,8 @@ describe 'lsp.listen', ->
 			io_lsp.provider = provider
 
 			waiting = spy ->
-				ok, result = request '$/waiting', null
-				{ :ok, :result }
+				result, err = request '$/waiting', null
+				{ :result, :err }
 
 			listen.routes = {
 				'$/startWait': waiting
@@ -103,7 +103,7 @@ describe 'lsp.listen', ->
 			responses = provider\mock_decode_output!
 			assert.same {
 				request_of 1, '$/waiting', null
-				response_of 5, { ok: true, result: { returned: 'value' } }
+				response_of 5, { result: { returned: 'value' } }
 			}, responses
 
 		it 'resumes non-response threads that made a request', ->
@@ -117,8 +117,8 @@ describe 'lsp.listen', ->
 
 			spawn_waiting = spy ->
 				thread = coroutine.create ->
-					ok, result = request '$/waiting', null
-					assert.truthy ok, result
+					result, err = request '$/waiting', null
+					assert.truthy result, err
 					config = result
 
 				coroutine.resume thread
