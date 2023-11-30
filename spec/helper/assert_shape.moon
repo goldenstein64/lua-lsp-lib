@@ -18,9 +18,11 @@ assert\register(
 	(state, arguments) ->
 		{ input, expected } = arguments
 		assert is_type(expected), "Expected tableshape type for second argument to assert.shape"
-		if expected input
+		passed, reason = expected input
+		if passed
 			true
 		else
+			state.failure_message = rawget(state, 'failure_message') or reason
 			false
 
 	"assertion.shape.positive"
