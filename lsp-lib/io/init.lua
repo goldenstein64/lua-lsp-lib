@@ -20,7 +20,8 @@ local NON_TABLE_ERROR = "sent a non-table, '%s'"
 ---@field read_callback? fun(data: lsp*.AnyMessage)
 ---@field write_callback? fun(data: lsp*.AnyMessage)
 local io_lsp = {
-	request_queue = {}
+	request_queue = {},
+	provider = require("lsp-lib.io.stdio"),
 }
 
 ---@param self lsp*.io

@@ -1,8 +1,4 @@
-local listen = require("lsp-lib.listen")
 local io_lsp = require("lsp-lib.io")
-
-io_lsp.provider = require("lsp-lib.io.stdio")
-listen.routes = require("lsp-lib.response")
 
 local lsp = {
 	notify = require("lsp-lib.notify"),

@@ -5,11 +5,15 @@ local request_state = require("lsp-lib.request.state")
 
 local errors = require("lsp-lib.listen.errors")
 
+---@alias lsp*.Listen.state "initialize" | "default" | "shutdown"
+
+---@class lsp*.Listen
+---@field routes { [string]: nil | fun(params: any): any }
+---@field state lsp*.Listen.state
+---@field running boolean
 ---@overload fun(exit?: boolean)
 local listen = {
-	---@type { [string]: nil | fun(params: any): any }
-	routes = nil,
-
+	routes = require("lsp-lib.response"),
 	state = "initialize",
 	running = true,
 }
