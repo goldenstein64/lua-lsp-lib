@@ -1,6 +1,12 @@
 local json = require("cjson")
 local ErrorCodes = require("lsp-lib.enum.ErrorCodes")
 
+---a table of response object constructors
+---
+---It holds all the types of errors
+---that may occur while listening to requests. See the `ErrorCodes` enum and
+---[LSP specification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/)
+---for more information.
 local errors = {}
 
 ---@param msg? string
@@ -57,6 +63,7 @@ function errors.ServerNotInitialized(id)
 	}
 end
 
+---This is treated as a fallback for any unhandled errors in a response.
 ---@param id? string | integer
 ---@param message? string
 ---@return lsp.Response
