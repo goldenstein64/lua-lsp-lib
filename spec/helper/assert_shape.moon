@@ -6,10 +6,10 @@ assert = require "luassert"
 import is_type from require 'tableshape'
 
 say\set "assertion.shape.positive",
-	"Expected shape to match.\nPassed in:\n%s\nExpected:\n%s"
+	"Expected tableshape type to match.\nPassed in:\n%s\nExpected:\n%s"
 
 say\set "assertion.shape.negative",
-	"Expected shape not to match.\nPassed in:\n%s\nDid not expect:\n%s"
+	"Expected tableshape type not to match.\nPassed in:\n%s\nDid not expect:\n%s"
 
 assert\register(
 	"assertion",
