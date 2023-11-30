@@ -81,7 +81,7 @@
 
 ---The parameters of a configuration request.
 ---@class lsp.ConfigurationParams
----@field items lsp.ConfigurationItem[]
+---@field items (lsp.ConfigurationItem)[]
 
 ---Parameters for a {@link DocumentColorRequest}.
 ---@class lsp.DocumentColorParams : lsp.WorkDoneProgressParams, lsp.PartialResultParams
@@ -117,7 +117,7 @@
 ---@field textEdit? lsp.TextEdit
 ---An optional array of additional {@link TextEdit text edits} that are applied when
 ---selecting this color presentation. Edits must not overlap with the main {@link ColorPresentation.textEdit edit} nor with themselves.
----@field additionalTextEdits? lsp.TextEdit[]
+---@field additionalTextEdits? (lsp.TextEdit)[]
 
 ---@class lsp.WorkDoneProgressOptions
 ---@field workDoneProgress? boolean
@@ -167,7 +167,7 @@
 ---The text document.
 ---@field textDocument lsp.TextDocumentIdentifier
 ---The positions inside the text document.
----@field positions lsp.Position[]
+---@field positions (lsp.Position)[]
 
 ---A selection range represents a part of a selection hierarchy. A selection range
 ---may have a parent selection range that contains it.
@@ -200,7 +200,7 @@
 ---The kind of this item.
 ---@field kind lsp.SymbolKind
 ---Tags for this item.
----@field tags? lsp.SymbolTag[]
+---@field tags? (lsp.SymbolTag)[]
 ---More detail for this item, e.g. the signature of a function.
 ---@field detail? string
 ---The resource identifier of this item.
@@ -230,7 +230,7 @@
 ---@field from lsp.CallHierarchyItem
 ---The ranges at which the calls appear. This is relative to the caller
 ---denoted by {@link CallHierarchyIncomingCall.from `this.from`}.
----@field fromRanges lsp.Range[]
+---@field fromRanges (lsp.Range)[]
 
 ---The parameter of a `callHierarchy/outgoingCalls` request.
 ---@since 3.16.0
@@ -245,7 +245,7 @@
 ---The range at which this item is called. This is the range relative to the caller, e.g the item
 ---passed to {@link CallHierarchyItemProvider.provideCallHierarchyOutgoingCalls `provideCallHierarchyOutgoingCalls`}
 ---and not {@link CallHierarchyOutgoingCall.to `this.to`}.
----@field fromRanges lsp.Range[]
+---@field fromRanges (lsp.Range)[]
 
 ---@since 3.16.0
 ---@class lsp.SemanticTokensParams : lsp.WorkDoneProgressParams, lsp.PartialResultParams
@@ -260,11 +260,11 @@
 ---send a delta.
 ---@field resultId? string
 ---The actual tokens.
----@field data integer[]
+---@field data (integer)[]
 
 ---@since 3.16.0
 ---@class lsp.SemanticTokensPartialResult
----@field data integer[]
+---@field data (integer)[]
 
 ---@since 3.16.0
 ---@class lsp.SemanticTokensRegistrationOptions : lsp.TextDocumentRegistrationOptions, lsp.SemanticTokensOptions, lsp.StaticRegistrationOptions
@@ -281,11 +281,11 @@
 ---@class lsp.SemanticTokensDelta
 ---@field resultId? string
 ---The semantic token edits to transform a previous result into a new result.
----@field edits lsp.SemanticTokensEdit[]
+---@field edits (lsp.SemanticTokensEdit)[]
 
 ---@since 3.16.0
 ---@class lsp.SemanticTokensDeltaPartialResult
----@field edits lsp.SemanticTokensEdit[]
+---@field edits (lsp.SemanticTokensEdit)[]
 
 ---@since 3.16.0
 ---@class lsp.SemanticTokensRangeParams : lsp.WorkDoneProgressParams, lsp.PartialResultParams
@@ -327,7 +327,7 @@
 ---@class lsp.LinkedEditingRanges
 ---A list of ranges that can be edited together. The ranges must have
 ---identical length and contain identical text content. The ranges cannot overlap.
----@field ranges lsp.Range[]
+---@field ranges (lsp.Range)[]
 ---An optional word pattern (regular expression) that describes valid contents for
 ---the given ranges. If no pattern is provided, the client configuration's word
 ---pattern will be used.
@@ -340,7 +340,7 @@
 ---@since 3.16.0
 ---@class lsp.CreateFilesParams
 ---An array of all files/folders created in this operation.
----@field files lsp.FileCreate[]
+---@field files (lsp.FileCreate)[]
 
 ---A workspace edit represents changes to many resources managed in the workspace. The edit
 ---should either provide `changes` or `documentChanges`. If documentChanges are present
@@ -354,7 +354,7 @@
 ---the client capability: `workspace.workspaceEdit.failureHandling`
 ---@class lsp.WorkspaceEdit
 ---Holds changes to existing resources.
----@field changes? { [lsp.DocumentUri]: lsp.TextEdit[] }
+---@field changes? { [lsp.DocumentUri]: (lsp.TextEdit)[] }
 ---Depending on the client capability `workspace.workspaceEdit.resourceOperations` document changes
 ---are either an array of `TextDocumentEdit`s to express changes to n different text documents
 ---where each text document edit addresses a specific version of a text document. Or it can contain
@@ -363,7 +363,7 @@
 ---`workspace.workspaceEdit.documentChanges` client capability.
 ---If a client neither supports `documentChanges` nor `workspace.workspaceEdit.resourceOperations` then
 ---only plain `TextEdit`s using the `changes` property are supported.
----@field documentChanges? lsp.TextDocumentEdit | lsp.CreateFile | lsp.RenameFile | lsp.DeleteFile[]
+---@field documentChanges? (lsp.TextDocumentEdit | lsp.CreateFile | lsp.RenameFile | lsp.DeleteFile)[]
 ---A map of change annotations that can be referenced in `AnnotatedTextEdit`s or create, rename and
 ---delete file / folder operations.
 ---Whether clients honor this property depends on the client capability `workspace.changeAnnotationSupport`.
@@ -374,7 +374,7 @@
 ---@since 3.16.0
 ---@class lsp.FileOperationRegistrationOptions
 ---The actual filters.
----@field filters lsp.FileOperationFilter[]
+---@field filters (lsp.FileOperationFilter)[]
 
 ---The parameters sent in notifications/requests for user-initiated renames of
 ---files.
@@ -382,14 +382,14 @@
 ---@class lsp.RenameFilesParams
 ---An array of all files/folders renamed in this operation. When a folder is renamed, only
 ---the folder will be included, and not its children.
----@field files lsp.FileRename[]
+---@field files (lsp.FileRename)[]
 
 ---The parameters sent in notifications/requests for user-initiated deletes of
 ---files.
 ---@since 3.16.0
 ---@class lsp.DeleteFilesParams
 ---An array of all files/folders deleted in this operation.
----@field files lsp.FileDelete[]
+---@field files (lsp.FileDelete)[]
 
 ---@class lsp.MonikerParams : lsp.TextDocumentPositionParams, lsp.WorkDoneProgressParams, lsp.PartialResultParams
 
@@ -419,7 +419,7 @@
 ---The kind of this item.
 ---@field kind lsp.SymbolKind
 ---Tags for this item.
----@field tags? lsp.SymbolTag[]
+---@field tags? (lsp.SymbolTag)[]
 ---More detail for this item, e.g. the signature of a function.
 ---@field detail? string
 ---The resource identifier of this item.
@@ -482,7 +482,7 @@
 ---The label of this hint. A human readable string or an array of
 ---InlayHintLabelPart label parts.
 ---*Note* that neither the string nor the label part can be empty.
----@field label string | lsp.InlayHintLabelPart[]
+---@field label string | (lsp.InlayHintLabelPart)[]
 ---The kind of this hint. Can be omitted in which case the client
 ---should fall back to a reasonable default.
 ---@field kind? lsp.InlayHintKind
@@ -490,7 +490,7 @@
 ---*Note* that edits are expected to change the document so that the inlay
 ---hint (or its nearest variant) is now part of the document and the inlay
 ---hint itself is now obsolete.
----@field textEdits? lsp.TextEdit[]
+---@field textEdits? (lsp.TextEdit)[]
 ---The tooltip text when you hover over this item.
 ---@field tooltip? string | lsp.MarkupContent
 ---Render padding before the hint.
@@ -542,17 +542,17 @@
 ---@field identifier? string
 ---The currently known diagnostic reports with their
 ---previous result ids.
----@field previousResultIds lsp.PreviousResultId[]
+---@field previousResultIds (lsp.PreviousResultId)[]
 
 ---A workspace diagnostic report.
 ---@since 3.17.0
 ---@class lsp.WorkspaceDiagnosticReport
----@field items lsp.WorkspaceDocumentDiagnosticReport[]
+---@field items (lsp.WorkspaceDocumentDiagnosticReport)[]
 
 ---A partial result for a workspace diagnostic report.
 ---@since 3.17.0
 ---@class lsp.WorkspaceDiagnosticReportPartialResult
----@field items lsp.WorkspaceDocumentDiagnosticReport[]
+---@field items (lsp.WorkspaceDocumentDiagnosticReport)[]
 
 ---The params sent in an open notebook document notification.
 ---@since 3.17.0
@@ -561,7 +561,7 @@
 ---@field notebookDocument lsp.NotebookDocument
 ---The text documents that represent the content
 ---of a notebook cell.
----@field cellTextDocuments lsp.TextDocumentItem[]
+---@field cellTextDocuments (lsp.TextDocumentItem)[]
 
 ---The params sent in a change notebook document notification.
 ---@since 3.17.0
@@ -597,7 +597,7 @@
 ---@field notebookDocument lsp.NotebookDocumentIdentifier
 ---The text documents that represent the content
 ---of a notebook cell that got closed.
----@field cellTextDocuments lsp.TextDocumentIdentifier[]
+---@field cellTextDocuments (lsp.TextDocumentIdentifier)[]
 
 ---A parameter literal used in inline completion requests.
 ---@since 3.18.0
@@ -612,7 +612,7 @@
 ---@proposed
 ---@class lsp.InlineCompletionList
 ---The inline completion items
----@field items lsp.InlineCompletionItem[]
+---@field items (lsp.InlineCompletionItem)[]
 
 ---An inline completion item represents a text snippet that is proposed inline to complete text that is being typed.
 ---@since 3.18.0
@@ -633,10 +633,10 @@
 ---@class lsp.InlineCompletionRegistrationOptions : lsp.InlineCompletionOptions, lsp.TextDocumentRegistrationOptions, lsp.StaticRegistrationOptions
 
 ---@class lsp.RegistrationParams
----@field registrations lsp.Registration[]
+---@field registrations (lsp.Registration)[]
 
 ---@class lsp.UnregistrationParams
----@field unregisterations lsp.Unregistration[]
+---@field unregisterations (lsp.Unregistration)[]
 
 ---@class lsp.InitializeParams : lsp._InitializeParams, lsp.WorkspaceFoldersInitializeParams
 
@@ -665,7 +665,7 @@
 ---@field settings lsp.LSPAny
 
 ---@class lsp.DidChangeConfigurationRegistrationOptions
----@field section? string | string[]
+---@field section? string | (string)[]
 
 ---The parameters of a notification message.
 ---@class lsp.ShowMessageParams
@@ -680,7 +680,7 @@
 ---The actual message.
 ---@field message string
 ---The message action items to present.
----@field actions? lsp.MessageActionItem[]
+---@field actions? (lsp.MessageActionItem)[]
 
 ---@class lsp.MessageActionItem
 ---A short title like 'Retry', 'Open Log' etc.
@@ -714,7 +714,7 @@
 ---- apply the 'textDocument/didChange' notifications in the order you receive them.
 ---- apply the `TextDocumentContentChangeEvent`s in a single notification in the order
 ---  you receive them.
----@field contentChanges lsp.TextDocumentContentChangeEvent[]
+---@field contentChanges (lsp.TextDocumentContentChangeEvent)[]
 
 ---Describe options to be used when registered for text document change events.
 ---@class lsp.TextDocumentChangeRegistrationOptions : lsp.TextDocumentRegistrationOptions
@@ -756,12 +756,12 @@
 ---The watched files change notification's parameters.
 ---@class lsp.DidChangeWatchedFilesParams
 ---The actual file events.
----@field changes lsp.FileEvent[]
+---@field changes (lsp.FileEvent)[]
 
 ---Describe options to be used when registered for text document change events.
 ---@class lsp.DidChangeWatchedFilesRegistrationOptions
 ---The watchers to register.
----@field watchers lsp.FileSystemWatcher[]
+---@field watchers (lsp.FileSystemWatcher)[]
 
 ---The publish diagnostic notification's parameters.
 ---@class lsp.PublishDiagnosticsParams
@@ -771,7 +771,7 @@
 ---@since 3.15.0
 ---@field version? integer
 ---An array of diagnostic information items.
----@field diagnostics lsp.Diagnostic[]
+---@field diagnostics (lsp.Diagnostic)[]
 
 ---Completion parameters
 ---@class lsp.CompletionParams : lsp.TextDocumentPositionParams, lsp.WorkDoneProgressParams, lsp.PartialResultParams
@@ -796,7 +796,7 @@
 ---@field kind? lsp.CompletionItemKind
 ---Tags for this completion item.
 ---@since 3.15.0
----@field tags? lsp.CompletionItemTag[]
+---@field tags? (lsp.CompletionItemTag)[]
 ---A human-readable string with additional information
 ---about this item, like type or symbol information.
 ---@field detail? string
@@ -872,11 +872,11 @@
 ---Additional text edits should be used to change text unrelated to the current cursor position
 ---(for example adding an import statement at the top of the file if the completion item will
 ---insert an unqualified type).
----@field additionalTextEdits? lsp.TextEdit[]
+---@field additionalTextEdits? (lsp.TextEdit)[]
 ---An optional set of characters that when pressed while this completion is active will accept it first and
 ---then type that character. *Note* that all commit characters should have `length=1` and that superfluous
 ---characters will be ignored.
----@field commitCharacters? string[]
+---@field commitCharacters? (string)[]
 ---An optional {@link Command command} that is executed *after* inserting this completion. *Note* that
 ---additional modifications to the current document should be described with the
 ---{@link CompletionItem.additionalTextEdits additionalTextEdits}-property.
@@ -904,7 +904,7 @@
 ---@since 3.17.0
 ---@field itemDefaults? lsp.CompletionList.itemDefaults
 ---The completion items.
----@field items lsp.CompletionItem[]
+---@field items (lsp.CompletionItem)[]
 
 ---Registration options for a {@link CompletionRequest}.
 ---@class lsp.CompletionRegistrationOptions : lsp.TextDocumentRegistrationOptions, lsp.CompletionOptions
@@ -915,7 +915,7 @@
 ---The result of a hover request.
 ---@class lsp.Hover
 ---The hover's content
----@field contents lsp.MarkupContent | lsp.MarkedString | lsp.MarkedString[]
+---@field contents lsp.MarkupContent | lsp.MarkedString | (lsp.MarkedString)[]
 ---An optional range inside the text document that is used to
 ---visualize the hover, e.g. by changing the background color.
 ---@field range? lsp.Range
@@ -935,7 +935,7 @@
 ---active and only one active parameter.
 ---@class lsp.SignatureHelp
 ---One or more signatures.
----@field signatures lsp.SignatureInformation[]
+---@field signatures (lsp.SignatureInformation)[]
 ---The active signature. If omitted or the value lies outside the
 ---range of `signatures` the value defaults to zero or is ignored if
 ---the `SignatureHelp` has no signatures.
@@ -1019,7 +1019,7 @@
 ---@field kind lsp.SymbolKind
 ---Tags for this document symbol.
 ---@since 3.16.0
----@field tags? lsp.SymbolTag[]
+---@field tags? (lsp.SymbolTag)[]
 ---Indicates if this symbol is deprecated.
 ---@deprecated Use tags instead
 ---@field deprecated? boolean
@@ -1031,7 +1031,7 @@
 ---Must be contained by the `range`.
 ---@field selectionRange lsp.Range
 ---Children of this symbol, e.g. properties of a class.
----@field children? lsp.DocumentSymbol[]
+---@field children? (lsp.DocumentSymbol)[]
 
 ---Registration options for a {@link DocumentSymbolRequest}.
 ---@class lsp.DocumentSymbolRegistrationOptions : lsp.TextDocumentRegistrationOptions, lsp.DocumentSymbolOptions
@@ -1056,7 +1056,7 @@
 ---@field command string
 ---Arguments that the command handler should be
 ---invoked with.
----@field arguments? lsp.LSPAny[]
+---@field arguments? (lsp.LSPAny)[]
 
 ---A code action represents a change that can be performed in code, e.g. to fix a problem or
 ---to refactor code.
@@ -1068,7 +1068,7 @@
 ---Used to filter code actions.
 ---@field kind? lsp.CodeActionKind
 ---The diagnostics that this code action resolves.
----@field diagnostics? lsp.Diagnostic[]
+---@field diagnostics? (lsp.Diagnostic)[]
 ---Marks this as a preferred action. Preferred actions are used by the `auto fix` command and can be targeted
 ---by keybindings.
 ---A quick fix should be marked preferred if it properly addresses the underlying error.
@@ -1197,7 +1197,7 @@
 ---The document to format.
 ---@field textDocument lsp.TextDocumentIdentifier
 ---The ranges to format
----@field ranges lsp.Range[]
+---@field ranges (lsp.Range)[]
 ---The format options
 ---@field options lsp.FormattingOptions
 
@@ -1241,7 +1241,7 @@
 ---The identifier of the actual command handler.
 ---@field command string
 ---Arguments that the command should be invoked with.
----@field arguments? lsp.LSPAny[]
+---@field arguments? (lsp.LSPAny)[]
 
 ---Registration options for a {@link ExecuteCommandRequest}.
 ---@class lsp.ExecuteCommandRegistrationOptions : lsp.ExecuteCommandOptions
@@ -1396,9 +1396,9 @@
 ---The workspace folder change event.
 ---@class lsp.WorkspaceFoldersChangeEvent
 ---The array of added workspace folders
----@field added lsp.WorkspaceFolder[]
+---@field added (lsp.WorkspaceFolder)[]
 ---The array of the removed workspace folders
----@field removed lsp.WorkspaceFolder[]
+---@field removed (lsp.WorkspaceFolder)[]
 
 ---@class lsp.ConfigurationItem
 ---The scope to get the configuration section for.
@@ -1488,7 +1488,7 @@
 ---The count of elements to remove.
 ---@field deleteCount integer
 ---The elements to insert.
----@field data? integer[]
+---@field data? (integer)[]
 
 ---@class lsp.LinkedEditingRangeOptions : lsp.WorkDoneProgressOptions
 
@@ -1508,7 +1508,7 @@
 ---The edits to be applied.
 ---@since 3.16.0 - support for AnnotatedTextEdit. This is guarded using a
 ---client capability.
----@field edits lsp.TextEdit | lsp.AnnotatedTextEdit[]
+---@field edits (lsp.TextEdit | lsp.AnnotatedTextEdit)[]
 
 ---Create file operation.
 ---@class lsp.CreateFile : lsp.ResourceOperation
@@ -1714,7 +1714,7 @@
 ---same document.
 ---@field resultId? string
 ---The actual items.
----@field items lsp.Diagnostic[]
+---@field items (lsp.Diagnostic)[]
 
 ---A diagnostic report indicating that the last returned
 ---report is still accurate.
@@ -1767,7 +1767,7 @@
 ---Note: should always be an object literal (e.g. LSPObject)
 ---@field metadata? lsp.LSPObject
 ---The cells of a notebook.
----@field cells lsp.NotebookCell[]
+---@field cells (lsp.NotebookCell)[]
 
 ---An item to transfer a text document from the client to the
 ---server.
@@ -1890,7 +1890,7 @@
 ---It can be `null` if the client supports workspace folders but none are
 ---configured.
 ---@since 3.6.0
----@field workspaceFolders? lsp.WorkspaceFolder[] | cjson.null
+---@field workspaceFolders? (lsp.WorkspaceFolder)[] | cjson.null
 
 ---Defines the capabilities provided by a language
 ---server.
@@ -2038,10 +2038,10 @@
 ---@field message string
 ---Additional metadata about the diagnostic.
 ---@since 3.15.0
----@field tags? lsp.DiagnosticTag[]
+---@field tags? (lsp.DiagnosticTag)[]
 ---An array of related diagnostic information, e.g. when symbol-names within
 ---a scope collide all definitions can be marked via this property.
----@field relatedInformation? lsp.DiagnosticRelatedInformation[]
+---@field relatedInformation? (lsp.DiagnosticRelatedInformation)[]
 ---A data entry field that is preserved between a `textDocument/publishDiagnostics`
 ---notification and `textDocument/codeAction` request.
 ---@since 3.16.0
@@ -2084,14 +2084,14 @@
 ---completion item. Characters that make up identifiers don't need to be listed here.
 ---If code complete should automatically be trigger on characters not being valid inside
 ---an identifier (for example `.` in JavaScript) list them in `triggerCharacters`.
----@field triggerCharacters? string[]
+---@field triggerCharacters? (string)[]
 ---The list of all possible characters that commit a completion. This field can be used
 ---if clients don't support individual commit characters per completion item. See
 ---`ClientCapabilities.textDocument.completion.completionItem.commitCharactersSupport`
 ---If a server provides both `allCommitCharacters` and commit characters on an individual
 ---completion item the ones on the completion item win.
 ---@since 3.2.0
----@field allCommitCharacters? string[]
+---@field allCommitCharacters? (string)[]
 ---The server provides support to resolve additional
 ---information for a completion item.
 ---@field resolveProvider? boolean
@@ -2131,7 +2131,7 @@
 ---in the UI but can be omitted.
 ---@field documentation? string | lsp.MarkupContent
 ---The parameters of this signature.
----@field parameters? lsp.ParameterInformation[]
+---@field parameters? (lsp.ParameterInformation)[]
 ---The index of the active parameter.
 ---If provided, this is used in place of `SignatureHelp.activeParameter`.
 ---@since 3.16.0
@@ -2140,12 +2140,12 @@
 ---Server Capabilities for a {@link SignatureHelpRequest}.
 ---@class lsp.SignatureHelpOptions : lsp.WorkDoneProgressOptions
 ---List of characters that trigger signature help automatically.
----@field triggerCharacters? string[]
+---@field triggerCharacters? (string)[]
 ---List of characters that re-trigger signature help.
 ---These trigger characters are only active when signature help is already showing. All trigger characters
 ---are also counted as re-trigger characters.
 ---@since 3.15.0
----@field retriggerCharacters? string[]
+---@field retriggerCharacters? (string)[]
 
 ---Server Capabilities for a {@link DefinitionRequest}.
 ---@class lsp.DefinitionOptions : lsp.WorkDoneProgressOptions
@@ -2170,7 +2170,7 @@
 ---@field kind lsp.SymbolKind
 ---Tags for this symbol.
 ---@since 3.16.0
----@field tags? lsp.SymbolTag[]
+---@field tags? (lsp.SymbolTag)[]
 ---The name of the symbol containing this symbol. This information is for
 ---user interface purposes (e.g. to render a qualifier in the user interface
 ---if necessary). It can't be used to re-infer a hierarchy for the document
@@ -2192,11 +2192,11 @@
 ---errors are currently presented to the user for the given range. There is no guarantee
 ---that these accurately reflect the error state of the resource. The primary parameter
 ---to compute code actions is the provided range.
----@field diagnostics lsp.Diagnostic[]
+---@field diagnostics (lsp.Diagnostic)[]
 ---Requested kind of actions to return.
 ---Actions not of this kind are filtered out by the client before being shown. So servers
 ---can omit computing them.
----@field only? lsp.CodeActionKind[]
+---@field only? (lsp.CodeActionKind)[]
 ---The reason why code actions were requested.
 ---@since 3.17.0
 ---@field triggerKind? lsp.CodeActionTriggerKind
@@ -2206,7 +2206,7 @@
 ---CodeActionKinds that this server may return.
 ---The list of kinds may be generic, such as `CodeActionKind.Refactor`, or the server
 ---may list out every specific kind they provide.
----@field codeActionKinds? lsp.CodeActionKind[]
+---@field codeActionKinds? (lsp.CodeActionKind)[]
 ---The server provides support to resolve additional
 ---information for a code action.
 ---@since 3.16.0
@@ -2260,7 +2260,7 @@
 ---A character on which formatting should be triggered, like `{`.
 ---@field firstTriggerCharacter string
 ---More trigger characters.
----@field moreTriggerCharacter? string[]
+---@field moreTriggerCharacter? (string)[]
 
 ---Provider options for a {@link RenameRequest}.
 ---@class lsp.RenameOptions : lsp.WorkDoneProgressOptions
@@ -2271,14 +2271,14 @@
 ---The server capabilities of a {@link ExecuteCommandRequest}.
 ---@class lsp.ExecuteCommandOptions : lsp.WorkDoneProgressOptions
 ---The commands to be executed on the server
----@field commands string[]
+---@field commands (string)[]
 
 ---@since 3.16.0
 ---@class lsp.SemanticTokensLegend
 ---The token types a server uses.
----@field tokenTypes string[]
+---@field tokenTypes (string)[]
 ---The token modifiers a server uses.
----@field tokenModifiers string[]
+---@field tokenModifiers (string)[]
 
 ---A text document identifier to optionally denote a specific version of a text document.
 ---@class lsp.OptionalVersionedTextDocumentIdentifier : lsp.TextDocumentIdentifier
@@ -2387,7 +2387,7 @@
 ---The deleted cells
 ---@field deleteCount integer
 ---The new cells, if any
----@field cells? lsp.NotebookCell[]
+---@field cells? (lsp.NotebookCell)[]
 
 ---Describes the currently selected completion item.
 ---@since 3.18.0
@@ -2444,7 +2444,7 @@
 ---@since 3.17.0
 ---@class lsp.NotebookDocumentSyncOptions
 ---The notebooks to be synced
----@field notebookSelector lsp.NotebookDocumentSyncOptions.notebookSelector.1 | lsp.NotebookDocumentSyncOptions.notebookSelector.2[]
+---@field notebookSelector (lsp.NotebookDocumentSyncOptions.notebookSelector.1 | lsp.NotebookDocumentSyncOptions.notebookSelector.2)[]
 ---Whether save notification should be forwarded to
 ---the server. Will only be honored if mode === `notebook`.
 ---@field save? boolean
@@ -2722,7 +2722,7 @@
 ---is best done where the file is read which is usually on the server
 ---side.
 ---@since 3.17.0
----@field positionEncodings? lsp.PositionEncodingKind[]
+---@field positionEncodings? (lsp.PositionEncodingKind)[]
 
 ---A relative pattern is a helper to construct glob patterns that are matched
 ---relatively to a base URI. The common value for a `baseUri` is a workspace
@@ -2741,7 +2741,7 @@
 ---The resource operations the client supports. Clients should at least
 ---support 'create', 'rename' and 'delete' files and folders.
 ---@since 3.13.0
----@field resourceOperations? lsp.ResourceOperationKind[]
+---@field resourceOperations? (lsp.ResourceOperationKind)[]
 ---The failure handling strategy of a client if applying the workspace edit
 ---fails.
 ---@since 3.13.0
@@ -2918,7 +2918,7 @@
 ---@field dynamicRegistration? boolean
 ---Client supports the following content formats for the content
 ---property. The order describes the preferred format of the client.
----@field contentFormat? lsp.MarkupKind[]
+---@field contentFormat? (lsp.MarkupKind)[]
 
 ---Client Capabilities for a {@link SignatureHelpRequest}.
 ---@class lsp.SignatureHelpClientCapabilities
@@ -3161,11 +3161,11 @@
 ---even decide to not show any semantic tokens at all.
 ---@field requests lsp.SemanticTokensClientCapabilities.requests
 ---The token types that the client supports.
----@field tokenTypes string[]
+---@field tokenTypes (string)[]
 ---The token modifiers that the client supports.
----@field tokenModifiers string[]
+---@field tokenModifiers (string)[]
 ---The token formats the clients supports.
----@field formats lsp.TokenFormat[]
+---@field formats (lsp.TokenFormat)[]
 ---Whether the client supports tokens that can overlap each other.
 ---@field overlappingTokenSupport? boolean
 ---Whether the client supports tokens that can span multiple lines.
@@ -3282,14 +3282,14 @@
 ---A list of HTML tags that the client allows / supports in
 ---Markdown.
 ---@since 3.17.0
----@field allowedTags? string[]
+---@field allowedTags? (string)[]
 
 ---The definition of a symbol represented as one or many {@link Location locations}.
 ---For most programming languages there is only one location at which a symbol is
 ---defined.
 ---Servers should prefer returning `DefinitionLink` over `Definition` if supported
 ---by the client.
----@alias lsp.Definition lsp.Location | lsp.Location[]
+---@alias lsp.Definition lsp.Location | (lsp.Location)[]
 
 ---Information about where a symbol is defined.
 ---Provides additional metadata over normal {@link Location location} definitions, including the range of
@@ -3298,7 +3298,7 @@
 
 ---LSP arrays.
 ---@since 3.17.0
----@alias lsp.LSPArray lsp.LSPAny[]
+---@alias lsp.LSPArray (lsp.LSPAny)[]
 
 ---The LSP any type.
 ---Please note that strictly speaking a property with the value `undefined`
@@ -3309,7 +3309,7 @@
 ---@alias lsp.LSPAny lsp.LSPObject | lsp.LSPArray | string | integer | integer | number | boolean | cjson.null
 
 ---The declaration of a symbol representation as one or many {@link Location locations}.
----@alias lsp.Declaration lsp.Location | lsp.Location[]
+---@alias lsp.Declaration lsp.Location | (lsp.Location)[]
 
 ---Information about where a symbol is declared.
 ---Provides additional metadata over normal {@link Location location} declarations, including the range of
@@ -3339,7 +3339,7 @@
 ---A document selector is the combination of one or many document filters.
 ---@sample `let sel:DocumentSelector = [{ language: 'typescript' }, { language: 'json', pattern: '**∕tsconfig.json' }]`;
 ---The use of a string as a document filter is deprecated @since 3.16.0.
----@alias lsp.DocumentSelector lsp.DocumentFilter[]
+---@alias lsp.DocumentSelector (lsp.DocumentFilter)[]
 
 ---@alias lsp.ProgressToken integer | string
 
@@ -5779,7 +5779,7 @@
 ---@class lsp.CompletionList.itemDefaults
 ---A default commit character set.
 ---@since 3.17.0
----@field commitCharacters? string[]
+---@field commitCharacters? (string)[]
 ---A default edit range.
 ---@since 3.17.0
 ---@field editRange? lsp.Range | lsp.CompletionList.itemDefaults.editRange.2
@@ -5811,13 +5811,13 @@
 ---The change to the cell array.
 ---@field array lsp.NotebookCellArrayChange
 ---Additional opened cell text documents.
----@field didOpen? lsp.TextDocumentItem[]
+---@field didOpen? (lsp.TextDocumentItem)[]
 ---Additional closed cell text documents.
----@field didClose? lsp.TextDocumentIdentifier[]
+---@field didClose? (lsp.TextDocumentIdentifier)[]
 
 ---@class lsp.NotebookDocumentChangeEvent.cells.textContent
 ---@field document lsp.VersionedTextDocumentIdentifier
----@field changes lsp.TextDocumentContentChangeEvent[]
+---@field changes (lsp.TextDocumentContentChangeEvent)[]
 
 ---@class lsp.NotebookDocumentChangeEvent.cells
 ---Changes to the cell structure to add or
@@ -5825,9 +5825,9 @@
 ---@field structure? lsp.NotebookDocumentChangeEvent.cells.structure
 ---Changes to notebook cells properties like its
 ---kind, execution summary or metadata.
----@field data? lsp.NotebookCell[]
+---@field data? (lsp.NotebookCell)[]
 ---Changes to the text content of notebook cells.
----@field textContent? lsp.NotebookDocumentChangeEvent.cells.textContent[]
+---@field textContent? (lsp.NotebookDocumentChangeEvent.cells.textContent)[]
 
 ---@class lsp._InitializeParams.clientInfo
 ---The name of the client as defined by the client.
@@ -5859,7 +5859,7 @@
 ---notebook type. '*' matches every notebook.
 ---@field notebook string | lsp.NotebookDocumentFilter
 ---The cells of the matching notebook to be synced.
----@field cells? lsp.NotebookDocumentSyncOptions.notebookSelector.1.cells[]
+---@field cells? (lsp.NotebookDocumentSyncOptions.notebookSelector.1.cells)[]
 
 ---@class lsp.NotebookDocumentSyncOptions.notebookSelector.2.cells
 ---@field language string
@@ -5870,7 +5870,7 @@
 ---notebook type. '*' matches every notebook.
 ---@field notebook? string | lsp.NotebookDocumentFilter
 ---The cells of the matching notebook to be synced.
----@field cells lsp.NotebookDocumentSyncOptions.notebookSelector.2.cells[]
+---@field cells (lsp.NotebookDocumentSyncOptions.notebookSelector.2.cells)[]
 
 ---@class lsp.GeneralClientCapabilities.staleRequestSupport
 ---The client will actively cancel the request.
@@ -5878,7 +5878,7 @@
 ---The list of requests for which the client
 ---will retry the request if it receives a
 ---response with error code `ContentModified`
----@field retryOnContentModified string[]
+---@field retryOnContentModified (string)[]
 
 ---@class lsp.WorkspaceEditClientCapabilities.changeAnnotationSupport
 ---Whether the client groups edits with equal labels into tree nodes,
@@ -5894,27 +5894,27 @@
 ---If this property is not present the client only supports
 ---the symbol kinds from `File` to `Array` as defined in
 ---the initial version of the protocol.
----@field valueSet? lsp.SymbolKind[]
+---@field valueSet? (lsp.SymbolKind)[]
 
 ---@class lsp.WorkspaceSymbolClientCapabilities.tagSupport
 ---The tags supported by the client.
----@field valueSet lsp.SymbolTag[]
+---@field valueSet (lsp.SymbolTag)[]
 
 ---@class lsp.WorkspaceSymbolClientCapabilities.resolveSupport
 ---The properties that a client can resolve lazily. Usually
 ---`location.range`
----@field properties string[]
+---@field properties (string)[]
 
 ---@class lsp.CompletionClientCapabilities.completionItem.tagSupport
 ---The tags supported by the client.
----@field valueSet lsp.CompletionItemTag[]
+---@field valueSet (lsp.CompletionItemTag)[]
 
 ---@class lsp.CompletionClientCapabilities.completionItem.resolveSupport
 ---The properties that a client can resolve lazily.
----@field properties string[]
+---@field properties (string)[]
 
 ---@class lsp.CompletionClientCapabilities.completionItem.insertTextModeSupport
----@field valueSet lsp.InsertTextMode[]
+---@field valueSet (lsp.InsertTextMode)[]
 
 ---@class lsp.CompletionClientCapabilities.completionItem
 ---Client supports snippets as insert text.
@@ -5927,7 +5927,7 @@
 ---@field commitCharactersSupport? boolean
 ---Client supports the following content formats for the documentation
 ---property. The order describes the preferred format of the client.
----@field documentationFormat? lsp.MarkupKind[]
+---@field documentationFormat? (lsp.MarkupKind)[]
 ---Client supports the deprecated property on a completion item.
 ---@field deprecatedSupport? boolean
 ---Client supports the preselect property on a completion item.
@@ -5965,7 +5965,7 @@
 ---If this property is not present the client only supports
 ---the completion items kinds from `Text` to `Reference` as defined in
 ---the initial version of the protocol.
----@field valueSet? lsp.CompletionItemKind[]
+---@field valueSet? (lsp.CompletionItemKind)[]
 
 ---@class lsp.CompletionClientCapabilities.completionList
 ---The client supports the following itemDefaults on
@@ -5974,7 +5974,7 @@
 ---`CompletionList.itemDefaults` object. If omitted
 ---no properties are supported.
 ---@since 3.17.0
----@field itemDefaults? string[]
+---@field itemDefaults? (string)[]
 
 ---@class lsp.SignatureHelpClientCapabilities.signatureInformation.parameterInformation
 ---The client supports processing label offsets instead of a
@@ -5985,7 +5985,7 @@
 ---@class lsp.SignatureHelpClientCapabilities.signatureInformation
 ---Client supports the following content formats for the documentation
 ---property. The order describes the preferred format of the client.
----@field documentationFormat? lsp.MarkupKind[]
+---@field documentationFormat? (lsp.MarkupKind)[]
 ---Client capabilities specific to parameter information.
 ---@field parameterInformation? lsp.SignatureHelpClientCapabilities.signatureInformation.parameterInformation
 ---The client supports the `activeParameter` property on `SignatureInformation`
@@ -6001,18 +6001,18 @@
 ---If this property is not present the client only supports
 ---the symbol kinds from `File` to `Array` as defined in
 ---the initial version of the protocol.
----@field valueSet? lsp.SymbolKind[]
+---@field valueSet? (lsp.SymbolKind)[]
 
 ---@class lsp.DocumentSymbolClientCapabilities.tagSupport
 ---The tags supported by the client.
----@field valueSet lsp.SymbolTag[]
+---@field valueSet (lsp.SymbolTag)[]
 
 ---@class lsp.CodeActionClientCapabilities.codeActionLiteralSupport.codeActionKind
 ---The code action kind values the client supports. When this
 ---property exists the client also guarantees that it will
 ---handle values outside its set gracefully and falls back
 ---to a default value when unknown.
----@field valueSet lsp.CodeActionKind[]
+---@field valueSet (lsp.CodeActionKind)[]
 
 ---@class lsp.CodeActionClientCapabilities.codeActionLiteralSupport
 ---The code action kind is support with the following value
@@ -6021,14 +6021,14 @@
 
 ---@class lsp.CodeActionClientCapabilities.resolveSupport
 ---The properties that a client can resolve lazily.
----@field properties string[]
+---@field properties (string)[]
 
 ---@class lsp.FoldingRangeClientCapabilities.foldingRangeKind
 ---The folding range kind values the client supports. When this
 ---property exists the client also guarantees that it will
 ---handle values outside its set gracefully and falls back
 ---to a default value when unknown.
----@field valueSet? lsp.FoldingRangeKind[]
+---@field valueSet? (lsp.FoldingRangeKind)[]
 
 ---@class lsp.FoldingRangeClientCapabilities.foldingRange
 ---If set, the client signals that it supports setting collapsedText on
@@ -6038,7 +6038,7 @@
 
 ---@class lsp.PublishDiagnosticsClientCapabilities.tagSupport
 ---The tags supported by the client.
----@field valueSet lsp.DiagnosticTag[]
+---@field valueSet (lsp.DiagnosticTag)[]
 
 ---@class lsp.SemanticTokensClientCapabilities.requests.range.2
 
@@ -6057,7 +6057,7 @@
 
 ---@class lsp.InlayHintClientCapabilities.resolveSupport
 ---The properties that a client can resolve lazily.
----@field properties string[]
+---@field properties (string)[]
 
 ---@class lsp.ShowMessageRequestClientCapabilities.messageActionItem
 ---Whether the client supports additional attributes which
@@ -6137,33 +6137,33 @@
 ---A glob pattern.
 ---@field pattern string
 
----@alias lsp.Response.textDocument-implementation.result lsp.Definition | lsp.DefinitionLink[] | cjson.null
+---@alias lsp.Response.textDocument-implementation.result lsp.Definition | (lsp.DefinitionLink)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-implementation.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-typeDefinition.result lsp.Definition | lsp.DefinitionLink[] | cjson.null
+---@alias lsp.Response.textDocument-typeDefinition.result lsp.Definition | (lsp.DefinitionLink)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-typeDefinition.error lsp.ResponseError
 
----@alias lsp.Response.workspace-workspaceFolders.result lsp.WorkspaceFolder[] | cjson.null
+---@alias lsp.Response.workspace-workspaceFolders.result (lsp.WorkspaceFolder)[] | cjson.null
 
 ---@alias lsp.Response.workspace-workspaceFolders.error lsp.ResponseError
 
----@alias lsp.Response.workspace-configuration.result lsp.LSPAny[]
+---@alias lsp.Response.workspace-configuration.result (lsp.LSPAny)[]
 
 ---@alias lsp.Response.workspace-configuration.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-documentColor.result lsp.ColorInformation[]
+---@alias lsp.Response.textDocument-documentColor.result (lsp.ColorInformation)[]
 
 ---@alias lsp.Response.textDocument-documentColor.error lsp.ResponseError
 
 ---@class lsp.Request.textDocument-colorPresentation.registrationOptions : lsp.WorkDoneProgressOptions, lsp.TextDocumentRegistrationOptions
 
----@alias lsp.Response.textDocument-colorPresentation.result lsp.ColorPresentation[]
+---@alias lsp.Response.textDocument-colorPresentation.result (lsp.ColorPresentation)[]
 
 ---@alias lsp.Response.textDocument-colorPresentation.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-foldingRange.result lsp.FoldingRange[] | cjson.null
+---@alias lsp.Response.textDocument-foldingRange.result (lsp.FoldingRange)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-foldingRange.error lsp.ResponseError
 
@@ -6171,11 +6171,11 @@
 
 ---@alias lsp.Response.workspace-foldingRange-refresh.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-declaration.result lsp.Declaration | lsp.DeclarationLink[] | cjson.null
+---@alias lsp.Response.textDocument-declaration.result lsp.Declaration | (lsp.DeclarationLink)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-declaration.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-selectionRange.result lsp.SelectionRange[] | cjson.null
+---@alias lsp.Response.textDocument-selectionRange.result (lsp.SelectionRange)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-selectionRange.error lsp.ResponseError
 
@@ -6183,15 +6183,15 @@
 
 ---@alias lsp.Response.window-workDoneProgress-create.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-prepareCallHierarchy.result lsp.CallHierarchyItem[] | cjson.null
+---@alias lsp.Response.textDocument-prepareCallHierarchy.result (lsp.CallHierarchyItem)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-prepareCallHierarchy.error lsp.ResponseError
 
----@alias lsp.Response.callHierarchy-incomingCalls.result lsp.CallHierarchyIncomingCall[] | cjson.null
+---@alias lsp.Response.callHierarchy-incomingCalls.result (lsp.CallHierarchyIncomingCall)[] | cjson.null
 
 ---@alias lsp.Response.callHierarchy-incomingCalls.error lsp.ResponseError
 
----@alias lsp.Response.callHierarchy-outgoingCalls.result lsp.CallHierarchyOutgoingCall[] | cjson.null
+---@alias lsp.Response.callHierarchy-outgoingCalls.result (lsp.CallHierarchyOutgoingCall)[] | cjson.null
 
 ---@alias lsp.Response.callHierarchy-outgoingCalls.error lsp.ResponseError
 
@@ -6231,23 +6231,23 @@
 
 ---@alias lsp.Response.workspace-willDeleteFiles.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-moniker.result lsp.Moniker[] | cjson.null
+---@alias lsp.Response.textDocument-moniker.result (lsp.Moniker)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-moniker.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-prepareTypeHierarchy.result lsp.TypeHierarchyItem[] | cjson.null
+---@alias lsp.Response.textDocument-prepareTypeHierarchy.result (lsp.TypeHierarchyItem)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-prepareTypeHierarchy.error lsp.ResponseError
 
----@alias lsp.Response.typeHierarchy-supertypes.result lsp.TypeHierarchyItem[] | cjson.null
+---@alias lsp.Response.typeHierarchy-supertypes.result (lsp.TypeHierarchyItem)[] | cjson.null
 
 ---@alias lsp.Response.typeHierarchy-supertypes.error lsp.ResponseError
 
----@alias lsp.Response.typeHierarchy-subtypes.result lsp.TypeHierarchyItem[] | cjson.null
+---@alias lsp.Response.typeHierarchy-subtypes.result (lsp.TypeHierarchyItem)[] | cjson.null
 
 ---@alias lsp.Response.typeHierarchy-subtypes.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-inlineValue.result lsp.InlineValue[] | cjson.null
+---@alias lsp.Response.textDocument-inlineValue.result (lsp.InlineValue)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-inlineValue.error lsp.ResponseError
 
@@ -6255,7 +6255,7 @@
 
 ---@alias lsp.Response.workspace-inlineValue-refresh.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-inlayHint.result lsp.InlayHint[] | cjson.null
+---@alias lsp.Response.textDocument-inlayHint.result (lsp.InlayHint)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-inlayHint.error lsp.ResponseError
 
@@ -6279,7 +6279,7 @@
 
 ---@alias lsp.Response.workspace-diagnostic-refresh.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-inlineCompletion.result lsp.InlineCompletionList | lsp.InlineCompletionItem[] | cjson.null
+---@alias lsp.Response.textDocument-inlineCompletion.result lsp.InlineCompletionList | (lsp.InlineCompletionItem)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-inlineCompletion.error lsp.ResponseError
 
@@ -6303,11 +6303,11 @@
 
 ---@alias lsp.Response.window-showMessageRequest.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-willSaveWaitUntil.result lsp.TextEdit[] | cjson.null
+---@alias lsp.Response.textDocument-willSaveWaitUntil.result (lsp.TextEdit)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-willSaveWaitUntil.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-completion.result lsp.CompletionItem[] | lsp.CompletionList | cjson.null
+---@alias lsp.Response.textDocument-completion.result (lsp.CompletionItem)[] | lsp.CompletionList | cjson.null
 
 ---@alias lsp.Response.textDocument-completion.error lsp.ResponseError
 
@@ -6323,23 +6323,23 @@
 
 ---@alias lsp.Response.textDocument-signatureHelp.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-definition.result lsp.Definition | lsp.DefinitionLink[] | cjson.null
+---@alias lsp.Response.textDocument-definition.result lsp.Definition | (lsp.DefinitionLink)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-definition.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-references.result lsp.Location[] | cjson.null
+---@alias lsp.Response.textDocument-references.result (lsp.Location)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-references.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-documentHighlight.result lsp.DocumentHighlight[] | cjson.null
+---@alias lsp.Response.textDocument-documentHighlight.result (lsp.DocumentHighlight)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-documentHighlight.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-documentSymbol.result lsp.SymbolInformation[] | lsp.DocumentSymbol[] | cjson.null
+---@alias lsp.Response.textDocument-documentSymbol.result (lsp.SymbolInformation)[] | (lsp.DocumentSymbol)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-documentSymbol.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-codeAction.result lsp.Command | lsp.CodeAction[] | cjson.null
+---@alias lsp.Response.textDocument-codeAction.result (lsp.Command | lsp.CodeAction)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-codeAction.error lsp.ResponseError
 
@@ -6347,7 +6347,7 @@
 
 ---@alias lsp.Response.codeAction-resolve.error lsp.ResponseError
 
----@alias lsp.Response.workspace-symbol.result lsp.SymbolInformation[] | lsp.WorkspaceSymbol[] | cjson.null
+---@alias lsp.Response.workspace-symbol.result (lsp.SymbolInformation)[] | (lsp.WorkspaceSymbol)[] | cjson.null
 
 ---@alias lsp.Response.workspace-symbol.error lsp.ResponseError
 
@@ -6355,7 +6355,7 @@
 
 ---@alias lsp.Response.workspaceSymbol-resolve.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-codeLens.result lsp.CodeLens[] | cjson.null
+---@alias lsp.Response.textDocument-codeLens.result (lsp.CodeLens)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-codeLens.error lsp.ResponseError
 
@@ -6367,7 +6367,7 @@
 
 ---@alias lsp.Response.workspace-codeLens-refresh.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-documentLink.result lsp.DocumentLink[] | cjson.null
+---@alias lsp.Response.textDocument-documentLink.result (lsp.DocumentLink)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-documentLink.error lsp.ResponseError
 
@@ -6375,19 +6375,19 @@
 
 ---@alias lsp.Response.documentLink-resolve.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-formatting.result lsp.TextEdit[] | cjson.null
+---@alias lsp.Response.textDocument-formatting.result (lsp.TextEdit)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-formatting.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-rangeFormatting.result lsp.TextEdit[] | cjson.null
+---@alias lsp.Response.textDocument-rangeFormatting.result (lsp.TextEdit)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-rangeFormatting.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-rangesFormatting.result lsp.TextEdit[] | cjson.null
+---@alias lsp.Response.textDocument-rangesFormatting.result (lsp.TextEdit)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-rangesFormatting.error lsp.ResponseError
 
----@alias lsp.Response.textDocument-onTypeFormatting.result lsp.TextEdit[] | cjson.null
+---@alias lsp.Response.textDocument-onTypeFormatting.result (lsp.TextEdit)[] | cjson.null
 
 ---@alias lsp.Response.textDocument-onTypeFormatting.error lsp.ResponseError
 
