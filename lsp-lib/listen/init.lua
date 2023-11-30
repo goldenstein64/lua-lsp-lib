@@ -203,7 +203,11 @@ listen.handlers = {
 		end
 		---@cast req lsp.Request | lsp.Notification
 
-		if method ~= "initialize" and method ~= "exit" then
+		if method == "exit" then
+			listen.running = false
+		elseif method == "initialize" then
+			listen.state = "default"
+		else
 			io_lsp:write(errors.ServerNotInitialized(req.id))
 			return
 		end
@@ -211,12 +215,6 @@ listen.handlers = {
 		local route = get_route(req)
 		if route then
 			handle_route(route, req)
-		end
-
-		if method == "exit" then
-			listen.running = false
-		else
-			listen.state = "default"
 		end
 	end,
 
@@ -232,15 +230,15 @@ listen.handlers = {
 		end
 		---@cast req lsp.Request | lsp.Notification
 
-		local route = get_route(req)
-		if route then
-			handle_route(route, req)
-		end
-
 		if method == "shutdown" then
 			listen.state = "shutdown"
 		elseif method == "exit" then
 			listen.running = false
+		end
+
+		local route = get_route(req)
+		if route then
+			handle_route(route, req)
 		end
 	end,
 
@@ -256,12 +254,12 @@ listen.handlers = {
 		end
 		---@cast req lsp.Request | lsp.Notification
 
-		if method ~= "exit" then
+		if method == "exit" then
+			listen.running = false
+		else
 			io_lsp:write(errors.InvalidRequest(req.id, method))
 			return
 		end
-
-		listen.running = false
 
 		local route = get_route(req)
 		if not route then return end
