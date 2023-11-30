@@ -17,6 +17,7 @@ dependencies = {
 test_dependencies = {
    "busted ~> 2.2",
    "moonscript ~> 0.5",
+   "tableshape ~> 2.6"
 }
 build = {
    type = "builtin",
