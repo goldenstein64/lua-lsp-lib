@@ -2,6 +2,8 @@
 
 A library aimed at making the construction of language servers easier.
 
+Note: This project is a work-in-progress. Expect features to change at any time!
+
 ## Setup
 
 ```sh
