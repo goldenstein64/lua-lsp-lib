@@ -11,7 +11,7 @@ $ luarocks install lsp-lib
 
 Lua language server definitions are included with the rock in `lua_modules`. The path is roughly outlined in the example below.
 
-```json
+```jsonc
 // in your .vscode/settings.json,
 {
   "Lua.workspace.library": [
