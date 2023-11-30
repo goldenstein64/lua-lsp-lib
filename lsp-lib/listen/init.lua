@@ -102,7 +102,7 @@ end
 local function handle_async_route(ok, result)
 	if not ok then
 		---@cast result lsp*.RouteError
-		notify.log.error(result.msg)
+		notify.log.error(tostring(result))
 	end
 end
 
@@ -139,18 +139,17 @@ end
 ---@param thread thread
 ---@param ... any
 local function execute_thread(req, thread, ...)
-	local ok, result = coroutine.resume(thread, ...)
-	if coroutine.status(thread) == "suspended" then
+	local co_ok, ok, result = coroutine.resume(thread, ...)
+	local thread_status = coroutine.status(thread)
+	if thread_status == "suspended" then
 		-- waiting for a request to complete
 		request_state.waiting_requests[thread] = req
 		return
 	end
-
-	if not ok then
-		result = handle_route_error(result)
-	end
+	assert(thread_status == "dead", "thread is not dead")
 
 	if not req then
+		ok, result = co_ok, ok
 		handle_async_route(ok, result)
 	elseif req.id then
 		---@cast req lsp.Request
@@ -169,8 +168,8 @@ local function handle_route(route, req)
 		route = function(...) return old_route(...) end
 	end
 
-	local thread = coroutine.create(route)
-	execute_thread(req, thread, req.params)
+	local thread = coroutine.create(xpcall)
+	execute_thread(req, thread, route, handle_route_error, req.params)
 end
 
 local NO_THREAD_STORED_ERROR = "no thread found for response id '%s'"
