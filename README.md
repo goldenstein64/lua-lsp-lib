@@ -5,6 +5,7 @@ A library aimed at making the construction of language servers easier.
 ## Setup
 
 ```sh
+# Note that this hasn't been uploaded to LuaRocks yet
 $ luarocks install lsp-lib
 ```
 
