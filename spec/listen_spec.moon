@@ -1,14 +1,19 @@
 import null from require 'cjson'
 
+spy = require 'luassert.spy'
+import types from require 'tableshape'
+
+MessageType = require 'lsp-lib.enum.MessageType'
+ErrorCodes = require 'lsp-lib.enum.ErrorCodes'
+
 io_lsp = require 'lsp-lib.io'
 listen = require 'lsp-lib.listen'
 response = require 'lsp-lib.response'
 request = require 'lsp-lib.request'
 request_state = require 'lsp-lib.request.state'
+async = require 'lsp-lib.async'
 import waiting_threads, waiting_requests from request_state
 
-match = require 'luassert.match'
-spy = require 'luassert.spy'
 import
 	MockProvider
 	request_of, response_of, notif_of
@@ -66,79 +71,136 @@ describe 'lsp.listen', ->
 				response_of 1, { returned: '97' }
 			}, responses
 
-		it 'resumes its thread when a response is received', ->
-			provider = MockProvider {
-				request_of 5, '$/startWait', null
-				response_of 1, { returned: 'value' }
-			}
-			io_lsp.provider = provider
+		describe 'when handling responses', ->
+			describe 'for routing threads', ->
+				it 'resumes when a response is received', ->
+					provider = MockProvider {
+						request_of 5, '$/startWait', null
+						response_of 1, { returned: 'value' }
+					}
+					io_lsp.provider = provider
 
-			waiting = spy ->
-				result, err = request '$/waiting', null
-				{ :result, :err }
+					waiting = spy ->
+						result, err = request '$/waiting', null
+						{ :result, :err }
 
-			listen.routes = {
-				'$/startWait': waiting
-			}
+					listen.routes = {
+						'$/startWait': waiting
+					}
 
-			listen.once!
+					listen.once!
 
-			assert.spy(waiting).called 1
-			assert.spy(waiting).called_with null
+					assert.spy(waiting).called 1
 
-			thread = waiting_threads[1]
-			assert.is_thread thread
-			assert.same(
-				request_of 5, '$/startWait', null
-				waiting_requests[thread]
-			)
+					thread = waiting_threads[1]
+					assert.is_thread thread
+					assert.same(
+						request_of 5, '$/startWait', null
+						waiting_requests[thread]
+					)
 
-			listen.once!
+					listen.once!
 
-			assert.is_nil next waiting_threads
-			assert.is_nil next waiting_requests
+					assert.is_nil next waiting_threads
+					assert.is_nil next waiting_requests
 
-			assert.spy(waiting).called 1
+					assert.spy(waiting).called 1
 
-			responses = provider\mock_decode_output!
-			assert.same {
-				request_of 1, '$/waiting', null
-				response_of 5, { result: { returned: 'value' } }
-			}, responses
+					responses = provider\mock_decode_output!
+					assert.same {
+						request_of 1, '$/waiting', null
+						response_of 5, { result: { returned: 'value' } }
+					}, responses
 
-		it 'resumes non-response threads that made a request', ->
-			provider = MockProvider {
-				request_of 5, '$/spawnWaiting', null
-				response_of 1, { returned: true }
-			}
-			io_lsp.provider = provider
+				it 'handles messy errors', ->
+					provider = MockProvider {
+						request_of 5, '$/startWait', null
+						response_of 1, { returned: 'value' }
+					}
+					io_lsp.provider = provider
 
-			local config
+					listen.routes = {
+						'$/startWait': ->
+							ok, result = request '$/waiting', null
+							error 'something went wrong'
+					}
 
-			spawn_waiting = spy ->
-				thread = coroutine.create ->
-					result, err = request '$/waiting', null
-					assert.truthy result, err
-					config = result
+					listen.once!
+					listen.once!
 
-				coroutine.resume thread
-				null
+					responses = provider\mock_decode_output!
+					assert.shape responses, types.shape {
+						types.shape request_of 1, '$/waiting', null
+						types.shape notif_of 'window/logMessage', types.shape {
+							type: MessageType.Error
+							message: types.pattern '^request error: something went wrong'
+						}
+						types.shape response_of 5, nil, types.shape {
+							code: ErrorCodes.InternalError
+							message: types.pattern '^something went wrong'
+						}
+					}
 
-			listen.routes = {
-				'$/spawnWaiting': spawn_waiting
-			}
+			describe 'for anonymous threads', ->
+				set_provider = ->
+					provider = MockProvider {
+						request_of 5, '$/spawnWaiting', null
+						response_of 1, { returned: 'value' }
+					}
+					io_lsp.provider = provider
+					provider
 
-			listen.once!
+				it 'resumes those that made a request', ->
+					provider = set_provider!
 
-			responses = provider\mock_decode_output!
-			assert.same {
-				request_of 1, '$/waiting', null
-				response_of 5, null
-			}, responses
+					local config
 
-			assert.is_nil config
+					listen.routes = {
+						'$/spawnWaiting': ->
+							async ->
+								result, err = request '$/waiting', null
+								assert.truthy result, err
+								config = result
 
-			listen.once!
+							null
+					}
 
-			assert.same { returned: true }, config
+					listen.once!
+
+					responses = provider\mock_decode_output!
+					assert.same {
+						request_of 1, '$/waiting', null
+						response_of 5, null
+					}, responses
+
+					assert.is_nil config
+
+					listen.once!
+
+					assert.same { returned: 'value' }, config
+
+				it 'handles errors', ->
+					provider = set_provider!
+
+					listen.routes = {
+						'$/spawnWaiting': ->
+							async ->
+								result, err = request '$/waiting', null
+								error 'non-response thread errored'
+
+							null
+					}
+
+					listen.once!
+					listen.once!
+
+					responses = provider\mock_decode_output!
+					assert.same {
+						request_of 1, '$/waiting', null
+						response_of 5, null
+						notif_of 'window/logMessage', {
+							type: MessageType.Error,
+							message: 'non-response thread errored'
+						}
+					}, responses
 
