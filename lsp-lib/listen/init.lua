@@ -7,9 +7,18 @@ local errors = require("lsp-lib.listen.errors")
 
 ---@alias lsp*.Listen.state "initialize" | "default" | "shutdown"
 
+---manages messages read from input, routes them through its response handlers,
+---and sends what they return to output.
+---
+---This module also resumes requesting threads when receiving responses and
+---logs errors to the client when a route errors.
 ---@class lsp*.Listen
+---determines how requests and notifications are responded to
 ---@field routes { [string]: nil | fun(params: any): any }
+---determines how messages are handled by `listen()`. This field
+---automatically changes based on the messages `listen` receives.
 ---@field state lsp*.Listen.state
+---a flag indicating whether `listen()` should stop listening for messages
 ---@field running boolean
 ---@overload fun(exit?: boolean)
 local listen = {
@@ -188,7 +197,8 @@ local function handle_response(res)
 	execute_thread(req, thread, res.result, res.error)
 end
 
----@enum (key) lsp*.handle.Handler
+---a map of states to state handlers. The handler at
+---`listen.handlers[listen.state]` runs while `listen()` is running.
 listen.handlers = {
 	initialize = function()
 		local req = get_request()
@@ -267,6 +277,23 @@ listen.handlers = {
 	end
 }
 
+---handles exactly one LSP message pulled from `lsp.io:read`
+---
+---The way the message is handled is determined by one of its three `state`
+---values:
+---
+---- `"initialize"`: It transitions to the `default` state once an `initialize`
+---  request is received and stops running if an `exit` notification is
+---  received. These requests and notifications are propagated to its router,
+---  and any other request is responded to with a `ServerNotInitialized` error.
+---
+---- `"default"`: It transitions to the `shutdown` state once a `shutdown`
+---  request is received and stops running if an `exit` notification is
+---  received. All requests are propagated to its router.
+---
+---- `"shutdown"`: It stops running if an `exit` notification is received. This
+---  notification is propagated to its router, and all requests are responded
+---  to with an `InvalidRequest` error.
 function listen.once()
 	local handler = listen.handlers[listen.state]
 	if not handler then
@@ -278,6 +305,10 @@ end
 
 local listen_mt = {}
 
+---starts listening for messages from `lsp.io:read`
+---
+---If `exit` is `false`, `listen()` will error if it was shut down improperly.
+---Otherwise, `os.exit` will be called unconditionally.
 ---@param exit? boolean
 function listen_mt:__call(exit)
 	listen.state = "initialize"
