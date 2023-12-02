@@ -24,7 +24,7 @@ describe 'lsp.request', ->
 
 		assert.equal thread, (select 2, next request_state.waiting_threads)
 
-		responses = provider\mock_decode_output!
+		responses = provider\mock_output!
 		assert.same {
 			request_of 1, '$/customRequest', null
 		}, responses

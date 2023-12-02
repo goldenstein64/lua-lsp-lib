@@ -50,7 +50,7 @@ describe 'the system', ->
 		thread = listen!
 		assert.thread_dead thread
 
-		responses = provider\mock_decode_output!
+		responses = provider\mock_output!
 		assert.same {
 			response_of 1, { capabilities: {} }
 			response_of 2, null
@@ -67,7 +67,7 @@ describe 'the system', ->
 		thread = listen!
 		assert.thread_dead thread
 
-		responses = provider\mock_decode_output!
+		responses = provider\mock_output!
 		assert.same {
 			response_of 'init', { capabilities: {} }
 			response_of 'stop', null
@@ -87,7 +87,7 @@ describe 'the system', ->
 		thread = listen!
 		assert.thread_dead thread
 
-		responses = provider\mock_decode_output!
+		responses = provider\mock_output!
 		assert.same {
 			response_of 1, { capabilities: {} }
 			response_of 2, { returned: 'test value' }
@@ -114,7 +114,7 @@ describe 'the system', ->
 		thread = listen!
 		assert.thread_dead thread
 
-		responses = provider\mock_decode_output!
+		responses = provider\mock_output!
 		assert.same {
 			response_of 1, { capabilities: {} } -- initialize
 			-- receives '$/asyncRequest'

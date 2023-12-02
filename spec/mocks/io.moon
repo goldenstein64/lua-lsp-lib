@@ -32,7 +32,7 @@ class MockProvider
 		str_requests = [http_encode json.encode request for request in *requests]
 		@input ..= concat str_requests
 
-	mock_decode_output: =>
+	mock_output: =>
 		responses = {}
 		content = concat @output
 		index = 1

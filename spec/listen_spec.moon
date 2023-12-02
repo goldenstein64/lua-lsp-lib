@@ -66,7 +66,7 @@ describe 'lsp.listen', ->
 			assert.spy(stringify).called 1
 			assert.spy(stringify).called_with match.is_same { arg: 97 }
 
-			responses = provider\mock_decode_output!
+			responses = provider\mock_output!
 			assert.same {
 				response_of 1, { returned: '97' }
 			}, responses
@@ -106,7 +106,7 @@ describe 'lsp.listen', ->
 
 					assert.spy(waiting).called 1
 
-					responses = provider\mock_decode_output!
+					responses = provider\mock_output!
 					assert.same {
 						request_of 1, '$/waiting', null
 						response_of 5, { result: { returned: 'value' } }
@@ -128,7 +128,7 @@ describe 'lsp.listen', ->
 					listen.once!
 					listen.once!
 
-					responses = provider\mock_decode_output!
+					responses = provider\mock_output!
 					assert.shape responses, types.shape {
 						types.shape request_of 1, '$/waiting', null
 						types.shape notif_of 'window/logMessage', types.shape {
@@ -167,7 +167,7 @@ describe 'lsp.listen', ->
 
 					listen.once!
 
-					responses = provider\mock_decode_output!
+					responses = provider\mock_output!
 					assert.same {
 						request_of 1, '$/waiting', null
 						response_of 5, null
@@ -194,11 +194,11 @@ describe 'lsp.listen', ->
 					listen.once!
 					listen.once!
 
-					responses = provider\mock_decode_output!
 					assert.same {
 						request_of 1, '$/waiting', null
 						response_of 5, null
 						notif_of 'window/logMessage', {
+					responses = provider\mock_output!
 							type: MessageType.Error,
 							message: 'non-response thread errored'
 						}
