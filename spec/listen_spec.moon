@@ -5,6 +5,7 @@ import types from require 'tableshape'
 
 MessageType = require 'lsp-lib.enum.MessageType'
 ErrorCodes = require 'lsp-lib.enum.ErrorCodes'
+LSPErrorCodes = require 'lsp-lib.enum.LSPErrorCodes'
 
 io_lsp = require 'lsp-lib.io'
 listen = require 'lsp-lib.listen'
@@ -139,6 +140,37 @@ describe 'lsp.listen', ->
 						types.shape response_of 5, nil, types.shape {
 							code: ErrorCodes.InternalError
 							message: types.pattern '^something went wrong'
+						}
+					}
+
+				it 'handles graceful errors', ->
+					provider = set_provider({
+						request_of 5, '$/startWait', null
+						response_of 1, { returned: 'value' }
+					})
+
+					listen.routes = {
+						'$/startWait': ->
+							result, err = request '$/waiting', null
+							error {
+								code: LSPErrorCodes.RequestFailed
+								message: 'internal response expected'
+							}
+					}
+
+					listen.once!
+					listen.once!
+
+					responses = provider\mock_output!
+					assert.shape responses, types.shape {
+						types.shape request_of 1, '$/waiting', null
+						types.shape notif_of 'window/logMessage', types.shape {
+							type: MessageType.Error
+							message: types.pattern '^request error: internal response expected'
+						}
+						types.shape response_of 5, nil, types.shape {
+							code: LSPErrorCodes.RequestFailed
+							message: types.pattern '^internal response expected'
 						}
 					}
 
