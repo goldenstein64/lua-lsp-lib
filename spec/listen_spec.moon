@@ -149,7 +149,7 @@ describe 'lsp.listen', ->
 					io_lsp.provider = provider
 					provider
 
-				it 'resumes those that made a request', ->
+				it 'resumes when a response is received', ->
 					provider = set_provider!
 
 					local config
