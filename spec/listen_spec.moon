@@ -19,6 +19,11 @@ import
 	request_of, response_of, notif_of
 from require 'spec.mocks.io'
 
+set_provider = (...) ->
+	provider = MockProvider ...
+	io_lsp.provider = provider
+	provider
+
 describe 'lsp.listen', ->
 	before_each ->
 		listen.state = 'default'
@@ -50,10 +55,9 @@ describe 'lsp.listen', ->
 			assert.error -> listen.once!
 
 		it 'indexes routes when called', ->
-			provider = MockProvider {
+			provider = set_provider {
 				request_of 1, '$/stringify', { arg: 97 }
 			}
-			io_lsp.provider = provider
 
 			stringify = spy (params) -> { returned: tostring params.arg }
 			listen.routes = {
@@ -73,11 +77,10 @@ describe 'lsp.listen', ->
 		describe 'when handling responses', ->
 			describe 'for routing threads with a request', ->
 				it 'resumes when a response is received', ->
-					provider = MockProvider {
+					provider = set_provider {
 						request_of 5, '$/startWait', null
 						response_of 1, { returned: 'value' }
 					}
-					io_lsp.provider = provider
 
 					waiting = spy ->
 						result, err = request '$/waiting', null
@@ -112,11 +115,10 @@ describe 'lsp.listen', ->
 					}, responses
 
 				it 'handles messy errors', ->
-					provider = MockProvider {
+					provider = set_provider {
 						request_of 5, '$/startWait', null
 						response_of 1, { returned: 'value' }
 					}
-					io_lsp.provider = provider
 
 					listen.routes = {
 						'$/startWait': ->
