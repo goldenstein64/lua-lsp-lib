@@ -192,11 +192,11 @@ describe 'lsp.listen', ->
 					listen.once!
 					listen.once!
 
+					responses = provider\mock_output!
 					assert.same {
 						request_of 1, '$/waiting', null
 						response_of 5, null
 						notif_of 'window/logMessage', {
-					responses = provider\mock_output!
 							type: MessageType.Error,
 							message: 'non-response thread errored'
 						}
