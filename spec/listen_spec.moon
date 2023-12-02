@@ -53,10 +53,9 @@ describe 'lsp.listen', ->
 			provider = MockProvider {
 				request_of 1, '$/stringify', { arg: 97 }
 			}
-			stringify = spy (params) -> { returned: tostring params.arg }
-
 			io_lsp.provider = provider
 
+			stringify = spy (params) -> { returned: tostring params.arg }
 			listen.routes = {
 				'$/stringify': stringify
 			}
