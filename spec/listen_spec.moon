@@ -141,19 +141,13 @@ describe 'lsp.listen', ->
 					}
 
 			describe 'for anonymous threads with a request', ->
-				set_provider = ->
+				it 'resumes when a response is received', ->
 					provider = set_provider {
 						request_of 5, '$/spawnWaiting', null
 						response_of 1, { returned: 'value' }
 					}
-					io_lsp.provider = provider
-					provider
-
-				it 'resumes when a response is received', ->
-					provider = set_provider!
 
 					local config
-
 					listen.routes = {
 						'$/spawnWaiting': ->
 							async ->
@@ -179,7 +173,10 @@ describe 'lsp.listen', ->
 					assert.same { returned: 'value' }, config
 
 				it 'handles errors', ->
-					provider = set_provider!
+					provider = set_provider {
+						request_of 5, '$/spawnWaiting', null
+						response_of 1, { returned: 'value' }
+					}
 
 					listen.routes = {
 						'$/spawnWaiting': ->
