@@ -71,7 +71,7 @@ describe 'lsp.listen', ->
 			}, responses
 
 		describe 'when handling responses', ->
-			describe 'for routing threads', ->
+			describe 'for routing threads with a request', ->
 				it 'resumes when a response is received', ->
 					provider = MockProvider {
 						request_of 5, '$/startWait', null
