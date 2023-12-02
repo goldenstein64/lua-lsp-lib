@@ -140,9 +140,9 @@ describe 'lsp.listen', ->
 						}
 					}
 
-			describe 'for anonymous threads', ->
 				set_provider = ->
 					provider = MockProvider {
+			describe 'for anonymous threads with a request', ->
 						request_of 5, '$/spawnWaiting', null
 						response_of 1, { returned: 'value' }
 					}
