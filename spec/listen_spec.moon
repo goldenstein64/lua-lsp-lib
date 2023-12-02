@@ -75,7 +75,7 @@ describe 'lsp.listen', ->
 				response_of 1, { returned: '97' }
 			}, responses
 
-		describe 'when handling responses', ->
+		describe 'when handling responses from the client', ->
 			describe 'for routing threads with a request', ->
 				it 'resumes when a response is received', ->
 					provider = set_provider {
@@ -141,6 +141,11 @@ describe 'lsp.listen', ->
 							code: ErrorCodes.InternalError
 							message: types.pattern '^something went wrong'
 						}
+					}
+
+				it 'handles messy table errors', ->
+					provider = set_provider {
+						request_of
 					}
 
 				it 'handles graceful errors', ->
