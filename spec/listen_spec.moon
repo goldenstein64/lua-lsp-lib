@@ -2,6 +2,7 @@ import null from require 'cjson'
 
 spy = require 'luassert.spy'
 import types from require 'tableshape'
+import shape from types
 
 MessageType = require 'lsp-lib.enum.MessageType'
 ErrorCodes = require 'lsp-lib.enum.ErrorCodes'
@@ -73,7 +74,7 @@ describe 'lsp.listen', ->
 			assert.spy(stringify).called_with match.is_same { arg: 97 }
 
 			responses = provider\mock_output!
-			assert.shape responses, types.shape {
+			assert.shape responses, shape {
 				response_shape 1, { returned: '97' }
 			}
 
@@ -91,7 +92,7 @@ describe 'lsp.listen', ->
 				listen.once!
 
 				responses = provider\mock_output!
-				assert.shape responses, types.shape {
+				assert.shape responses, shape {
 					response_shape 5, { message: 'Hello, Bob.' }
 				}
 
@@ -121,7 +122,7 @@ describe 'lsp.listen', ->
 				listen.once!
 
 				responses = provider\mock_output!
-				assert.shape responses, types.shape { notif_error! }
+				assert.shape responses, shape { notif_error! }
 
 			it 'errors when a notification is not implemented', ->
 				provider = set_provider {
@@ -133,7 +134,7 @@ describe 'lsp.listen', ->
 				listen.once!
 
 				responses = provider\mock_output!
-				assert.shape responses, types.shape { notif_error! }
+				assert.shape responses, shape { notif_error! }
 
 			it 'errors when a request is not responded to', ->
 				provider = set_provider {
@@ -147,7 +148,7 @@ describe 'lsp.listen', ->
 				listen.once!
 
 				responses = provider\mock_output!
-				assert.shape responses, types.shape {
+				assert.shape responses, shape {
 					notif_error!
 					response_shape 5, nil, {
 						code: ErrorCodes.InternalError
@@ -165,7 +166,7 @@ describe 'lsp.listen', ->
 				listen.once!
 
 				responses = provider\mock_output!
-				assert.shape responses, types.shape {
+				assert.shape responses, shape {
 					notif_error!
 					response_shape 5, nil, {
 						code: ErrorCodes.MethodNotFound
@@ -208,9 +209,9 @@ describe 'lsp.listen', ->
 					assert.spy(waiting).called 1
 
 					responses = provider\mock_output!
-					assert.shape responses, types.shape {
+					assert.shape responses, shape {
 						request_shape 1, '$/waiting', null
-						response_shape 5, { result: types.shape { returned: 'value' } }
+						response_shape 5, { result: shape { returned: 'value' } }
 					}
 
 				it 'handles messy errors', ->
@@ -229,7 +230,7 @@ describe 'lsp.listen', ->
 					listen.once!
 
 					responses = provider\mock_output!
-					assert.shape responses, types.shape {
+					assert.shape responses, shape {
 						request_shape 1, '$/waiting', null
 						notif_error!
 						response_shape 5, nil, {
@@ -254,7 +255,7 @@ describe 'lsp.listen', ->
 					listen.once!
 
 					responses = provider\mock_output!
-					assert.shape responses, types.shape {
+					assert.shape responses, shape {
 						request_shape 1, '$/waiting', null
 						notif_error!
 						response_shape 5, nil, {
@@ -283,7 +284,7 @@ describe 'lsp.listen', ->
 					listen.once!
 
 					responses = provider\mock_output!
-					assert.shape responses, types.shape {
+					assert.shape responses, shape {
 						request_shape 1, '$/waiting', null
 						notif_error!
 						response_shape 5, nil, {
@@ -313,7 +314,7 @@ describe 'lsp.listen', ->
 					listen.once!
 
 					responses = provider\mock_output!
-					assert.shape responses, types.shape {
+					assert.shape responses, shape {
 						request_shape 1, '$/waiting', null
 						response_shape 5, null
 					}
@@ -344,7 +345,7 @@ describe 'lsp.listen', ->
 					listen.once!
 
 					responses = provider\mock_output!
-					assert.shape responses, types.shape {
+					assert.shape responses, shape {
 						request_shape 1, '$/waiting', null
 						response_shape 5, null
 						notif_error err_msg

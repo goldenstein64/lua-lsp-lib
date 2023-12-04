@@ -4,6 +4,7 @@ json = require 'cjson'
 import null from json
 
 import types from require 'tableshape'
+import shape from types
 
 lsp = require 'lsp-lib'
 io_lsp = require 'lsp-lib.io'
@@ -56,8 +57,8 @@ describe 'the system', ->
 		assert.thread_dead thread
 
 		responses = provider\mock_output!
-		assert.shape responses, types.shape {
-			response_shape 1, { capabilities: types.shape {} }
+		assert.shape responses, shape {
+			response_shape 1, { capabilities: shape {} }
 			response_shape 2, null
 		}
 
@@ -72,8 +73,8 @@ describe 'the system', ->
 		assert.thread_dead thread
 
 		responses = provider\mock_output!
-		assert.shape responses, types.shape {
-			response_shape 'init', { capabilities: types.shape {} }
+		assert.shape responses, shape {
+			response_shape 'init', { capabilities: shape {} }
 			response_shape 'stop', null
 		}
 
@@ -91,8 +92,8 @@ describe 'the system', ->
 		assert.thread_dead thread
 
 		responses = provider\mock_output!
-		assert.shape responses, types.shape {
-			response_shape 1, { capabilities: types.shape {} }
+		assert.shape responses, shape {
+			response_shape 1, { capabilities: shape {} }
 			response_shape 2, { returned: 'test value' }
 			response_shape 3, null
 		}
@@ -117,14 +118,14 @@ describe 'the system', ->
 		assert.thread_dead thread
 
 		responses = provider\mock_output!
-		assert.shape responses, types.shape {
-			response_shape 1, { capabilities: types.shape {} } -- initialize
+		assert.shape responses, shape {
+			response_shape 1, { capabilities: shape {} } -- initialize
 			-- receives '$/asyncRequest'
 			request_shape 1, '$/pendingRequest', null
 			response_shape 3, null -- '$/noop' is responded to in the meantime
-			response_shape 2, { result: types.shape { test_prop: 'foo' } } -- $/asyncRequest
+			response_shape 2, { result: shape { test_prop: 'foo' } } -- $/asyncRequest
 			response_shape 4, null -- shutdown
 		}
 
-		assert.shape request_state.waiting_threads, types.shape {}
-		assert.shape request_state.waiting_requests, types.shape {}
+		assert.shape request_state.waiting_threads, shape {}
+		assert.shape request_state.waiting_requests, shape {}
