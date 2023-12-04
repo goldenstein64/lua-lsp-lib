@@ -12,6 +12,8 @@ io_lsp.provider = nil
 
 request_state = require 'lsp-lib.request.state'
 
+listen_async = require 'spec.helper.listen_async'
+
 import
 	set_provider
 	request_of, notif_of, response_of
@@ -38,14 +40,6 @@ describe 'the system', ->
 
 	exit_notif = notif_of 'exit', null
 
-	listen = do
-		listen_wrapper = (...) -> lsp.listen ...
-		->
-			thread = coroutine.create listen_wrapper
-			ok, reason = coroutine.resume thread, false
-			assert.is_true ok, reason
-			thread
-
 	it 'works', ->
 		provider = set_provider {
 			initialize_request 1
@@ -53,7 +47,7 @@ describe 'the system', ->
 			exit_notif
 		}
 
-		thread = listen!
+		thread = listen_async!
 		assert.thread_dead thread
 
 		responses = provider\mock_output!
@@ -69,7 +63,7 @@ describe 'the system', ->
 			exit_notif
 		}
 
-		thread = listen!
+		thread = listen_async!
 		assert.thread_dead thread
 
 		responses = provider\mock_output!
@@ -88,7 +82,7 @@ describe 'the system', ->
 
 		lsp.response['$/customRequest'] = (params) -> { returned: params.test_prop }
 
-		thread = listen!
+		thread = listen_async!
 		assert.thread_dead thread
 
 		responses = provider\mock_output!
@@ -114,7 +108,7 @@ describe 'the system', ->
 			result, err = lsp.request '$/pendingRequest', null
 			{ :result, :err }
 
-		thread = listen!
+		thread = listen_async!
 		assert.thread_dead thread
 
 		responses = provider\mock_output!
