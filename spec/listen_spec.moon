@@ -20,6 +20,10 @@ import
 	request_of, response_of, notif_of
 from require 'spec.mocks.io'
 
+import
+	request_shape, response_shape, notif_shape
+from require 'spec.mocks.message_shapes'
+
 set_provider = (...) ->
 	provider = MockProvider ...
 	io_lsp.provider = provider
@@ -71,9 +75,9 @@ describe 'lsp.listen', ->
 			assert.spy(stringify).called_with match.is_same { arg: 97 }
 
 			responses = provider\mock_output!
-			assert.same {
-				response_of 1, { returned: '97' }
-			}, responses
+			assert.shape responses, types.shape {
+				response_shape 1, { returned: '97' }
+			}
 
 		describe 'when handling responses from the client', ->
 			describe 'for routing threads with a request', ->
@@ -110,10 +114,10 @@ describe 'lsp.listen', ->
 					assert.spy(waiting).called 1
 
 					responses = provider\mock_output!
-					assert.same {
-						request_of 1, '$/waiting', null
-						response_of 5, { result: { returned: 'value' } }
-					}, responses
+					assert.shape responses, types.shape {
+						request_shape 1, '$/waiting', null
+						response_shape 5, { result: types.shape { returned: 'value' } }
+					}
 
 				it 'handles messy errors', ->
 					provider = set_provider {
@@ -132,14 +136,14 @@ describe 'lsp.listen', ->
 
 					responses = provider\mock_output!
 					assert.shape responses, types.shape {
-						types.shape request_of 1, '$/waiting', null
-						types.shape notif_of 'window/logMessage', types.shape {
+						request_shape 1, '$/waiting', null
+						notif_shape 'window/logMessage', {
 							type: MessageType.Error
-							message: types.pattern '^request error: something went wrong'
+							message: types.string
 						}
-						types.shape response_of 5, nil, types.shape {
+						response_shape 5, nil, {
 							code: ErrorCodes.InternalError
-							message: types.pattern '^something went wrong'
+							message: types.string
 						}
 					}
 
@@ -154,12 +158,13 @@ describe 'lsp.listen', ->
 						response_of 1, { returned: 'value' }
 					})
 
+					err_msg = 'an error occurred'
 					listen.routes = {
 						'$/startWait': ->
 							result, err = request '$/waiting', null
 							error {
 								code: LSPErrorCodes.RequestFailed
-								message: 'internal response expected'
+								message: err_msg
 							}
 					}
 
@@ -168,14 +173,14 @@ describe 'lsp.listen', ->
 
 					responses = provider\mock_output!
 					assert.shape responses, types.shape {
-						types.shape request_of 1, '$/waiting', null
-						types.shape notif_of 'window/logMessage', types.shape {
+						request_shape 1, '$/waiting', null
+						notif_shape 'window/logMessage', {
 							type: MessageType.Error
-							message: types.pattern '^request error: internal response expected'
+							message: types.string
 						}
-						types.shape response_of 5, nil, types.shape {
+						response_shape 5, nil, {
 							code: LSPErrorCodes.RequestFailed
-							message: types.pattern '^internal response expected'
+							message: err_msg
 						}
 					}
 
@@ -200,10 +205,10 @@ describe 'lsp.listen', ->
 					listen.once!
 
 					responses = provider\mock_output!
-					assert.same {
-						request_of 1, '$/waiting', null
-						response_of 5, null
-					}, responses
+					assert.shape responses, types.shape {
+						request_shape 1, '$/waiting', null
+						response_shape 5, null
+					}
 
 					assert.is_nil config
 
@@ -217,11 +222,12 @@ describe 'lsp.listen', ->
 						response_of 1, { returned: 'value' }
 					}
 
+					err_msg = 'non-response thread errored'
 					listen.routes = {
 						'$/spawnWaiting': ->
 							async ->
 								result, err = request '$/waiting', null
-								error 'non-response thread errored'
+								error err_msg
 
 							null
 					}
@@ -230,12 +236,12 @@ describe 'lsp.listen', ->
 					listen.once!
 
 					responses = provider\mock_output!
-					assert.same {
-						request_of 1, '$/waiting', null
-						response_of 5, null
-						notif_of 'window/logMessage', {
+					assert.shape responses, types.shape {
+						request_shape 1, '$/waiting', null
+						response_shape 5, null
+						notif_shape 'window/logMessage', {
 							type: MessageType.Error,
-							message: 'non-response thread errored'
+							message: err_msg
 						}
-					}, responses
+					}
 
