@@ -64,7 +64,7 @@ describe 'the system', ->
 			response_shape 'stop', null
 		}
 
-	it 'calls my custom function when requested', ->
+	it 'calls an implemented response when requested', ->
 		provider = set_provider {
 			initialize_request 1
 			request_of 2, '$/customRequest', { test_prop: 'test value' }
