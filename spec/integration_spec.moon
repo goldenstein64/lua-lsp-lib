@@ -10,7 +10,7 @@ io_lsp.provider = nil
 request_state = require 'lsp-lib.request.state'
 
 import
-	MockProvider
+	set_provider
 	request_of, notif_of, response_of
 from require 'spec.mocks.io'
 
@@ -40,12 +40,11 @@ describe 'the system', ->
 			thread
 
 	it 'works', ->
-		provider = MockProvider {
+		provider = set_provider {
 			initialize_request 1
 			shutdown_request 2
 			exit_notif
 		}
-		io_lsp.provider = provider
 
 		thread = listen!
 		assert.thread_dead thread
@@ -57,12 +56,11 @@ describe 'the system', ->
 		}, responses
 
 	it 'works with string ids', ->
-		provider = MockProvider {
+		provider = set_provider {
 			initialize_request 'init'
 			shutdown_request 'stop'
 			exit_notif
 		}
-		io_lsp.provider = provider
 
 		thread = listen!
 		assert.thread_dead thread
@@ -74,13 +72,12 @@ describe 'the system', ->
 		}, responses
 
 	it 'calls my custom function when requested', ->
-		provider = MockProvider {
+		provider = set_provider {
 			initialize_request 1
 			request_of 2, '$/customRequest', { test_prop: 'test value' }
 			shutdown_request 3
 			exit_notif
 		}
-		io_lsp.provider = provider
 
 		lsp.response['$/customRequest'] = (params) -> { returned: params.test_prop }
 
@@ -95,7 +92,7 @@ describe 'the system', ->
 		}, responses
 
 	it 'waits for a request asynchronously', ->
-		provider = MockProvider {
+		provider = set_provider {
 			initialize_request 1
 			request_of 2, '$/asyncRequest', null
 			request_of 3, '$/noop', null
@@ -103,7 +100,6 @@ describe 'the system', ->
 			shutdown_request 4
 			exit_notif
 		}
-		io_lsp.provider = provider
 
 		lsp.response['$/noop'] = (params) -> null
 
