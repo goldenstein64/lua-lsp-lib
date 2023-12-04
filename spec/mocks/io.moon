@@ -59,4 +59,19 @@ set_provider = (...) ->
 	io_lsp.provider = provider
 	provider
 
-{ :MockProvider, :set_provider, :request_of, :notif_of, :response_of }
+initialize_request = (id) ->
+	request_of id, 'initialize', {
+		processId: null
+		rootUri: null
+		capabilities: {}
+	}
+
+shutdown_request = (id) -> request_of id, 'shutdown', null
+
+exit_notif = notif_of 'exit', null
+
+{
+	:MockProvider, :set_provider
+	:request_of, :notif_of, :response_of
+	:initialize_request, :shutdown_request, :exit_notif
+}

@@ -17,6 +17,7 @@ listen_async = require 'spec.helper.listen_async'
 import
 	set_provider
 	request_of, notif_of, response_of
+	initialize_request, shutdown_request, exit_notif
 from require 'spec.mocks.io'
 
 import
@@ -28,17 +29,6 @@ describe 'the system', ->
 		io_lsp.provider = nil
 		lsp.response[k] = nil for k in pairs lsp.response
 		request_state.id = 1
-
-	initialize_request = (id) ->
-		request_of id, 'initialize', {
-			processId: null
-			rootUri: null
-			capabilities: {}
-		}
-
-	shutdown_request = (id) -> request_of id, 'shutdown', null
-
-	exit_notif = notif_of 'exit', null
 
 	it 'works', ->
 		provider = set_provider {
