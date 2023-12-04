@@ -29,6 +29,9 @@ set_provider = (...) ->
 	io_lsp.provider = provider
 	provider
 
+notif_error = (message=types.string) ->
+	notif_shape 'window/logMessage', { type: MessageType.Error, :message }
+
 describe 'lsp.listen', ->
 	before_each ->
 		listen.state = 'default'
@@ -123,12 +126,7 @@ describe 'lsp.listen', ->
 				listen.once!
 
 				responses = provider\mock_output!
-				assert.shape responses, types.shape {
-					notif_shape 'window/logMessage', {
-						type: MessageType.Error
-						message: types.string
-					}
-				}
+				assert.shape responses, types.shape { notif_error! }
 
 			it 'errors when a notification is not implemented', ->
 				provider = set_provider {
@@ -140,12 +138,7 @@ describe 'lsp.listen', ->
 				listen.once!
 
 				responses = provider\mock_output!
-				assert.shape responses, types.shape {
-					notif_shape 'window/logMessage', {
-						type: MessageType.Error
-						message: types.string
-					}
-				}
+				assert.shape responses, types.shape { notif_error! }
 
 			it 'errors when a request is not responded to', ->
 				provider = set_provider {
@@ -160,10 +153,7 @@ describe 'lsp.listen', ->
 
 				responses = provider\mock_output!
 				assert.shape responses, types.shape {
-					notif_shape 'window/logMessage', {
-						type: MessageType.Error
-						message: types.string
-					}
+					notif_error!
 					response_shape 5, nil, {
 						code: ErrorCodes.InternalError
 						message: types.string
@@ -181,10 +171,7 @@ describe 'lsp.listen', ->
 
 				responses = provider\mock_output!
 				assert.shape responses, types.shape {
-					notif_shape 'window/logMessage', {
-						type: MessageType.Error
-						message: types.string
-					}
+					notif_error!
 					response_shape 5, nil, {
 						code: ErrorCodes.MethodNotFound
 						message: types.string
@@ -249,10 +236,7 @@ describe 'lsp.listen', ->
 					responses = provider\mock_output!
 					assert.shape responses, types.shape {
 						request_shape 1, '$/waiting', null
-						notif_shape 'window/logMessage', {
-							type: MessageType.Error
-							message: types.string
-						}
+						notif_error!
 						response_shape 5, nil, {
 							code: ErrorCodes.InternalError
 							message: types.string
@@ -277,10 +261,7 @@ describe 'lsp.listen', ->
 					responses = provider\mock_output!
 					assert.shape responses, types.shape {
 						request_shape 1, '$/waiting', null
-						notif_shape 'window/logMessage', {
-							type: MessageType.Error
-							message: types.string
-						}
+						notif_error!
 						response_shape 5, nil, {
 							code: ErrorCodes.InternalError
 							message: types.string
@@ -309,10 +290,7 @@ describe 'lsp.listen', ->
 					responses = provider\mock_output!
 					assert.shape responses, types.shape {
 						request_shape 1, '$/waiting', null
-						notif_shape 'window/logMessage', {
-							type: MessageType.Error
-							message: types.string
-						}
+						notif_error!
 						response_shape 5, nil, {
 							code: LSPErrorCodes.RequestFailed
 							message: err_msg
@@ -374,9 +352,6 @@ describe 'lsp.listen', ->
 					assert.shape responses, types.shape {
 						request_shape 1, '$/waiting', null
 						response_shape 5, null
-						notif_shape 'window/logMessage', {
-							type: MessageType.Error,
-							message: err_msg
-						}
+						notif_error err_msg
 					}
 
