@@ -16,18 +16,13 @@ async = require 'lsp-lib.async'
 import waiting_threads, waiting_requests from request_state
 
 import
-	MockProvider
+	set_provider
 	request_of, response_of, notif_of
 from require 'spec.mocks.io'
 
 import
 	request_shape, response_shape, notif_shape
 from require 'spec.mocks.message_shapes'
-
-set_provider = (...) ->
-	provider = MockProvider ...
-	io_lsp.provider = provider
-	provider
 
 notif_error = (message=types.string) ->
 	notif_shape 'window/logMessage', { type: MessageType.Error, :message }

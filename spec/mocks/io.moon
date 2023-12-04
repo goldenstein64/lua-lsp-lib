@@ -1,6 +1,7 @@
 import insert, concat from table
 
 json = require 'cjson'
+io_lsp = require 'lsp-lib.io'
 
 http_encode = (content) -> "Content-Length: #{#content}\n\n#{content}"
 
@@ -53,4 +54,9 @@ class MockProvider
 
 		[json.decode response for response in *responses]
 
-{ :MockProvider, :request_of, :notif_of, :response_of }
+set_provider = (...) ->
+	provider = MockProvider ...
+	io_lsp.provider = provider
+	provider
+
+{ :MockProvider, :set_provider, :request_of, :notif_of, :response_of }
