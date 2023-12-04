@@ -149,7 +149,30 @@ describe 'lsp.listen', ->
 
 				it 'handles messy table errors', ->
 					provider = set_provider {
-						request_of
+						request_of 5, '$/startWait', null
+						response_of 1, { returned: 'value' }
+					}
+
+					listen.routes = {
+						'$/startWait': ->
+							result, err = request '$/waiting', null
+							error { '???' }
+					}
+
+					listen.once!
+					listen.once!
+
+					responses = provider\mock_output!
+					assert.shape responses, types.shape {
+						request_shape 1, '$/waiting', null
+						notif_shape 'window/logMessage', {
+							type: MessageType.Error
+							message: types.string
+						}
+						response_shape 5, nil, {
+							code: ErrorCodes.InternalError
+							message: types.string
+						}
 					}
 
 				it 'handles graceful errors', ->
