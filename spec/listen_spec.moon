@@ -19,11 +19,14 @@ import waiting_threads, waiting_requests from request_state
 import
 	set_provider
 	request_of, response_of, notif_of
+	initialize_request, shutdown_request, exit_notif
 from require 'spec.mocks.io'
 
 import
 	request_shape, response_shape, notif_shape
 from require 'spec.mocks.message_shapes'
+
+listen_async = require 'spec.helper.listen_async'
 
 notif_error = (message=types.string) ->
 	notif_shape 'window/logMessage', { type: MessageType.Error, :message }
@@ -351,3 +354,28 @@ describe 'lsp.listen', ->
 						notif_error err_msg
 					}
 
+	describe 'call', ->
+		it 'errors when exiting initialize state', ->
+			provider = set_provider { exit_notif }
+
+			thread, ok, reason = listen_async!
+			assert.is_false ok
+			assert.thread_dead thread
+
+			responses = provider\mock_output!
+			assert.shape responses, shape {}
+
+		it 'errors when exiting default state', ->
+			provider = set_provider {
+				initialize_request 1
+				exit_notif
+			}
+
+			thread, ok, reason = listen_async!
+			assert.is_false ok
+			assert.thread_dead thread
+
+			responses = provider\mock_output!
+			assert.shape responses, shape {
+				response_shape 1, { capabilities: shape {} }
+			}
