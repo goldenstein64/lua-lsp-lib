@@ -47,7 +47,8 @@ describe 'the system', ->
 			exit_notif
 		}
 
-		thread = listen_async!
+		thread, ok, reason = listen_async!
+		assert.is_true ok, reason
 		assert.thread_dead thread
 
 		responses = provider\mock_output!
@@ -63,7 +64,8 @@ describe 'the system', ->
 			exit_notif
 		}
 
-		thread = listen_async!
+		thread, ok, reason = listen_async!
+		assert.is_true ok, reason
 		assert.thread_dead thread
 
 		responses = provider\mock_output!
@@ -82,7 +84,8 @@ describe 'the system', ->
 
 		lsp.response['$/customRequest'] = (params) -> { returned: params.test_prop }
 
-		thread = listen_async!
+		thread, ok, reason = listen_async!
+		assert.is_true ok, reason
 		assert.thread_dead thread
 
 		responses = provider\mock_output!
@@ -108,7 +111,8 @@ describe 'the system', ->
 			result, err = lsp.request '$/pendingRequest', null
 			{ :result, :err }
 
-		thread = listen_async!
+		thread, ok, reason = listen_async!
+		assert.is_true ok, reaso
 		assert.thread_dead thread
 
 		responses = provider\mock_output!
