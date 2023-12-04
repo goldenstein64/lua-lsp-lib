@@ -109,7 +109,7 @@ describe 'lsp.listen', ->
 				listen.once!
 
 				responses = provider\mock_output!
-				assert.equal nil, next responses -- responses should be empty
+				assert.shape responses, shape {} -- responses should be empty
 				assert.equal 'string', ev_type
 
 			it 'errors when a notification is responded to', ->
@@ -203,8 +203,8 @@ describe 'lsp.listen', ->
 
 					listen.once!
 
-					assert.is_nil next waiting_threads
-					assert.is_nil next waiting_requests
+					assert.shape waiting_threads, shape {}
+					assert.shape waiting_requests, shape {}
 
 					assert.spy(waiting).called 1
 
