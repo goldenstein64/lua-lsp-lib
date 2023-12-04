@@ -3,6 +3,8 @@ import concat from table
 json = require 'cjson'
 import null from json
 
+import types from require 'tableshape'
+
 lsp = require 'lsp-lib'
 io_lsp = require 'lsp-lib.io'
 io_lsp.provider = nil
@@ -13,6 +15,10 @@ import
 	set_provider
 	request_of, notif_of, response_of
 from require 'spec.mocks.io'
+
+import
+	request_shape, notif_shape, response_shape
+from require 'spec.mocks.message_shapes'
 
 describe 'the system', ->
 	before_each ->
@@ -50,10 +56,10 @@ describe 'the system', ->
 		assert.thread_dead thread
 
 		responses = provider\mock_output!
-		assert.same {
-			response_of 1, { capabilities: {} }
-			response_of 2, null
-		}, responses
+		assert.shape responses, types.shape {
+			response_shape 1, { capabilities: types.shape {} }
+			response_shape 2, null
+		}
 
 	it 'works with string ids', ->
 		provider = set_provider {
@@ -66,10 +72,10 @@ describe 'the system', ->
 		assert.thread_dead thread
 
 		responses = provider\mock_output!
-		assert.same {
-			response_of 'init', { capabilities: {} }
-			response_of 'stop', null
-		}, responses
+		assert.shape responses, types.shape {
+			response_shape 'init', { capabilities: types.shape {} }
+			response_shape 'stop', null
+		}
 
 	it 'calls my custom function when requested', ->
 		provider = set_provider {
@@ -85,11 +91,11 @@ describe 'the system', ->
 		assert.thread_dead thread
 
 		responses = provider\mock_output!
-		assert.same {
-			response_of 1, { capabilities: {} }
-			response_of 2, { returned: 'test value' }
-			response_of 3, null
-		}, responses
+		assert.shape responses, types.shape {
+			response_shape 1, { capabilities: types.shape {} }
+			response_shape 2, { returned: 'test value' }
+			response_shape 3, null
+		}
 
 	it 'waits for a request asynchronously', ->
 		provider = set_provider {
@@ -111,14 +117,14 @@ describe 'the system', ->
 		assert.thread_dead thread
 
 		responses = provider\mock_output!
-		assert.same {
-			response_of 1, { capabilities: {} } -- initialize
+		assert.shape responses, types.shape {
+			response_shape 1, { capabilities: types.shape {} } -- initialize
 			-- receives '$/asyncRequest'
-			request_of 1, '$/pendingRequest', null
-			response_of 3, null -- '$/noop' is responded to in the meantime
-			response_of 2, { result: { test_prop: 'foo' } } -- $/asyncRequest
-			response_of 4, null -- shutdown
-		}, responses
+			request_shape 1, '$/pendingRequest', null
+			response_shape 3, null -- '$/noop' is responded to in the meantime
+			response_shape 2, { result: types.shape { test_prop: 'foo' } } -- $/asyncRequest
+			response_shape 4, null -- shutdown
+		}
 
-		assert.is_nil next request_state.waiting_threads
-		assert.is_nil next request_state.waiting_requests
+		assert.shape request_state.waiting_threads, types.shape {}
+		assert.shape request_state.waiting_requests, types.shape {}
