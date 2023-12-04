@@ -79,6 +79,118 @@ describe 'lsp.listen', ->
 				response_shape 1, { returned: '97' }
 			}
 
+		describe 'when handling responses from routes', ->
+			it 'handles requests successfully', ->
+				provider = set_provider {
+					request_of 5, '$/greet', { name: 'Bob' }
+				}
+
+				listen.routes = {
+					'$/greet': (params) ->
+						{ message: "Hello, #{params.name}." }
+				}
+
+				listen.once!
+
+				responses = provider\mock_output!
+				assert.shape responses, types.shape {
+					response_shape 5, { message: 'Hello, Bob.' }
+				}
+
+			it 'handles notifications successfully', ->
+				provider = set_provider {
+					notif_of '$/event', { type: 'string' }
+				}
+
+				local ev_type
+				listen.routes = {
+					'$/event': (params) -> ev_type = params.type
+				}
+
+				listen.once!
+
+				responses = provider\mock_output!
+				assert.equal nil, next responses -- responses should be empty
+				assert.equal 'string', ev_type
+
+			it 'errors when a notification is responded to', ->
+				provider = set_provider {
+					notif_of '$/event', { type: 'string' }
+				}
+
+				listen.routes = { '$/event': -> null }
+
+				listen.once!
+
+				responses = provider\mock_output!
+				assert.shape responses, types.shape {
+					notif_shape 'window/logMessage', {
+						type: MessageType.Error
+						message: types.string
+					}
+				}
+
+			it 'errors when a notification is not implemented', ->
+				provider = set_provider {
+					notif_of '$/event', { type: 'string' }
+				}
+
+				listen.routes = {}
+
+				listen.once!
+
+				responses = provider\mock_output!
+				assert.shape responses, types.shape {
+					notif_shape 'window/logMessage', {
+						type: MessageType.Error
+						message: types.string
+					}
+				}
+
+			it 'errors when a request is not responded to', ->
+				provider = set_provider {
+					request_of 5, '$/customRequest', null
+				}
+
+				listen.routes = {
+					'$/customRequest': -> nil
+				}
+
+				listen.once!
+
+				responses = provider\mock_output!
+				assert.shape responses, types.shape {
+					notif_shape 'window/logMessage', {
+						type: MessageType.Error
+						message: types.string
+					}
+					response_shape 5, nil, {
+						code: ErrorCodes.InternalError
+						message: types.string
+					}
+				}
+
+			it 'errors when a request is not implemented', ->
+				provider = set_provider {
+					request_of 5, '$/customRequest', null
+				}
+
+				listen.routes = {}
+
+				listen.once!
+
+				responses = provider\mock_output!
+				assert.shape responses, types.shape {
+					notif_shape 'window/logMessage', {
+						type: MessageType.Error
+						message: types.string
+					}
+					response_shape 5, nil, {
+						code: ErrorCodes.MethodNotFound
+						message: types.string
+					}
+				}
+
 		describe 'when handling responses from the client', ->
 			describe 'for routing threads with a request', ->
 				it 'resumes when a response is received', ->

@@ -43,14 +43,11 @@ local ERR_UNKNOWN_PROTOCOL = "invoked an unknown protocol '%s'"
 ---@return nil | fun(params: any): any
 local function get_route(req)
 	local route = listen.routes[req.method]
-	local is_required = req.method:sub(1, 1) ~= "$"
 	if not route then
 		local is_request = req.id ~= nil
 		if is_request then
-			if is_required then
-				io_lsp:write(errors.MethodNotFound(req.id, req.method))
-				notify.log.error(ERR_UNKNOWN_PROTOCOL:format(req.method))
-			end
+			notify.log.error(ERR_UNKNOWN_PROTOCOL:format(req.method))
+			io_lsp:write(errors.MethodNotFound(req.id, req.method))
 		else
 			notify.log.error(ERR_UNKNOWN_PROTOCOL:format(req.method))
 		end
