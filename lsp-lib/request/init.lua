@@ -134,103 +134,79 @@ function request.create_work_done_progress(token)
 	return request("window/workDoneProgress/create", { token = token })
 end
 
----@class lsp*.Range
----@field [1] integer
----@field [2] integer
-
 ---@class lsp*.Request.show_document.options
+---Indicates to show the resource in an external program. To show, for example,
+---`https://code.visualstudio.com/` in the default WEB browser set `external`
+---to `true`.
 ---@field external? boolean
+---An optional property to indicate whether the editor showing the document
+---should take focus or not. Clients might ignore this property if an external
+---program is started.
 ---@field takeFocus? boolean
----@field selection? lsp*.Range
+---An optional selection range if the document is a text document. Clients
+---might ignore the property if an external program is started or the file is
+---not a text file.
+---@field selection? lsp.Range
 
 ---sends a `window/showDocument` request
----@param uri lsp.URI
+---@param uri lsp.URI -- The uri to show.
 ---@param options lsp*.Request.show_document.options
 ---@return lsp.Response.window-showDocument.result? result
 ---@return lsp.Response.window-showDocument.error? error
 function request.show_document(uri, options)
-	---@type lsp.Range?
-	local selection do
-		local selection_opt = options.selection
-		if selection_opt then
-			selection = transform_range(selection_opt[1], selection_opt[2])
-		end
-	end
-
-	return request("window/showDocument", {
+	---@type lsp.Request.window-showDocument.params
+	local params = {
 		uri = uri,
 		external = options.external,
 		takeFocus = options.takeFocus,
-		selection = selection,
-	})
+		selection = options.selection,
+	}
+
+	return request("window/showDocument", params)
 end
 
----@class lsp*.TextEdit
----@field newText string
----@field range lsp*.Range
-
----@class lsp*.AnnotatedTextEdit : lsp*.TextEdit
----@field annotationId lsp.ChangeAnnotationIdentifier
-
----@class lsp*.TextDocumentEdit
----@field textDocument lsp.OptionalVersionedTextDocumentIdentifier
----@field edits (lsp*.TextEdit | lsp*.AnnotatedTextEdit)[]
-
----@class lsp*.WorkspaceEdit
----@field changeAnnotations? { [string]: lsp.ChangeAnnotation }
----@field changes? { [lsp.DocumentUri]: lsp*.TextEdit[] }
----@field documentChanges? (lsp.CreateFile | lsp.DeleteFile | lsp.RenameFile | lsp*.TextDocumentEdit)[]
-
 ---sends a `workspace/applyEdit` request
----@param text string
 ---@param label string
----@param edit lsp*.WorkspaceEdit
+---@param edit lsp.WorkspaceEdit
 ---@return lsp.Response.workspace-applyEdit.result? result
 ---@return lsp.Response.workspace-applyEdit.error? error
-function request.apply_edit(text, label, edit)
-	-- apply a transformation to change the argument form to an LSP form
-	if edit.changes then
-		for _, change in pairs(edit.changes) do
-			for _, textEdit in ipairs(change) do
-				local sentTextEdit = textEdit --[[@as lsp.TextEdit]]
-				sentTextEdit.range = transform_range.to_lsp(text, table.unpack(textEdit.range, 1, 2))
-			end
-		end
-	end
-
-	if edit.documentChanges then
-		for _, change in ipairs(edit.documentChanges) do
-			if change.edits then
-				for _, textEdit in ipairs(change.edits) do
-					local sentTextEdit = textEdit --[[@as lsp.TextEdit | lsp.AnnotatedTextEdit]]
-					sentTextEdit.range = transform_range.to_lsp(text, table.unpack(textEdit.range, 1, 2))
-				end
-			end
-		end
-	end
-
-	return request("workspace/applyEdit", {
-		edit = edit --[[@as lsp.WorkspaceEdit]],
+function request.apply_edit(label, edit)
+	---@type lsp.Request.workspace-applyEdit.params
+	local params = {
+		edit = edit,
 		label = label,
-	})
+	}
+
+	return request("workspace/applyEdit", params)
 end
 
 ---namespace for dynamic registration of server capabilities
 request.capability = {
 	---sends a `client/registerCapability` request
+	---@param registration lsp.Registration
 	---@param ... lsp.Registration
 	---@return lsp.Response.client-registerCapability.result? result
 	---@return lsp.Response.client-registerCapability.error? error
-	register = function(...)
-		return request["client/registerCapability"] { registrations = { ... } }
+	register = function(registration, ...)
+		---@type lsp.Request.client-registerCapability.params
+		local params = {
+			registrations = { registration, ... }
+		}
+		return request("client/registerCapability", params)
 	end,
 
 	---sends a `client/unregisterCapability` request
+	---@param unregistration lsp.Unregistration
 	---@param ... lsp.Unregistration
 	---@return lsp.Response.client-unregisterCapability.result? result
 	---@return lsp.Response.client-unregisterCapability.error? error
-	unregister = function(...)
-		return request("client/unregisterCapability", { unregisterations = { ... } })
+	unregister = function(unregistration, ...)
+		---@type lsp.Request.client-unregisterCapability.params
+		local params = {
+			unregisterations = { unregistration, ... }
+		}
+
+		return request("client/unregisterCapability", params)
 	end
 }
 
