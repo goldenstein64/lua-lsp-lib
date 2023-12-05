@@ -72,6 +72,7 @@ build = {
       ["lsp-lib.transform.position"] = "lsp-lib/transform/position.lua",
       ["lsp-lib.transform.range"] = "lsp-lib/transform/range.lua",
 
+      ["lsp-lib.async"] = "lsp-lib/async.lua",
       ["lsp-lib.notify"] = "lsp-lib/notify.lua",
       ["lsp-lib.response"] = "lsp-lib/response.lua",
 
