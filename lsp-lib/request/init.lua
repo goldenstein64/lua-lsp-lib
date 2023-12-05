@@ -26,17 +26,17 @@ local requests = {
 	"client/registerCapability", -- .capability.register
 	"client/unregisterCapability", -- .capability.unregister
 	"workspace/applyEdit", -- .apply_edit
-	"workspace/foldingRange/refresh", -- .refresh.*
-	"workspace/semanticTokens/refresh", -- .refresh.*
-	"workspace/inlineValue/refresh", -- .refresh.*
-	"workspace/inlayHint/refresh", -- .refresh.*
-	"workspace/diagnostic/refresh", -- .refresh.*
-	"workspace/codeLens/refresh", -- .refresh.*
+	"workspace/foldingRange/refresh", -- .refresh.folding_range
+	"workspace/semanticTokens/refresh", -- .refresh.semantic_tokens
+	"workspace/inlineValue/refresh", -- .refresh.inline_value
+	"workspace/inlayHint/refresh", -- .refresh.inlay_hint
+	"workspace/diagnostic/refresh", -- .refresh.diagnostic
+	"workspace/codeLens/refresh", -- .refresh.code_lens
 }
 
 ---sends requests to the client. All requests block the current thread and
----return the response's result and error object. An `async` utility is
----provided for sending requests asynchronously.
+---return the response's result and error object. `lsp-lib.async` is provided
+---for sending requests asynchronously.
 ---
 ---When indexed with an LSP-specified method, it returns a function that takes
 ---a `params` argument. This form is entirely type-checked by LuaLS.
@@ -46,8 +46,7 @@ local requests = {
 ---loosely type-checked by LuaLS and is typically used by other request
 ---functions.
 ---
----This table also contains utility functions for common requests like getting
----the client's configuration.
+---This table also contains request functions for all LSP-specified methods.
 ---@class lsp*.Request
 local request = {
 
