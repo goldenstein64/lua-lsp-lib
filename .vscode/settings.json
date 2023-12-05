@@ -1,6 +1,6 @@
 {
 	"Lua.workspace.library": [
-		"$LUA_ENVS/cjson/library"
+		"$USERPROFILE/AppData/Roaming/Code/User/globalStorage/sumneko.lua/addonManager/addons/lua-cjson/module/library"
 	],
 	"Lua.diagnostics.globals": [],
 	"Lua.workspace.checkThirdParty": false,
