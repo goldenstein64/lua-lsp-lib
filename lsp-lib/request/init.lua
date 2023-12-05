@@ -150,27 +150,33 @@ end
 
 ---sends a `window/showDocument` request
 ---@param uri lsp.URI -- The uri to show.
----@param options lsp*.Request.show_document.options
+---@param options? lsp*.Request.show_document.options
 ---@return lsp.Response.window-showDocument.result? result
 ---@return lsp.Response.window-showDocument.error? error
 function request.show_document(uri, options)
+
 	---@type lsp.Request.window-showDocument.params
-	local params = {
-		uri = uri,
-		external = options.external,
-		takeFocus = options.takeFocus,
-		selection = options.selection,
-	}
+	local params
+	if options then
+		params = {
+			uri = uri,
+			external = options.external,
+			takeFocus = options.takeFocus,
+			selection = options.selection,
+		}
+	else
+		params = { uri = uri }
+	end
 
 	return request("window/showDocument", params)
 end
 
 ---sends a `workspace/applyEdit` request
----@param label string
 ---@param edit lsp.WorkspaceEdit
+---@param label? string
 ---@return lsp.Response.workspace-applyEdit.result? result
 ---@return lsp.Response.workspace-applyEdit.error? error
-function request.apply_edit(label, edit)
+function request.apply_edit(edit, label)
 	---@type lsp.Request.workspace-applyEdit.params
 	local params = {
 		edit = edit,
