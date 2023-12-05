@@ -2,9 +2,9 @@
 import null from require 'cjson'
 
 lsp = require 'lsp-lib'
-import notify, request, response, listen, async from lsp
+import notify, request, listen, async from lsp
 
-class Response extends response
+class Response extends lsp.response
 	'initialize': (params) ->
 		-- make a (non-blocking) LSP request
 		async -> lsp.config = assert request.config!

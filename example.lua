@@ -17,9 +17,7 @@ lsp.response['initialize'] = function(params)
 
 	-- annotation is needed here due to a shortcoming of LuaLS
 	---@type lsp.Response.initialize.result
-	return {
-		capabilities = {}
-	}
+	return { capabilities = {} }
 end
 
 lsp.response['shutdown'] = function()
