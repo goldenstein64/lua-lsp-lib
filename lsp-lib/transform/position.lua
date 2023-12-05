@@ -30,7 +30,8 @@ end
 local transform_position = {}
 
 ---takes an LSP Position and converts it to a byte position in the range of
----`[1, n + 1]`
+---`[1, n + 1]`. It errors with a response error object if the given `position`
+---is erroneous according to `text`.
 ---
 ---`n + 1` represents the end of the current line.
 ---@param text string
@@ -47,7 +48,7 @@ function transform_position.from_lsp(text, position)
 			})
 		end
 	end
-	local line_end = match_end_line(text, line_start) or utf8.len(text) + 1
+	local line_end = match_end_line(text, line_start) or string.len(text) + 1
 
 	local character = position.character
 	local end_char = line_end - line_start
@@ -61,8 +62,9 @@ function transform_position.from_lsp(text, position)
 	return utf8.offset(text, character + 1, line_start)
 end
 
----takes a byte position in the range of `[1, n + 1]` and converts it into an
----LSP Position
+---takes a byte position in the range of `[1, n + 1]` and converts it to an LSP
+---Position. It errors with a response error object if the given `position` is
+---erroneous according to `text`.
 ---
 ---`n + 1` represents the end of the current line.
 ---@param text string
