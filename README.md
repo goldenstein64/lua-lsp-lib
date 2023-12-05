@@ -1,29 +1,32 @@
 # lua-lsp-lib
 
-A library aimed at making the construction of language servers easier.
+A low-level library aimed at making the construction of language servers in Lua easier.
 
 Note: This project is a work-in-progress. Expect features to change at any time!
 
-## Setup
+## Usage
+
+`lsp-lib` is a library that can be installed via LuaRocks, like shown below.
 
 ```sh
 # Note that this hasn't been uploaded to LuaRocks yet
 $ luarocks install lsp-lib
 ```
 
-Lua language server definitions are included with the rock in `lua_modules`. The path is roughly outlined in the example below.
+[Lua Language Server](https://github.com/LuaLS/lua-language-server) definitions are included with the rock in `lua_modules`. The path is roughly outlined in the example below.
 
 ```jsonc
 // in your .vscode/settings.json,
 {
   "Lua.workspace.library": [
+    // path to the CJSON addon, e.g. on Windows,
+		"$USERPROFILE/AppData/Roaming/Code/User/globalStorage/sumneko.lua/addonManager/addons/lua-cjson/module/library",
+
     // this should point to this rock's types folder
     "lua_modules/lib/luarocks/rocks-5.X/lsp-lib/X.X.X/types"
   ]
 }
 ```
-
-## Usage
 
 These examples showcase some of the functions exposed by this library.
 
@@ -104,13 +107,25 @@ lsp.debug true
 listen!
 ```
 
-Documentation can be found [here](https://goldenstein64.github.io/lua-lsp-lib).
+Documentation can be found [here](https://goldenstein64.github.io/lua-lsp-lib). (This is also not set up yet!)
 
-## Testing
+## Development Setup
 
-This repo uses Busted/MoonScript for its tests. They can be run using the below command.
+```sh
+git clone https://github.com/goldenstein64/lua-lsp-lib
+
+# set up `.env` or `.envrc` with your environment manager
+# For Windows, I recommend `PS-Dotenv`
+
+luarocks build --deps-only --pin
+```
+
+The `lsp-lib/` folder contains all the source code.
+
+### Testing
+
+Tests are located in the `spec/` folder. Busted and MoonScript are used to run them. They can be run using the following command.
 
 ```sh
 $ luarocks test
 ```
-
