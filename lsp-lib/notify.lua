@@ -2,13 +2,13 @@ local io_lsp = require("lsp-lib.io")
 local MessageType = require("lsp-lib.enum.MessageType")
 
 local notifications = {
-	"window/showMessage",
-	"window/logMessage",
-	"telemetry/event",
-	"textDocument/publishDiagnostics",
-	"$/logTrace",
-	"$/cancelRequest",
-	"$/progress",
+	"window/showMessage", -- .show.*
+	"window/logMessage", -- .log.*
+	"telemetry/event", -- .telemetry
+	"textDocument/publishDiagnostics", -- .diagnostics
+	"$/logTrace", -- .log_trace
+	"$/cancelRequest", -- .cancel_request
+	"$/progress", -- .progress
 }
 
 ---@enum (key) lsp*.MessageType
@@ -20,7 +20,8 @@ local message_type_map = {
 	debug = MessageType.Debug
 }
 
----sends notifications to the client
+---sends notifications to the client. Unlike requests, notifications never
+---block the current thread and return nothing.
 ---
 ---When indexed with an LSP-specified method, it returns a function that takes
 ---a `params` argument. This form is entirely type-checked by LuaLS.
@@ -29,8 +30,30 @@ local message_type_map = {
 ---`params` argument. This form is loosely type-checked by LuaLS and is
 ---typically used by other notification functions.
 ---
----This table also contains utility functions for common notifications like
----logging messages.
+---This table also contains utility functions for all LSP-specified methods.
+---
+---Example:
+---
+---```lua
+----- three ways to send a `window/logMessage` notification:
+---
+---local MessageType = require('lsp-lib.enum.MessageType')
+---
+----- calling `notify`, loosely typed
+---notify('window/logMessage', {
+---  type = MessageType.Info,
+---  message = "server version: X.Y.Z",
+---})
+---
+----- indexing `notify`, strictly typed with Intellisense
+---notify['window/logMessage'] {
+---  type = MessageType.Info,
+---  message = "server version: X.Y.Z",
+---}
+---
+----- calling `notify.log.*`, strictly typed with Intellisense
+---notify.log.info("server version: X.Y.Z")
+---```
 ---@class lsp*.Notify
 local notify = {
 	---sends a `window/logMessage` notification, where the message type as the
@@ -97,10 +120,11 @@ end
 ---
 ---local id = request_state.id
 ---lsp.async(function()
----  assert(lsp.request.refresh.code_lens())
+---  local ok, error = lsp.request.refresh.code_lens()
+---  print(ok, error)
 ---end)
 ---
------ makes the above async function error.
+----- makes the above async function print `nil table: 0x1234...`.
 ---lsp.notify.cancel_request(id)
 ---```
 ---@param id string | integer
@@ -109,6 +133,10 @@ function notify.cancel_request(id)
 end
 
 ---sends a `textDocument/publishDiagnostics` notification
+---
+---Note: It is recommended to send each diagnostic object's `range` field
+---through `lsp-lib.transform.range`'s `to_lsp` function to create an
+---LSP-compliant range object.
 ---@param uri lsp.URI
 ---@param diagnostics lsp.Diagnostic[]
 ---@param version? integer

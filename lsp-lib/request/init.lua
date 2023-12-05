@@ -34,9 +34,9 @@ local requests = {
 	"workspace/codeLens/refresh", -- .refresh.code_lens
 }
 
----sends requests to the client. All requests block the current thread and
----return the response's result and error object. `lsp-lib.async` is provided
----for sending requests asynchronously.
+---sends requests to the client. Requests block the current thread and return
+---the response's result and error object. `lsp-lib.async` is provided for
+---sending requests asynchronously.
 ---
 ---When indexed with an LSP-specified method, it returns a function that takes
 ---a `params` argument. This form is entirely type-checked by LuaLS.
@@ -46,7 +46,26 @@ local requests = {
 ---loosely type-checked by LuaLS and is typically used by other request
 ---functions.
 ---
----This table also contains request functions for all LSP-specified methods.
+---This table also contains utility functions for all LSP-specified methods.
+---
+---Example:
+---
+---```lua
+----- three ways to send a `workspace/configuration` request:
+---
+----- calling `request`, loosely typed
+---local result = lsp.request('workspace/configuration', {
+---  items = { { section = "Namespace" } },
+---})
+---
+----- indexing `request`, strictly typed with Intellisense
+---local result = lsp.request['workspace/configuration'] {
+---  items = { { section = "Namespace" } },
+---}
+---
+----- calling `request.config`, strictly typed with Intellisense
+---local result = lsp.request.config( { section = "Namespace" } )
+---```
 ---@class lsp*.Request
 local request = {
 
@@ -148,12 +167,15 @@ end
 ---@field selection? lsp.Range
 
 ---sends a `window/showDocument` request
+---
+---Note: If `selection` is provided in the `options` argument, it's recommended
+---to send it through `lsp-lib.transform.range`'s `to_lsp` function to create
+---an LSP-compliant range object.
 ---@param uri lsp.URI -- The uri to show.
 ---@param options? lsp*.Request.show_document.options
 ---@return lsp.Response.window-showDocument.result? result
 ---@return lsp.Response.window-showDocument.error? error
 function request.show_document(uri, options)
-
 	---@type lsp.Request.window-showDocument.params
 	local params
 	if options then
@@ -171,6 +193,11 @@ function request.show_document(uri, options)
 end
 
 ---sends a `workspace/applyEdit` request
+---
+---Note: If the `edit` argument contains a `changes` table or a
+---`documentChanges` table with `edits` entries, it is recommended to send
+---their corresponding `range` fields through `lsp-lib.transform.range`'s
+---`to_lsp` function to create an LSP-compliant range object.
 ---@param edit lsp.WorkspaceEdit
 ---@param label? string
 ---@return lsp.Response.workspace-applyEdit.result? result
