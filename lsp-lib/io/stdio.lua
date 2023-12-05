@@ -1,4 +1,3 @@
----@class lsp*.io.provider.stdio : lsp*.io.provider
 local io_std = {}
 
 ---@param bytes integer
@@ -13,4 +12,5 @@ function io_std:write(data)
 	io.flush()
 end
 
+---@type lsp*.io.Provider
 return io_std

@@ -6,18 +6,43 @@ local RESPONSE_FMT = "Content-Length: %d\n\n%s"
 
 local NON_TABLE_ERROR = "sent a non-table, '%s'"
 
+---represents any message that can be sent or received by the server
 ---@alias lsp*.AnyMessage
 ---| lsp.Request
 ---| lsp.Response
 ---| lsp.Notification
 
----@class lsp*.io.provider
----@field read fun(self: lsp*.io.provider, bytes: integer): (data: string)
----@field write fun(self: lsp*.io.provider, data: string)
+---a primitive interface for reading from and writing to an I/O source
+---
+---Due to its push-only interface, it may not be powerful enough to support all
+---modes of transport, which is why it may be good practice to redirect stdio
+---externally instead of swapping the provider at runtime.
+---@see lsp*.io.provider
+---@class lsp*.io.Provider
+---reads `bytes` bytes from its input source and returns the data read. It must
+---be synchronous.
+---@field read fun(self: lsp*.io.Provider, bytes: integer): (data: string)
+---writes `data` to its output source. It can be asynchronous but must be
+---atomic.
+---@field write fun(self: lsp*.io.Provider, data: string)
 
+---a mid-level interface that sends and receives Lua tables
 ---@class lsp*.io
----@field provider lsp*.io.provider
+---the interface `lsp*.io` uses to read from and write to an I/O source
+---
+---`stdio` is the default provider, but it can be swapped with other providers
+---for pipe and socket transport.
+---
+---Due to its push-only interface, it may not be powerful enough to support all
+---modes of transport, which is why it may be good practice to redirect stdio
+---externally instead of swapping the provider at runtime.
+---@see lsp*.io.Provider
+---@field provider lsp*.io.Provider
+---a function that gets called after data is read from `lsp*.io`'s provider and
+---before it gets returned
 ---@field read_callback? fun(data: lsp*.AnyMessage)
+---a function that gets called after it receives data and gets it validated and
+---before it gets written to `lsp*.io`'s provider
 ---@field write_callback? fun(data: lsp*.AnyMessage)
 local io_lsp = {
 	request_queue = {},
@@ -41,6 +66,7 @@ local function read_header_line(self)
 	end
 end
 
+---an internal interface used for decoding headers
 ---@class lsp*.io.headers
 ---@field ["content-length"] integer
 ---@field ["content-type"] string?
@@ -104,6 +130,8 @@ local function get_data(self, len)
 	return object
 end
 
+---reads a message from `lsp*.io`'s provider, validates it, and returns it as a Lua
+---table
 ---@return lsp*.AnyMessage
 function io_lsp:read()
 	if #self.request_queue > 0 then
@@ -122,6 +150,7 @@ function io_lsp:read()
 	return data
 end
 
+---takes a Lua table, validates it, and writes it to `lsp*.io`'s provider
 ---@param data lsp*.AnyMessage
 function io_lsp:write(data)
 	if type(data) ~= "table" then
