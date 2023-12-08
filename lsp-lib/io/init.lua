@@ -122,8 +122,9 @@ local function get_data(self, len)
 
 	local mt = getmetatable(object)
 	if mt == json.array_mt then
-		---@diagnostic disable-next-line:deprecated
-		table.move(object, 2, #object, #self.request_queue + 1, self.request_queue)
+		for i = 2, #object do
+			table.insert(self.request_queue, object[i])
+		end
 		return object[1]
 	end
 
