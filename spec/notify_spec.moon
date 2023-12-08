@@ -1,6 +1,5 @@
 io_lsp = require 'lsp-lib.io'
 notify = require 'lsp-lib.notify'
-async = require 'lsp-lib.async'
 MessageType = require 'lsp-lib.enum.MessageType'
 
 import set_provider, notif_of from require 'spec.mocks.io'
@@ -12,9 +11,7 @@ describe 'lsp.notify', ->
 	it 'writes notifications LSP I/O', ->
 		provider = set_provider!
 
-		thread, ok, err = async -> notify 'window/logMessage', { message: "bar" }
-		assert.truthy ok, err
-		assert.thread_dead thread
+		notify 'window/logMessage', { message: "bar" }
 
 		responses = provider\mock_output!
 		assert.same {
@@ -22,23 +19,13 @@ describe 'lsp.notify', ->
 		}, responses
 
 	it 'errors when indexed with an unknown notification method', ->
-		provider = set_provider!
-
-		thread, ok, err = async -> notify['$/unknownNotification']
-		assert.falsy ok, err
-		assert.thread_dead thread
-
-		responses = provider\mock_output!
-		assert.same {}, responses
+		assert.error -> notify['$/unknownNotification']
 
 	it "doesn't error when indexed with a known notification method", ->
 		provider = set_provider!
 
-		thread, ok, err = async ->
+		assert.no_error ->
 			notify['window/showMessage'] { type: MessageType.Debug, message: 'foo' }
-
-		assert.truthy ok, err
-		assert.thread_dead thread
 
 		responses = provider\mock_output!
 		assert.same {
@@ -50,9 +37,7 @@ describe 'lsp.notify', ->
 			provider = set_provider!
 
 			for k in *{ 'debug', 'log', 'info', 'warn', 'error' }
-				thread, ok, err = async -> notify.log[k] "#{k} message"
-				assert.truthy ok, "log.#{k} errored: #{err}"
-				assert.thread_dead thread, "log.#{k}'s thread wasn't dead"
+				notify.log[k] "#{k} message"
 
 			responses = provider\mock_output!
 			assert.same {
@@ -68,9 +53,7 @@ describe 'lsp.notify', ->
 			provider = set_provider!
 
 			for k in *{ 'debug', 'log', 'info', 'warn', 'error' }
-				thread, ok, err = async -> notify.show[k] "#{k} message"
-				assert.truthy ok, "show.#{k} errored: #{err}"
-				assert.thread_dead thread, "show.#{k}'s thread wasn't dead"
+				notify.show[k] "#{k} message"
 
 			responses = provider\mock_output!
 			assert.same {
@@ -85,9 +68,7 @@ describe 'lsp.notify', ->
 		it 'sends a $/logTrace notification', ->
 			provider = set_provider!
 
-			thread, ok, err = async -> notify.log_trace 'msg', true
-			assert.truthy ok, err
-			assert.thread_dead thread
+			notify.log_trace 'msg', true
 
 			responses = provider\mock_output!
 			assert.same {
@@ -98,9 +79,7 @@ describe 'lsp.notify', ->
 		it 'sends a telemetry/event notification', ->
 			provider = set_provider!
 
-			thread, ok, err = async -> notify.telemetry { anything: 'foobar' }
-			assert.truthy ok, err
-			assert.thread_dead thread
+			notify.telemetry { anything: 'foobar' }
 
 			responses = provider\mock_output!
 			assert.same {
@@ -111,9 +90,7 @@ describe 'lsp.notify', ->
 		it 'sends a $/progress notification', ->
 			provider = set_provider!
 
-			thread, ok, err = async -> notify.progress 493, 'qux'
-			assert.truthy ok, err
-			assert.thread_dead thread
+			notify.progress 493, 'qux'
 
 			responses = provider\mock_output!
 			assert.same {
