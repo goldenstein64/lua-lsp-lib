@@ -1,8 +1,6 @@
 local null = require("cjson").null
 local MessageType = require("lsp-lib.enum.MessageType")
 
-local transform_range = require("lsp-lib.transform.range")
-
 local io_lsp = require("lsp-lib.io")
 
 local request_state = require("lsp-lib.request.state")
