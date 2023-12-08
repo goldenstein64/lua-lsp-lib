@@ -107,3 +107,15 @@ describe 'lsp.notify', ->
 				notif_of 'telemetry/event', { anything: 'foobar' }
 			}, responses
 
+	describe 'progress', ->
+		it 'sends a $/progress notification', ->
+			provider = set_provider!
+
+			thread, ok, err = async -> notify.progress 493, 'qux'
+			assert.truthy ok, err
+			assert.thread_dead thread
+
+			responses = provider\mock_output!
+			assert.same {
+				notif_of '$/progress', { token: 493, value: 'qux' }
+			}, responses
