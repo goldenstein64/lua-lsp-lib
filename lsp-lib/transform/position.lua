@@ -29,6 +29,23 @@ local function match_end_line(text, i)
 	return result ~= math.huge and result or nil
 end
 
+---@param text string
+---@param position integer
+---@return integer line, integer line_start
+local function get_line(text, position)
+	local line = 0
+	local line_start = 1
+
+	local next_start = match_next_line(text)
+	while next_start and next_start <= position do
+		line = line + 1
+		line_start = next_start
+		next_start = match_next_line(text, next_start)
+	end
+
+	return line, line_start
+end
+
 ---helps with transforming LSP Position objects into byte positions and
 ---vice-versa
 local transform_position = {}
@@ -63,15 +80,15 @@ function transform_position.from_lsp(text, position)
 	end
 	local line_end = match_end_line(text, line_start) or string.len(text) + 1
 
-	local column = position.character
-	if column < 0 then
+	local character = position.character
+	if character < 0 then
 		error({
 			code = ErrorCodes.InvalidParams,
-			message = UTF_CHAR_NEGATIVE:format(column)
+			message = UTF_CHAR_NEGATIVE:format(character)
 		})
 	end
 
-	local byte_pos = utf8.offset(text, column + 1, line_start)
+	local byte_pos = utf8.offset(text, character + 1, line_start)
 	if not byte_pos or byte_pos < line_start - 1 or byte_pos > line_end then
 		error({
 			code = ErrorCodes.InvalidParams,
@@ -80,23 +97,6 @@ function transform_position.from_lsp(text, position)
 	end
 
 	return byte_pos
-end
-
----@param text string
----@param position integer
----@return integer line, integer line_start
-local function get_line(text, position)
-	local line = 0
-	local line_start = 1
-
-	local next_start = match_next_line(text)
-	while next_start and next_start <= position do
-		line = line + 1
-		line_start = next_start
-		next_start = match_next_line(text, next_start)
-	end
-
-	return line, line_start
 end
 
 ---takes a byte position in the range of `[1, n + 1]` and converts it to an LSP
@@ -163,16 +163,6 @@ function transform_position.to_lsp(text, position)
 		line = line,
 		character = character,
 	}
-end
-
----@param text string
----@param position integer
----@return lsp.Position position
-function transform_position.to_lsp_end(text, position)
-	position = position + 1
-	local result = transform_position.to_lsp(text, position)
-	result.character = result.character - 1
-	-- works for most cases, unless result.character == 0
 end
 
 return transform_position

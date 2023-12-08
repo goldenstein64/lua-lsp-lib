@@ -23,18 +23,17 @@ end
 ---them into an LSP range. It errors with a response error object if the given
 ---positions are erroneous according to `text`.
 ---
----If the third argument `finish` is omitted, it defaults to the beginning
----of the next line.
+---If the third argument `finish` is omitted, it defaults to the beginning of
+---the next line.
 ---@param text string
 ---@param start integer
 ---@param finish? integer
 ---@return lsp.Range range
 function transform_range.to_lsp(text, start, finish)
 	if finish then
-		local end_pos = transform_position.to_lsp(text, finish + 1)
 		return {
 			start = transform_position.to_lsp(text, start),
-			["end"] = end_pos,
+			["end"] = transform_position.to_lsp(text, finish + 1),
 		}
 	else
 		local lsp_start = transform_position.to_lsp(text, start)
