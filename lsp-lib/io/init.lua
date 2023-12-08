@@ -85,7 +85,6 @@ local function get_headers(self)
 		header = read_header_line(self)
 	end
 
-
 	local len = tonumber(headers["content-length"])
 	assert(len, "could not find length")
 	headers["content-length"] = len
