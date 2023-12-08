@@ -44,3 +44,40 @@ describe 'lsp.notify', ->
 		assert.same {
 			notif_of 'window/showMessage', { type: MessageType.Debug, message: 'foo' }
 		}, responses
+
+	describe 'log', ->
+		it 'sends a notification for each message type', ->
+			provider = set_provider!
+
+			for k in *{ 'debug', 'log', 'info', 'warn', 'error' }
+				thread, ok, err = async -> notify.log[k] "#{k} message"
+				assert.truthy ok, "log.#{k} errored: #{err}"
+				assert.thread_dead thread, "log.#{k}'s thread wasn't dead"
+
+			responses = provider\mock_output!
+			assert.same {
+				notif_of 'window/logMessage', { type: MessageType.Debug, message: 'debug message' }
+				notif_of 'window/logMessage', { type: MessageType.Log, message: 'log message' }
+				notif_of 'window/logMessage', { type: MessageType.Info, message: 'info message' }
+				notif_of 'window/logMessage', { type: MessageType.Warning, message: 'warn message' }
+				notif_of 'window/logMessage', { type: MessageType.Error, message: 'error message' }
+			}, responses
+
+	describe 'show', ->
+		it 'sends a notification for each message type', ->
+			provider = set_provider!
+
+			for k in *{ 'debug', 'log', 'info', 'warn', 'error' }
+				thread, ok, err = async -> notify.show[k] "#{k} message"
+				assert.truthy ok, "show.#{k} errored: #{err}"
+				assert.thread_dead thread, "show.#{k}'s thread wasn't dead"
+
+			responses = provider\mock_output!
+			assert.same {
+				notif_of 'window/showMessage', { type: MessageType.Debug, message: 'debug message' }
+				notif_of 'window/showMessage', { type: MessageType.Log, message: 'log message' }
+				notif_of 'window/showMessage', { type: MessageType.Info, message: 'info message' }
+				notif_of 'window/showMessage', { type: MessageType.Warning, message: 'warn message' }
+				notif_of 'window/showMessage', { type: MessageType.Error, message: 'error message' }
+			}, responses
+
