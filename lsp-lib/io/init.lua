@@ -50,6 +50,7 @@ local io_lsp = {
 }
 
 ---@param self lsp*.io
+---@return string
 local function read_header_line(self)
 	local buffer = {}
 	while true do
@@ -73,7 +74,7 @@ end
 
 ---@param self lsp*.io
 ---@return lsp*.io.headers
-local function decode_headers(self)
+local function get_headers(self)
 	local headers = {}
 	local header = read_header_line(self)
 	while not header:match("^\r?\n$") do
@@ -84,11 +85,7 @@ local function decode_headers(self)
 		header = read_header_line(self)
 	end
 
-	return headers
-end
 
----@param headers lsp*.io.headers
-local function validate_headers(headers)
 	local len = tonumber(headers["content-length"])
 	assert(len, "could not find length")
 	headers["content-length"] = len
@@ -101,13 +98,7 @@ local function validate_headers(headers)
 		),
 		"cannot handle content types other than 'application/vscode-jsonrpc; charset=utf-8'"
 	)
-end
 
----@param self lsp*.io
----@return lsp*.io.headers
-local function get_headers(self)
-	local headers = decode_headers(self)
-	validate_headers(headers)
 	return headers
 end
 
