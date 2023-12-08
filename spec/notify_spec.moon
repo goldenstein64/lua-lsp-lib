@@ -81,3 +81,16 @@ describe 'lsp.notify', ->
 				notif_of 'window/showMessage', { type: MessageType.Error, message: 'error message' }
 			}, responses
 
+	describe 'log_trace', ->
+		it 'sends a $/logTrace notification', ->
+			provider = set_provider!
+
+			thread, ok, err = async -> notify.log_trace 'msg', true
+			assert.truthy ok, err
+			assert.thread_dead thread
+
+			responses = provider\mock_output!
+			assert.same {
+				notif_of '$/logTrace', { message: 'msg', verbose: true }
+			}, responses
+
