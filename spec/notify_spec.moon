@@ -1,5 +1,7 @@
 io_lsp = require 'lsp-lib.io'
 notify = require 'lsp-lib.notify'
+async = require 'lsp-lib.async'
+MessageType = require 'lsp-lib.enum.MessageType'
 
 import set_provider, notif_of from require 'spec.mocks.io'
 
@@ -10,9 +12,7 @@ describe 'lsp.notify', ->
 	it 'writes notifications LSP I/O', ->
 		provider = set_provider!
 
-		thread = coroutine.create -> notify 'window/logMessage', { message: "bar" }
-
-		ok, err = coroutine.resume thread
+		thread, ok, err = async -> notify 'window/logMessage', { message: "bar" }
 		assert.truthy ok, err
 		assert.thread_dead thread
 
@@ -24,9 +24,7 @@ describe 'lsp.notify', ->
 	it 'errors when indexed with an unknown notification method', ->
 		provider = set_provider!
 
-		thread = coroutine.create -> notify['$/unknownNotification']
-
-		ok, err = coroutine.resume thread
+		thread, ok, err = async -> notify['$/unknownNotification']
 		assert.falsy ok, err
 		assert.thread_dead thread
 
@@ -36,14 +34,13 @@ describe 'lsp.notify', ->
 	it "doesn't error when indexed with a known notification method", ->
 		provider = set_provider!
 
-		thread = coroutine.create ->
-			notify['window/showMessage'] { message: 'foo' }
+		thread, ok, err = async ->
+			notify['window/showMessage'] { type: MessageType.Debug, message: 'foo' }
 
-		ok, err = coroutine.resume thread
 		assert.truthy ok, err
 		assert.thread_dead thread
 
 		responses = provider\mock_output!
 		assert.same {
-			notif_of 'window/showMessage', { message: 'foo' }
+			notif_of 'window/showMessage', { type: MessageType.Debug, message: 'foo' }
 		}, responses
