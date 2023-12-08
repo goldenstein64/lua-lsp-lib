@@ -92,37 +92,37 @@ request.refresh = {
 	---@return lsp.Response.workspace-foldingRange-refresh.result? result
 	---@return lsp.Response.workspace-foldingRange-refresh.error? error
 	folding_range = function()
-		return request["workspace/foldingRange/refresh"](null)
+		return request("workspace/foldingRange/refresh", null)
 	end,
 
 	---@return lsp.Response.workspace-semanticTokens-refresh.result? result
 	---@return lsp.Response.workspace-semanticTokens-refresh.error? error
 	semantic_tokens = function()
-		return request["workspace/semanticTokens/refresh"](null)
+		return request("workspace/semanticTokens/refresh", null)
 	end,
 
 	---@return lsp.Response.workspace-inlineValue-refresh.result? result
 	---@return lsp.Response.workspace-inlineValue-refresh.error? error
 	inline_value = function()
-		return request["workspace/inlineValue/refresh"](null)
+		return request("workspace/inlineValue/refresh", null)
 	end,
 
 	---@return lsp.Response.workspace-inlayHint-refresh.result? result
 	---@return lsp.Response.workspace-inlayHint-refresh.error? error
 	inlay_hint = function()
-		return request["workspace/inlayHint/refresh"](null)
+		return request("workspace/inlayHint/refresh", null)
 	end,
 
 	---@return lsp.Response.workspace-diagnostic-refresh.result? result
 	---@return lsp.Response.workspace-diagnostic-refresh.error? error
 	diagnostic = function()
-		return request["workspace/diagnostic/refresh"](null)
+		return request("workspace/diagnostic/refresh", null)
 	end,
 
 	---@return lsp.Response.workspace-codeLens-refresh.result? result
 	---@return lsp.Response.workspace-codeLens-refresh.error? error
 	code_lens = function()
-		return request["workspace/codeLens/refresh"](null)
+		return request("workspace/codeLens/refresh", null)
 	end,
 }
 
