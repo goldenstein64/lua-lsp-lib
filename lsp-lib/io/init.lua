@@ -45,7 +45,7 @@ local NON_TABLE_ERROR = "sent a non-table, '%s'"
 ---before it gets written to `lsp*.io`'s provider
 ---@field write_callback? fun(data: lsp*.AnyMessage)
 local io_lsp = {
-	request_queue = {},
+	message_queue = {},
 	provider = require("lsp-lib.io.stdio"),
 }
 
@@ -123,7 +123,7 @@ local function get_data(self, len)
 	local mt = getmetatable(object)
 	if mt == json.array_mt then
 		for i = 2, #object do
-			table.insert(self.request_queue, object[i])
+			table.insert(self.message_queue, object[i])
 		end
 		return object[1]
 	end
@@ -135,8 +135,8 @@ end
 ---table
 ---@return lsp*.AnyMessage
 function io_lsp:read()
-	if #self.request_queue > 0 then
-		return table.remove(self.request_queue, 1)
+	if #self.message_queue > 0 then
+		return table.remove(self.message_queue, 1)
 	end
 
 	local headers = get_headers(self)
