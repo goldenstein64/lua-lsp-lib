@@ -2,9 +2,8 @@
 ---`...`. A `thread` object representing the call is returned.
 ---@param f function
 ---@param ... any
----@return thread
+---@return thread thread, boolean ok, any ...
 return function(f, ...)
 	local thread = coroutine.create(f)
-	coroutine.resume(thread, ...)
-	return thread
+	return thread, coroutine.resume(thread, ...)
 end
