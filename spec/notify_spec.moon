@@ -94,3 +94,16 @@ describe 'lsp.notify', ->
 				notif_of '$/logTrace', { message: 'msg', verbose: true }
 			}, responses
 
+	describe 'telemetry', ->
+		it 'sends a telemetry/event notification', ->
+			provider = set_provider!
+
+			thread, ok, err = async -> notify.telemetry { anything: 'foobar' }
+			assert.truthy ok, err
+			assert.thread_dead thread
+
+			responses = provider\mock_output!
+			assert.same {
+				notif_of 'telemetry/event', { anything: 'foobar' }
+			}, responses
+
