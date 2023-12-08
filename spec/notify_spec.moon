@@ -96,3 +96,14 @@ describe 'lsp.notify', ->
 			assert.same {
 				notif_of '$/progress', { token: 493, value: 'qux' }
 			}, responses
+
+	describe 'cancel_request', ->
+		it 'sends a $/cancelRequest notification', ->
+			provider = set_provider!
+
+			notify.cancel_request 1
+
+			responses = provider\mock_output!
+			assert.same {
+				notif_of '$/cancelRequest', { id: 1 }
+			}, responses
