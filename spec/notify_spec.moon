@@ -47,9 +47,3 @@ describe 'lsp.notify', ->
 		assert.same {
 			notif_of 'window/showMessage', { message: 'foo' }
 		}, responses
-
-	describe 'log', ->
-		it 'sends a notification for each message type', ->
-			provider = set_provider!
-
-			thread = coroutine.create
