@@ -10,7 +10,7 @@ describe 'lsp.notify', ->
 	it 'writes notifications LSP I/O', ->
 		provider = set_provider!
 
-		thread = coroutine.create () -> notify 'window/logMessage', { message: "bar" }
+		thread = coroutine.create -> notify 'window/logMessage', { message: "bar" }
 
 		ok, err = coroutine.resume thread
 		assert.truthy ok, err
@@ -24,7 +24,7 @@ describe 'lsp.notify', ->
 	it 'errors when indexed with an unknown notification method', ->
 		provider = set_provider!
 
-		thread = coroutine.create () -> notify['$/unknownNotification']
+		thread = coroutine.create -> notify['$/unknownNotification']
 
 		ok, err = coroutine.resume thread
 		assert.falsy ok, err
@@ -36,7 +36,7 @@ describe 'lsp.notify', ->
 	it "doesn't error when indexed with a known notification method", ->
 		provider = set_provider!
 
-		thread = coroutine.create () ->
+		thread = coroutine.create ->
 			notify['window/showMessage'] { message: 'foo' }
 
 		ok, err = coroutine.resume thread
@@ -47,3 +47,9 @@ describe 'lsp.notify', ->
 		assert.same {
 			notif_of 'window/showMessage', { message: 'foo' }
 		}, responses
+
+	describe 'log', ->
+		it 'sends a notification for each message type', ->
+			provider = set_provider!
+
+			thread = coroutine.create
