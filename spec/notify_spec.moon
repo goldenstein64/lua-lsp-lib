@@ -8,14 +8,14 @@ describe 'lsp.notify', ->
 	before_each ->
 		io_lsp.provider = nil
 
-	it 'writes notifications LSP I/O', ->
+	it 'writes notifications to LSP I/O', ->
 		provider = set_provider!
 
-		notify 'window/logMessage', { message: "bar" }
+		notify 'window/logMessage', { type: MessageType.Debug, message: "bar" }
 
 		responses = provider\mock_output!
 		assert.same {
-			notif_of 'window/logMessage', { message: "bar" }
+			notif_of 'window/logMessage', { type: MessageType.Debug, message: "bar" }
 		}, responses
 
 	it 'errors when indexed with an unknown notification method', ->
