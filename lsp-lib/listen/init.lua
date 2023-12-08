@@ -28,7 +28,7 @@ local listen = {
 }
 
 ---@return lsp*.AnyMessage?
-local function get_request()
+local function read_message()
 	local ok, req = pcall(io_lsp.read, io_lsp)
 	if not ok then
 		io_lsp:write(errors.ParseError(req --[[@as string?]]))
@@ -195,7 +195,7 @@ end
 ---`listen.handlers[listen.state]` runs while `listen()` is running.
 listen.handlers = {
 	initialize = function()
-		local req = get_request()
+		local req = read_message()
 		if not req then return end
 
 		local method = req.method
@@ -222,7 +222,7 @@ listen.handlers = {
 	end,
 
 	default = function()
-		local req = get_request()
+		local req = read_message()
 		if not req then return end
 
 		local method = req.method
@@ -246,7 +246,7 @@ listen.handlers = {
 	end,
 
 	shutdown = function()
-		local req = get_request()
+		local req = read_message()
 		if not req then return end
 
 		local method = req.method
