@@ -1,6 +1,10 @@
 io_lsp = require 'lsp-lib.io'
 notify = require 'lsp-lib.notify'
+
 MessageType = require 'lsp-lib.enum.MessageType'
+DiagnosticSeverity = require 'lsp-lib.enum.DiagnosticSeverity'
+
+transform_range = require 'lsp-lib.transform.range'
 
 import set_provider, notif_of from require 'spec.mocks.io'
 
@@ -106,4 +110,42 @@ describe 'lsp.notify', ->
 			responses = provider\mock_output!
 			assert.same {
 				notif_of '$/cancelRequest', { id: 1 }
+			}, responses
+
+	describe 'diagnostics', ->
+		it 'sends a textDocumentM/publishDiagnostics notification', ->
+			provider = set_provider!
+
+			notify.diagnostics(
+				'file:///home/me/doc/test.txt'
+				{
+					{
+						range: transform_range.to_lsp 'abcd', 1, 4
+						message: 'unknown character'
+						code: 'UnknownChar'
+						severity: DiagnosticSeverity.Error
+						data: { thud: 'baz' }
+					}
+				}
+				10
+			)
+
+			responses = provider\mock_output!
+			assert.same {
+				notif_of 'textDocument/publishDiagnostics', {
+					uri: 'file:///home/me/doc/test.txt'
+					diagnostics: {
+						{
+							range: {
+								start: { line: 0, character: 0 }
+								'end': { line: 0, character: 4 }
+							}
+							message: 'unknown character'
+							code: 'UnknownChar'
+							severity: DiagnosticSeverity.Error
+							data: { thud: 'baz' }
+						}
+					}
+					version: 10
+				}
 			}, responses
