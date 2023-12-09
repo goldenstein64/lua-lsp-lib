@@ -4,6 +4,7 @@ io_lsp = require 'lsp-lib.io'
 listen = require 'lsp-lib.listen'
 request = require 'lsp-lib.request'
 request_state = require 'lsp-lib.request.state'
+async = require 'lsp-lib.async'
 
 import MockProvider, request_of from require 'spec.mocks.io'
 
@@ -16,9 +17,7 @@ describe 'lsp.request', ->
 		provider = MockProvider!
 		io_lsp.provider = provider
 
-		thread = coroutine.create () -> request '$/customRequest', null
-
-		ok, err = coroutine.resume thread
+		thread, ok, err = async -> request '$/customRequest', null
 		assert.truthy ok, err
 		assert.thread_suspended thread
 
@@ -31,16 +30,12 @@ describe 'lsp.request', ->
 
 	it 'succeeds when indexing with a known request', ->
 		io_lsp.provider = MockProvider!
-		thread = coroutine.create () -> request['workspace/configuration'] null
-
-		ok, err = coroutine.resume thread
+		thread, ok, err = async -> request['workspace/configuration'] null
 		assert.truthy ok, err
 		assert.thread_suspended thread
 
 	it 'errors when indexing with an unknown request', ->
 		io_lsp.provider = MockProvider!
-		thread = coroutine.create () -> request['$/unknownRequest'] null
-
-		ok, err = coroutine.resume thread
+		thread, ok, err = async -> request['$/unknownRequest'] null
 		assert.falsy ok, err
 		assert.thread_dead thread
