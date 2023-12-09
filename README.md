@@ -1,4 +1,4 @@
-# lua-lsp-lib
+# lsp-lib
 
 A low-level library aimed at making the construction of language servers in Lua easier.
 
