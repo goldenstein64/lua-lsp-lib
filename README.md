@@ -1,12 +1,12 @@
 # lsp-lib
 
-A low-level library aimed at making the construction of language servers in Lua easier.
+A library aimed at making the construction of language servers in Lua easier.
 
 Note: This project is a work-in-progress. Expect features to change at any time!
 
 ## Usage
 
-`lsp-lib` is a library that can be installed via LuaRocks, like shown below.
+`lsp-lib` is packaged as a module on LuaRocks, so it can be installed there as shown below.
 
 ```sh
 # Note that this hasn't been uploaded to LuaRocks yet
@@ -35,20 +35,24 @@ These examples showcase some of the functions exposed by this library.
 local null = require('cjson').null
 local lsp = require('lsp-lib')
 
+-- this allows adding fields to the type
+---@class lsp*.Request
+lsp.request = lsp.request
+
 -- 'initialize' should auto-complete well enough under LuaLS
 lsp.response['initialize'] = function(params)
-
-  lsp.async(function()
-    -- make a blocking LSP request
-    lsp.config = assert(lsp.request.config())
-  end)
-
-  -- utility notify functions are provided too
-  lsp.notify.log.info(os.date())
 
   -- annotation is needed here due to a shortcoming of LuaLS
   ---@type lsp.Response.initialize.result
   return { capabilities = {} }
+end
+
+lsp.response['initialized'] = function()
+  -- utility notify functions are provided
+  lsp.notify.log.info(os.date())
+
+  -- make a blocking LSP request
+  lsp.config = assert(lsp.request.config())
 end
 
 lsp.response['shutdown'] = function()
@@ -76,21 +80,22 @@ lsp.listen()
 import null from require 'cjson'
 
 lsp = require 'lsp-lib'
-import notify, request, listen, async from lsp
+import notify, request, listen from lsp
 
 class Response extends lsp.response
   'initialize': (params) ->
-    -- make a (non-blocking) LSP request
-    async -> lsp.config = assert request.config!
+    { capabilities: {} }
 
-    -- utility notify functions are provided too
+  'initialized': ->
+    -- utility notify functions are provided
     notify.log.info os.date!
 
-    { capabilities: {} }
+    -- make a blocking LSP request
+    lsp.config = assert request.config!
 
   'shutdown': ->
     -- notify the client of something
-    notify['$/cancelRequest'] { id: 0 }
+    notify.cancel_request { id: 0 }
     null
 
 listen.routes = Response!
@@ -112,12 +117,12 @@ Documentation can be found [here](https://goldenstein64.github.io/lua-lsp-lib). 
 ## Development Setup
 
 ```sh
-git clone https://github.com/goldenstein64/lua-lsp-lib
+$ git clone https://github.com/goldenstein64/lua-lsp-lib
 
 # set up `.env` or `.envrc` with your environment manager
 # For Windows, I recommend `PS-Dotenv`
 
-luarocks build --deps-only --pin
+$ luarocks build --deps-only --pin
 ```
 
 The `lsp-lib/` folder contains all the source code.
