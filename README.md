@@ -20,7 +20,7 @@ $ luarocks install lsp-lib
 {
   "Lua.workspace.library": [
     // path to the CJSON addon, e.g. on Windows,
-		"$USERPROFILE/AppData/Roaming/Code/User/globalStorage/sumneko.lua/addonManager/addons/lua-cjson/module/library",
+    "$USERPROFILE/AppData/Roaming/Code/User/globalStorage/sumneko.lua/addonManager/addons/lua-cjson/module/library",
 
     // this should point to this rock's types folder
     "lua_modules/lib/luarocks/rocks-5.X/lsp-lib/X.X.X/types"
