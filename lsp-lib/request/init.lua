@@ -127,11 +127,12 @@ request.refresh = {
 }
 
 ---sends a `workspace/configuration` request, returning the specified settings
+---@param item lsp.ConfigurationItem
 ---@param ... lsp.ConfigurationItem
 ---@return lsp.Response.workspace-configuration.result? result
 ---@return lsp.Response.workspace-configuration.error? error
-function request.config(...)
-	return request("workspace/configuration", { items = { ... } })
+function request.config(item, ...)
+	return request("workspace/configuration", { items = { item, ... } })
 end
 
 ---The `workspace/workspaceFolders` request is sent from the server to the client to
