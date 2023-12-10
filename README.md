@@ -9,7 +9,6 @@ Note: This project is a work-in-progress. Expect features to change at any time!
 `lsp-lib` is packaged as a module on LuaRocks, so it can be installed there as shown below.
 
 ```sh
-# Note that this hasn't been uploaded to LuaRocks yet
 $ luarocks --dev install lsp-lib
 ```
 
