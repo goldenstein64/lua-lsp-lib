@@ -18,7 +18,7 @@ function errors.ParseError(msg)
 		error = {
 			code = ErrorCodes.ParseError,
 			message = string.format("parse error: %s", msg or "unknown cause"),
-		}
+		},
 	}
 end
 
@@ -31,8 +31,8 @@ function errors.MethodNotFound(id, methodName)
 
 		error = {
 			code = ErrorCodes.MethodNotFound,
-			message = string.format("invoked an unknown protocol '%s'", methodName or "")
-		}
+			message = string.format("invoked an unknown protocol '%s'", methodName or ""),
+		},
 	}
 end
 
@@ -45,8 +45,8 @@ function errors.InvalidRequest(id, methodName)
 
 		error = {
 			code = ErrorCodes.InvalidRequest,
-			message = string.format("cannot respond to protocol '%s'", methodName or "")
-		}
+			message = string.format("cannot respond to protocol '%s'", methodName or ""),
+		},
 	}
 end
 
@@ -58,8 +58,8 @@ function errors.ServerNotInitialized(id)
 
 		error = {
 			code = ErrorCodes.ServerNotInitialized,
-			message = "the server is not yet initialized"
-		}
+			message = "the server is not yet initialized",
+		},
 	}
 end
 
@@ -74,7 +74,7 @@ function errors.general(id, message)
 		error = {
 			code = ErrorCodes.InternalError,
 			message = message or "request failed",
-		}
+		},
 	}
 end
 

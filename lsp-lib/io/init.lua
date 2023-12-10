@@ -91,10 +91,7 @@ local function get_headers(self)
 
 	local content_type = headers["content-type"] ---@type string?
 	assert(
-		not content_type or (
-			content_type:find("^application/vscode%-jsonrpc")
-			and content_type:find("charset=utf%-8$")
-		),
+		not content_type or (content_type:find("^application/vscode%-jsonrpc") and content_type:find("charset=utf%-8$")),
 		"cannot handle content types other than 'application/vscode-jsonrpc; charset=utf-8'"
 	)
 
@@ -151,7 +148,8 @@ function io_lsp:write(data)
 	data.jsonrpc = "2.0"
 
 	if data.id then
-		local mutex = 0 do
+		local mutex = 0
+		do
 			if data.result then
 				mutex = mutex + 1
 			end

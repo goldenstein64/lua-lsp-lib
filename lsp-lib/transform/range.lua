@@ -14,8 +14,7 @@ local transform_range = {}
 function transform_range.from_lsp(text, range)
 	local end_line = range["end"].line
 	local end_char = range["end"].character
-	return
-		transform_position.from_lsp(text, range.start),
+	return transform_position.from_lsp(text, range.start),
 		transform_position.from_lsp(text, { line = end_line, character = end_char }) - 1
 end
 
@@ -39,7 +38,7 @@ function transform_range.to_lsp(text, start, finish)
 		local lsp_start = transform_position.to_lsp(text, start)
 		return {
 			start = lsp_start,
-			["end"] = { line = lsp_start.line + 1, character = 0 }
+			["end"] = { line = lsp_start.line + 1, character = 0 },
 		}
 	end
 end

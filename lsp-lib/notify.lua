@@ -17,7 +17,7 @@ local message_type_map = {
 	warn = MessageType.Warning,
 	info = MessageType.Info,
 	log = MessageType.Log,
-	debug = MessageType.Debug
+	debug = MessageType.Debug,
 }
 
 ---sends notifications to the client. Unlike requests, notifications never
@@ -146,7 +146,9 @@ end
 
 for _, method in pairs(notifications) do
 	---@diagnostic disable-next-line: assign-type-mismatch
-	notify[method] = function(params) notify(method, params) end
+	notify[method] = function(params)
+		notify(method, params)
+	end
 end
 
 local notify_mt = {}
@@ -162,7 +164,7 @@ function notify_mt:__call(method, params)
 	local notif = {
 		jsonrpc = "2.0",
 		method = method,
-		params = params
+		params = params,
 	}
 
 	io_lsp:write(notif)

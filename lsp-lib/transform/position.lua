@@ -11,10 +11,9 @@ local POSITION_OUT_OF_RANGE = "{PositionOutOfRange}: position %d is not in the r
 ---@param i? integer
 ---@return integer? position
 local function match_next_line(text, i)
-	local result = math.min(
-		string.match(text, "\r\n?()", i) or math.huge,
-		string.match(text, "\n()", i) or math.huge
-	)
+	local crlf_match = string.match(text, "\r\n?()", i) or math.huge
+	local lf_match = string.match(text, "\n()", i) or math.huge
+	local result = math.min(crlf_match, lf_match)
 	return result ~= math.huge and result or nil
 end
 
@@ -22,10 +21,9 @@ end
 ---@param i? integer
 ---@return integer? position
 local function match_end_line(text, i)
-	local result = math.min(
-		string.match(text, "()\r\n?", i) or math.huge,
-		string.match(text, "()\n", i) or math.huge
-	)
+	local crlf_match = string.match(text, "()\r\n?", i) or math.huge
+	local lf_match = string.match(text, "()\n", i) or math.huge
+	local result = math.min(crlf_match, lf_match)
 	return result ~= math.huge and result or nil
 end
 
@@ -74,7 +72,7 @@ function transform_position.from_lsp(text, position)
 		if not line_start then
 			error({
 				code = ErrorCodes.InvalidParams,
-				message = LINE_OUT_OF_RANGE:format(line)
+				message = LINE_OUT_OF_RANGE:format(line),
 			})
 		end
 	end
@@ -84,7 +82,7 @@ function transform_position.from_lsp(text, position)
 	if character < 0 then
 		error({
 			code = ErrorCodes.InvalidParams,
-			message = UTF_CHAR_NEGATIVE:format(character)
+			message = UTF_CHAR_NEGATIVE:format(character),
 		})
 	end
 
@@ -92,7 +90,7 @@ function transform_position.from_lsp(text, position)
 	if not byte_pos or byte_pos < line_start - 1 or byte_pos > line_end then
 		error({
 			code = ErrorCodes.InvalidParams,
-			message = CHAR_OUT_OF_RANGE:format(byte_pos, line_start, line_end)
+			message = CHAR_OUT_OF_RANGE:format(byte_pos, line_start, line_end),
 		})
 	end
 
@@ -155,7 +153,7 @@ function transform_position.to_lsp(text, position)
 	if character < 0 or character > utf_row_len then
 		error({
 			code = ErrorCodes.InternalError,
-			message = CHAR_OUT_OF_RANGE:format(character, 0, utf_row_len)
+			message = CHAR_OUT_OF_RANGE:format(character, 0, utf_row_len),
 		})
 	end
 

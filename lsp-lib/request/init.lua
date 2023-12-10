@@ -10,7 +10,7 @@ local message_type_map = {
 	warn = MessageType.Warning,
 	info = MessageType.Info,
 	log = MessageType.Log,
-	debug = MessageType.Debug
+	debug = MessageType.Debug,
 }
 
 local INT_LIMIT = 2 ^ 53
@@ -82,7 +82,7 @@ for k, type in pairs(message_type_map) do
 		return request("window/showMessageRequest", {
 			message = message,
 			type = type,
-			actions = actions
+			actions = actions,
 		})
 	end
 end
@@ -219,9 +219,7 @@ request.capability = {
 	---@return lsp.Response.client-registerCapability.error? error
 	register = function(registration, ...)
 		---@type lsp.Request.client-registerCapability.params
-		local params = {
-			registrations = { registration, ... }
-		}
+		local params = { registrations = { registration, ... } }
 		return request("client/registerCapability", params)
 	end,
 
@@ -232,16 +230,16 @@ request.capability = {
 	---@return lsp.Response.client-unregisterCapability.error? error
 	unregister = function(unregistration, ...)
 		---@type lsp.Request.client-unregisterCapability.params
-		local params = {
-			unregisterations = { unregistration, ... }
-		}
+		local params = { unregisterations = { unregistration, ... } }
 
 		return request("client/unregisterCapability", params)
-	end
+	end,
 }
 
 for _, method in ipairs(requests) do
-	request[method] = function(params) return request(method, params) end
+	request[method] = function(params)
+		return request(method, params)
+	end
 end
 
 local request_mt = {}

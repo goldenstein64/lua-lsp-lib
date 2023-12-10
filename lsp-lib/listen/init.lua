@@ -168,7 +168,9 @@ end
 local function handle_route(route, req)
 	if type(route) == "table" then
 		local old_route = route
-		route = function(...) return old_route(...) end
+		route = function(...)
+			return old_route(...)
+		end
 	end
 
 	local thread = coroutine.create(xpcall)
@@ -196,7 +198,9 @@ end
 listen.handlers = {
 	initialize = function()
 		local req = read_message()
-		if not req then return end
+		if not req then
+			return
+		end
 
 		local method = req.method
 		if not method then
@@ -223,7 +227,9 @@ listen.handlers = {
 
 	default = function()
 		local req = read_message()
-		if not req then return end
+		if not req then
+			return
+		end
 
 		local method = req.method
 		if not method then
@@ -247,7 +253,9 @@ listen.handlers = {
 
 	shutdown = function()
 		local req = read_message()
-		if not req then return end
+		if not req then
+			return
+		end
 
 		local method = req.method
 		if not method then
@@ -265,10 +273,12 @@ listen.handlers = {
 		end
 
 		local route = get_route(req)
-		if not route then return end
+		if not route then
+			return
+		end
 
 		handle_route(route, req)
-	end
+	end,
 }
 
 ---handles exactly one LSP message pulled from `lsp.io:read`
@@ -307,7 +317,9 @@ local listen_mt = {}
 function listen_mt:__call(exit)
 	listen.state = "initialize"
 	listen.running = true
-	while listen.running do listen.once() end
+	while listen.running do
+		listen.once()
+	end
 
 	if exit ~= false then
 		os.exit(listen.state == "shutdown" and 0 or 1)
