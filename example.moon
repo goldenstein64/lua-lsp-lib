@@ -13,7 +13,7 @@ class Response extends lsp.response
 		notify.log.info os.date!
 
 		-- make a blocking LSP request
-		lsp.config = assert request.config!
+		lsp.config = assert request.config { section: "server.config" }
 
 	'shutdown': ->
 		-- notify the client of something
