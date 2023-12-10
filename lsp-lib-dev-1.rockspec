@@ -2,8 +2,7 @@ package = "lsp-lib"
 version = "dev-1"
 rockspec_format = "3.0"
 source = {
-   url = "https://github.com/goldenstein64/lua-lsp-lib",
-   dir = "lsp-lib"
+   url = "git://github.com/goldenstein64/lua-lsp-lib.git"
 }
 description = {
    homepage = "https://github.com/goldenstein64/lua-lsp-lib",
