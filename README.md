@@ -10,7 +10,7 @@ Note: This project is a work-in-progress. Expect features to change at any time!
 
 ```sh
 # Note that this hasn't been uploaded to LuaRocks yet
-$ luarocks install lsp-lib
+$ luarocks --dev install lsp-lib
 ```
 
 [Lua Language Server](https://github.com/LuaLS/lua-language-server) definitions are included with the rock in `lua_modules`. The path is roughly outlined in the example below.
