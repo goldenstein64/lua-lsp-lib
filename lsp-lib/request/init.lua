@@ -53,16 +53,16 @@ local requests = {
 ---
 ----- calling `request`, loosely typed
 ---local result = lsp.request('workspace/configuration', {
----  items = { { section = "Namespace" } },
+---  items = { { section = "server.config" } },
 ---})
 ---
 ----- indexing `request`, strictly typed with Intellisense
 ---local result = lsp.request['workspace/configuration'] {
----  items = { { section = "Namespace" } },
+---  items = { { section = "server.config" } },
 ---}
 ---
 ----- calling `request.config`, strictly typed with Intellisense
----local result = lsp.request.config( { section = "Namespace" } )
+---local result = lsp.request.config( { section = "server.config" } )
 ---```
 ---@class lsp*.Request
 local request = {
