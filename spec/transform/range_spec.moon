@@ -3,6 +3,7 @@ import to_lsp, from_lsp from require 'lsp-lib.transform.range'
 describe 'transform_range', ->
 	ascii_text = 'ab\nc\n\nd\r\ne\rf'
 	emoji_text = "🤗🤗\n🙂😀\n\n🤣😅\r\n😊\r💥"
+	crlf_text = 'ab\r\ncd'
 
 	describe 'from_lsp', ->
 		it 'works', ->
@@ -32,6 +33,20 @@ describe 'transform_range', ->
 				'end': { line: 0, character: 2 }
 			}
 			assert.same { 5, 8 }, { i, j }
+
+		it 'accepts the end of a CRLF line', ->
+			i, j = from_lsp crlf_text, {
+				start: { line: 0, character: 2 }
+				'end': { line: 0, character: 2 }
+			}
+			assert.same { 3, 2 }, { i, j }
+
+		it 'accepts the beginning of a CRLF line', ->
+			i, j = from_lsp crlf_text, {
+				start: { line: 1, character: 0 }
+				'end': { line: 1, character: 0 }
+			}
+			assert.same { 5, 4 }, { i, j }
 
 	describe 'to_lsp', ->
 		it 'works', ->
@@ -90,3 +105,20 @@ describe 'transform_range', ->
 				start: { line: 0, character: 0 }
 				'end': { line: 1, character: 0}
 			}, result
+
+		it "accepts the end of a CRLF line", ->
+			result = to_lsp crlf_text, 3, 2
+			assert.same {
+				start: { line: 0, character: 2 }
+				'end': { line: 0, character: 2 }
+			}, result
+
+		it "accepts the start of a CRLF line", ->
+			result = to_lsp crlf_text, 5, 4
+			assert.same {
+				start: { line: 1, character: 0 }
+				'end': { line: 1, character: 0 }
+			}, result
+
+		it "rejects the middle of a CRLF line", ->
+			assert.error -> to_lsp crlf_text, 4, 3
