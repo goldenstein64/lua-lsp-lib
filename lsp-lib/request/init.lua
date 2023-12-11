@@ -69,11 +69,11 @@ local request = {
 
 	---sends a `window/showMessageRequest`, where the message type is the key
 	---@class lsp*.Request.show
-	---@field log fun(message: string, actions: lsp.MessageActionItem[]): lsp.MessageActionItem
-	---@field info fun(message: string, actions: lsp.MessageActionItem[]): lsp.MessageActionItem
-	---@field error fun(message: string, actions: lsp.MessageActionItem[]): lsp.MessageActionItem
-	---@field warn fun(message: string, actions: lsp.MessageActionItem[]): lsp.MessageActionItem
-	---@field debug fun(message: string, actions: lsp.MessageActionItem[]): lsp.MessageActionItem
+	---@field log fun(message: string, actions: lsp.MessageActionItem[]): (result: lsp.Response.window-showMessageRequest.result?, error: lsp.Response.window-showMessageRequest.error?)
+	---@field info fun(message: string, actions: lsp.MessageActionItem[]): (result: lsp.Response.window-showMessageRequest.result?, error: lsp.Response.window-showMessageRequest.error?)
+	---@field error fun(message: string, actions: lsp.MessageActionItem[]): (result: lsp.Response.window-showMessageRequest.result?, error: lsp.Response.window-showMessageRequest.error?)
+	---@field warn fun(message: string, actions: lsp.MessageActionItem[]): (result: lsp.Response.window-showMessageRequest.result?, error: lsp.Response.window-showMessageRequest.error?)
+	---@field debug fun(message: string, actions: lsp.MessageActionItem[]): (result: lsp.Response.window-showMessageRequest.result?, error: lsp.Response.window-showMessageRequest.error?)
 	show = {},
 }
 
