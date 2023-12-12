@@ -197,47 +197,47 @@ end
 ---`listen.handlers[listen.state]` runs while `listen()` is running.
 listen.handlers = {
 	initialize = function()
-		local req = read_message()
-		if not req then
+		local msg = read_message()
+		if not msg then
 			return
 		end
 
-		local method = req.method
+		local method = msg.method
 		if not method then
-			---@cast req lsp.Response
-			handle_response(req)
+			---@cast msg lsp.Response
+			handle_response(msg)
 			return
 		end
-		---@cast req lsp.Request | lsp.Notification
+		---@cast msg lsp.Request | lsp.Notification
 
 		if method == "exit" then
 			listen.running = false
 		elseif method == "initialize" then
 			listen.state = "default"
 		else
-			io_lsp:write(errors.ServerNotInitialized(req.id))
+			io_lsp:write(errors.ServerNotInitialized(msg.id))
 			return
 		end
 
-		local route = get_route(req)
+		local route = get_route(msg)
 		if route then
-			handle_route(route, req)
+			handle_route(route, msg)
 		end
 	end,
 
 	default = function()
-		local req = read_message()
-		if not req then
+		local msg = read_message()
+		if not msg then
 			return
 		end
 
-		local method = req.method
+		local method = msg.method
 		if not method then
-			---@cast req lsp.Response
-			handle_response(req)
+			---@cast msg lsp.Response
+			handle_response(msg)
 			return
 		end
-		---@cast req lsp.Request | lsp.Notification
+		---@cast msg lsp.Request | lsp.Notification
 
 		if method == "shutdown" then
 			listen.state = "shutdown"
@@ -245,39 +245,39 @@ listen.handlers = {
 			listen.running = false
 		end
 
-		local route = get_route(req)
+		local route = get_route(msg)
 		if route then
-			handle_route(route, req)
+			handle_route(route, msg)
 		end
 	end,
 
 	shutdown = function()
-		local req = read_message()
-		if not req then
+		local msg = read_message()
+		if not msg then
 			return
 		end
 
-		local method = req.method
+		local method = msg.method
 		if not method then
-			---@cast req lsp.Response
-			handle_response(req)
+			---@cast msg lsp.Response
+			handle_response(msg)
 			return
 		end
-		---@cast req lsp.Request | lsp.Notification
+		---@cast msg lsp.Request | lsp.Notification
 
 		if method == "exit" then
 			listen.running = false
 		else
-			io_lsp:write(errors.InvalidRequest(req.id, method))
+			io_lsp:write(errors.InvalidRequest(msg.id, method))
 			return
 		end
 
-		local route = get_route(req)
+		local route = get_route(msg)
 		if not route then
 			return
 		end
 
-		handle_route(route, req)
+		handle_route(route, msg)
 	end,
 }
 
