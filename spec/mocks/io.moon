@@ -10,6 +10,8 @@ notif_of = (method, params) -> { jsonrpc: '2.0', :method, :params }
 response_of = (id, result, err) -> { jsonrpc: '2.0', :id, :result, error: err }
 
 class MockProvider
+	line_ending: '\n'
+
 	new: (requests) =>
 		@input = ''
 		@output = {}

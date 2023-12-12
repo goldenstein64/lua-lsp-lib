@@ -1,4 +1,6 @@
-local io_std = {}
+local io_std = {
+	line_ending = "\n"
+}
 
 ---@param bytes integer
 ---@return string

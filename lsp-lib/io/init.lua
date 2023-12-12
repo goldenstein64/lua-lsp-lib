@@ -2,7 +2,7 @@ local json = require("cjson").new()
 
 json.decode_array_with_array_mt(true)
 
-local RESPONSE_FMT = "Content-Length: %d\n\n%s"
+local RESPONSE_FMT = "Content-Length: %d%s%s%s"
 
 local NON_TABLE_ERROR = "sent a non-table, '%s'"
 
@@ -25,6 +25,9 @@ local NON_TABLE_ERROR = "sent a non-table, '%s'"
 ---writes `data` to its output source. It can be asynchronous but must be
 ---atomic.
 ---@field write fun(self: lsp*.io.Provider, data: string)
+---describes what line ending to use for header fields and the header block
+---separator.
+---@field line_ending string
 
 ---a mid-level interface that sends and receives Lua tables
 ---@class lsp*.io
@@ -178,8 +181,9 @@ function io_lsp:write(data)
 
 	local content = json.encode(data)
 
+	local line_ending = self.provider.line_ending
 	local content_length = string.len(content)
-	local response = RESPONSE_FMT:format(content_length, content)
+	local response = RESPONSE_FMT:format(content_length, line_ending, line_ending, content)
 
 	self.provider:write(response)
 end
