@@ -67,23 +67,43 @@ local requests = {
 ---@class lsp*.Request
 local request = {
 
-	---sends a `window/showMessageRequest`, where the message type is the key
+	---sends a `window/showMessageRequest`, where the message type is the key and
+	---a `message` string is taken as an argument. A list of strings representing
+	---available actions can be sent with it, and the request will return one of
+	---the strings or `null` if none were chosen.
 	---@class lsp*.Request.show
-	---@field log fun(message: string, actions: lsp.MessageActionItem[]): (result: lsp.Response.window-showMessageRequest.result?, error: lsp.Response.window-showMessageRequest.error?)
-	---@field info fun(message: string, actions: lsp.MessageActionItem[]): (result: lsp.Response.window-showMessageRequest.result?, error: lsp.Response.window-showMessageRequest.error?)
-	---@field error fun(message: string, actions: lsp.MessageActionItem[]): (result: lsp.Response.window-showMessageRequest.result?, error: lsp.Response.window-showMessageRequest.error?)
-	---@field warn fun(message: string, actions: lsp.MessageActionItem[]): (result: lsp.Response.window-showMessageRequest.result?, error: lsp.Response.window-showMessageRequest.error?)
-	---@field debug fun(message: string, actions: lsp.MessageActionItem[]): (result: lsp.Response.window-showMessageRequest.result?, error: lsp.Response.window-showMessageRequest.error?)
+	---@field log fun(message: string, ...: string): (result: lsp.Response.window-showMessageRequest.result?, error: lsp.Response.window-showMessageRequest.error?)
+	---@field info fun(message: string, ...: string): (result: lsp.Response.window-showMessageRequest.result?, error: lsp.Response.window-showMessageRequest.error?)
+	---@field error fun(message: string, ...: string): (result: lsp.Response.window-showMessageRequest.result?, error: lsp.Response.window-showMessageRequest.error?)
+	---@field warn fun(message: string, ...: string): (result: lsp.Response.window-showMessageRequest.result?, error: lsp.Response.window-showMessageRequest.error?)
+	---@field debug fun(message: string, ...: string): (result: lsp.Response.window-showMessageRequest.result?, error: lsp.Response.window-showMessageRequest.error?)
 	show = {},
 }
 
 for k, type in pairs(message_type_map) do
-	request.show[k] = function(message, actions)
-		return request("window/showMessageRequest", {
-			message = message,
+	request.show[k] = function(message, ...)
+		---@type lsp.MessageActionItem[] | nil
+		local actions = nil
+		if select("#", ...) > 0 then
+			actions = {}
+			for _, title in ipairs({ ... }) do
+				table.insert(actions, { title = tostring(title) })
+			end
+		end
+
+		---@type lsp.Request.window-showMessageRequest.params
+		local params = {
+			message = tostring(message),
 			type = type,
 			actions = actions,
-		})
+		}
+
+		local response, err = request("window/showMessageRequest", params)
+		if response then
+			return response == null and null or response.title
+		else
+			return response, err
+		end
 	end
 end
 
