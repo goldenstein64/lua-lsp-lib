@@ -1,5 +1,5 @@
 local ErrorCodes = require("lsp-lib.enum.ErrorCodes")
-local utf8 = require("compat53.module").utf8
+local utf8 = require("compat53.utf8")
 
 local LINE_OUT_OF_RANGE = "{LineOutOfRange}: line %d is out of range"
 local UTF_CHAR_NEGATIVE = "{UTFCharNegative}: LSP column %d is negative"
@@ -62,6 +62,18 @@ end
 ---vice-versa
 local transform_position = {}
 
+---finds the positional offset from a byte position. It also finds the byte
+---position from a positional offset.
+---@class lsp*.transform_position.encoder
+---@field byte_of fun(text: string, i: integer, unit_pos: integer): (byte_pos: integer)
+---@field unit_of fun(text: string, i: integer, byte_pos: integer): (unit_pos: integer)
+
+---determines how LSP Positions are translated to byte positions. This is
+---typically controlled by which `PositionEncodingKind` was selected on
+---`'initialize'`.
+---@type lsp*.transform_position.encoder
+transform_position.encoder = require("lsp-lib.transform.position.utf8")
+
 ---takes an LSP Position and converts it to a byte position in the range of
 ---`[1, n + 1]`. It errors with a response error object if the given `position`
 ---is erroneous according to `text`.
@@ -91,9 +103,11 @@ function transform_position.from_lsp(text, position)
 		error(e_invalid(UTF_CHAR_NEGATIVE, character))
 	end
 
-	local byte_pos = utf8.offset(text, character + 1, line_start)
-	if not byte_pos or byte_pos < line_start - 1 or byte_pos > line_end then
+	local byte_pos = transform_position.encoder.byte_of(text, line_start, character)
+	if byte_pos < line_start - 1 then
 		error(e_invalid(CHAR_OUT_OF_RANGE, byte_pos, line_start, line_end))
+	elseif byte_pos > line_end then
+		byte_pos = line_end
 	end
 
 	return byte_pos
@@ -121,25 +135,19 @@ function transform_position.to_lsp(text, position)
 
 	local line, line_start = get_line(text, position)
 
-	if position == byte_len + 1 then -- end of the string
-		return { line = line, character = utf8.len(text, line_start) }
-	elseif position == 1 then -- start of the string
-		return { line = 0, character = 0 }
-	end
+	-- if position == 1 then -- start of the string
+	-- 	return { line = 0, character = 0 }
+	-- end
 
 	local line_end = match_end_line(text, line_start)
-	local char_end
-	if line_end then
-		char_end = utf8.len(text, 1, line_end)
-	else
-		char_end = utf8.len(text) + 1
+	if line_end and position > line_end then
+		error(e_invalid(CHAR_OUT_OF_RANGE, position, line_start, line_end))
 	end
 
-	local character = utf8.len(text, line_start, position - 1)
-	local char_start = utf8.len(text, 1, line_start)
-	local utf_row_len = char_end - char_start
-	if character < 0 or character > utf_row_len then
-		error(e_internal(CHAR_OUT_OF_RANGE, character, 0, utf_row_len))
+	local character = transform_position.encoder.unit_of(text, line_start, position)
+
+	if character < 0 then
+		error(e_internal(UTF_CHAR_NEGATIVE, character))
 	end
 
 	return {
