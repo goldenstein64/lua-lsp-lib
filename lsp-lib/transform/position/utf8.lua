@@ -1,5 +1,3 @@
-local utf8 = require("compat53.utf8")
-
 local utf8_encoder = {}
 
 ---@param text string
