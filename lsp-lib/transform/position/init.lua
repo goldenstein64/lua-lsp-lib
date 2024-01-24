@@ -72,7 +72,7 @@ local transform_position = {}
 ---typically controlled by which `PositionEncodingKind` was selected on
 ---`'initialize'`.
 ---@type lsp*.transform_position.encoder
-transform_position.encoder = require("lsp-lib.transform.position.utf8")
+transform_position.encoder = require("lsp-lib.transform.position.utf16")
 
 ---takes an LSP Position and converts it to a byte position in the range of
 ---`[1, n + 1]`. It errors with a response error object if the given `position`
