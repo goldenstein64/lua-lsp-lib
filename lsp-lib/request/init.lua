@@ -192,7 +192,7 @@ end
 ---an LSP-compliant range object.
 ---@param uri lsp.URI -- The uri to show.
 ---@param options? lsp*.Request.show_document.options
----@return lsp.Response.window-showDocument.result? result
+---@return boolean? result
 ---@return lsp.Response.window-showDocument.error? error
 function request.show_document(uri, options)
 	---@type lsp.Request.window-showDocument.params
@@ -208,7 +208,12 @@ function request.show_document(uri, options)
 		params = { uri = uri }
 	end
 
-	return request("window/showDocument", params)
+	local result, error = request("window/showDocument", params)
+	if result then
+		result = result.success
+	end
+
+	return result, error
 end
 
 ---sends a `workspace/applyEdit` request
