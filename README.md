@@ -57,6 +57,8 @@ end
 lsp.response['shutdown'] = function()
   -- notify the client of something
   lsp.notify['$/cancelRequest'] { id = 0 }
+  -- there is also a library function for this
+  lsp.notify.cancel_request(0)
 
   return null
 end
@@ -94,7 +96,7 @@ class Response extends lsp.response
 
   'shutdown': ->
     -- notify the client of something
-    notify.cancel_request { id: 0 }
+    notify.cancel_request 0
     null
 
 listen.routes = Response!
