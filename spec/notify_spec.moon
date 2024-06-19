@@ -113,7 +113,7 @@ describe 'lsp.notify', ->
 			}, responses
 
 	describe 'diagnostics', ->
-		it 'sends a textDocumentM/publishDiagnostics notification', ->
+		it 'sends a textDocument/publishDiagnostics notification', ->
 			provider = set_provider!
 
 			notify.diagnostics(
