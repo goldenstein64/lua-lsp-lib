@@ -45,5 +45,5 @@ local function byte_of(text, i, unit_pos)
 	return i
 end
 
----@return lsp*.transform_position.encoder
+---@type lsp*.transform_position.encoder
 return { byte_of = byte_of, unit_of = unit_of }
