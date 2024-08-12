@@ -3,9 +3,12 @@ local utf8 = require("compat53.utf8")
 
 local LINE_OUT_OF_RANGE = "{LineOutOfRange}: line %d is out of range"
 local UTF_CHAR_NEGATIVE = "{UTFCharNegative}: LSP column %d is negative"
-local CHAR_OUT_OF_RANGE = "{CharOutOfRange}: column %s is not in the range of [%d, %d]"
-local POSITION_INSIDE_CHAR = "{PositionInsideChar}: position %d is inside a UTF-8 character"
-local POSITION_OUT_OF_RANGE = "{PositionOutOfRange}: position %d is not in the range of [1, %d]"
+local CHAR_OUT_OF_RANGE =
+	"{CharOutOfRange}: column %s is not in the range of [%d, %d]"
+local POSITION_INSIDE_CHAR =
+	"{PositionInsideChar}: position %d is inside a UTF-8 character"
+local POSITION_OUT_OF_RANGE =
+	"{PositionOutOfRange}: position %d is not in the range of [1, %d]"
 
 ---@param s string
 ---@param ... any
@@ -103,7 +106,8 @@ function transform_position.from_lsp(text, position)
 		error(e_invalid(UTF_CHAR_NEGATIVE, character))
 	end
 
-	local byte_pos = transform_position.encoder.byte_of(text, line_start, character)
+	local byte_pos =
+		transform_position.encoder.byte_of(text, line_start, character)
 	if byte_pos < line_start - 1 then
 		error(e_invalid(CHAR_OUT_OF_RANGE, byte_pos, line_start, line_end))
 	elseif byte_pos > line_end then
@@ -144,7 +148,8 @@ function transform_position.to_lsp(text, position)
 		error(e_invalid(CHAR_OUT_OF_RANGE, position, line_start, line_end))
 	end
 
-	local character = transform_position.encoder.unit_of(text, line_start, position)
+	local character =
+		transform_position.encoder.unit_of(text, line_start, position)
 
 	if character < 0 then
 		error(e_internal(UTF_CHAR_NEGATIVE, character))

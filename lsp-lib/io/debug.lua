@@ -33,9 +33,15 @@ do
 		local display_id = data.id == json.null and "null" or data.id
 
 		if data.result then
-			message = WRITE_RESPONSE_RESULT_FORMAT:format(display_id, inspect(data.result))
+			message = WRITE_RESPONSE_RESULT_FORMAT:format(
+				display_id,
+				inspect(data.result)
+			)
 		elseif data.error then
-			message = WRITE_RESPONSE_ERROR_FORMAT:format(display_id, data.error.message)
+			message = WRITE_RESPONSE_ERROR_FORMAT:format(
+				display_id,
+				data.error.message
+			)
 		elseif data.method ~= "window/logMessage" then
 			message = WRITE_NOTIFICATION_FORMAT:format(data.method)
 		else

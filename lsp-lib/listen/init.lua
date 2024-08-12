@@ -68,7 +68,9 @@ local function handle_route_error(result)
 		return { msg = debug.traceback(result) }
 	else
 		-- messier error
-		return { msg = debug.traceback("non-string error: " .. tostring(result)) }
+		return {
+			msg = debug.traceback("non-string error: " .. tostring(result)),
+		}
 	end
 end
 

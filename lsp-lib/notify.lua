@@ -141,7 +141,10 @@ end
 ---@param diagnostics lsp.Diagnostic[]
 ---@param version? integer
 function notify.diagnostics(uri, diagnostics, version)
-	notify("textDocument/publishDiagnostics", { uri = uri, diagnostics = diagnostics, version = version })
+	notify(
+		"textDocument/publishDiagnostics",
+		{ uri = uri, diagnostics = diagnostics, version = version }
+	)
 end
 
 for _, method in pairs(notifications) do
@@ -154,7 +157,12 @@ end
 local notify_mt = {}
 
 function notify_mt:__index(method)
-	error(string.format("attempt to retrieve unknown notification method '%s'", method))
+	error(
+		string.format(
+			"attempt to retrieve unknown notification method '%s'",
+			method
+		)
+	)
 end
 
 ---@param method string

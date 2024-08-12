@@ -94,7 +94,11 @@ local function get_headers(self)
 
 	local content_type = headers["content-type"] ---@type string?
 	assert(
-		not content_type or (content_type:find("^application/vscode%-jsonrpc") and content_type:find("charset=utf%-8$")),
+		not content_type
+			or (
+				content_type:find("^application/vscode%-jsonrpc")
+				and content_type:find("charset=utf%-8$")
+			),
 		"cannot handle content types other than 'application/vscode-jsonrpc; charset=utf-8'"
 	)
 
@@ -183,7 +187,8 @@ function io_lsp:write(data)
 
 	local line_ending = self.provider.line_ending
 	local content_length = string.len(content)
-	local response = RESPONSE_FMT:format(content_length, line_ending, line_ending, content)
+	local response =
+		RESPONSE_FMT:format(content_length, line_ending, line_ending, content)
 
 	self.provider:write(response)
 end

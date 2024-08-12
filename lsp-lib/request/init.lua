@@ -271,7 +271,9 @@ end
 local request_mt = {}
 
 function request_mt:__index(method)
-	error(string.format("attempt to retrieve unknown request method '%s'", method))
+	error(
+		string.format("attempt to retrieve unknown request method '%s'", method)
+	)
 end
 
 function request_mt:__call(method, params)

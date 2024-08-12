@@ -1,5 +1,5 @@
 local io_std = {
-	line_ending = "\n"
+	line_ending = "\n",
 }
 
 ---@param bytes integer
