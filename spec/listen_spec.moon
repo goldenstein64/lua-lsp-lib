@@ -43,6 +43,10 @@ describe 'lsp.listen', ->
 
 		io_lsp.provider = nil
 
+	describe 'routes', ->
+		it 'defaults to lsp.response', ->
+			assert.equal response, listen.routes
+
 	describe 'once', ->
 		it 'calls the handler corresponding to its state', ->
 			listen.state = 'foo_bar'

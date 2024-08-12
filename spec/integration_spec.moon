@@ -102,7 +102,7 @@ describe 'the system', ->
 			{ :result, :err }
 
 		thread, ok, reason = listen_async!
-		assert.is_true ok, reaso
+		assert.is_true ok, reason
 		assert.thread_dead thread
 
 		responses = provider\mock_output!
