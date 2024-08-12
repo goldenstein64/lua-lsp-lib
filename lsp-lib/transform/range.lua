@@ -12,10 +12,8 @@ local transform_range = {}
 ---@param range lsp.Range
 ---@return integer start, integer finish
 function transform_range.from_lsp(text, range)
-	local end_line = range["end"].line
-	local end_char = range["end"].character
 	return transform_position.from_lsp(text, range.start),
-		transform_position.from_lsp(text, { line = end_line, character = end_char }) - 1
+		transform_position.from_lsp(text, range["end"]) - 1
 end
 
 ---takes a pair of byte positions in the range of `[1, n + 1]` and converts
