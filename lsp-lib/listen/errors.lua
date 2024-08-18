@@ -1,4 +1,4 @@
-local json = require("cjson")
+local null = require("cjson").null
 local ErrorCodes = require("lsp-lib.enum.ErrorCodes")
 
 ---a table of response object constructors
@@ -13,11 +13,12 @@ local errors = {}
 ---@return lsp.Response
 function errors.ParseError(msg)
 	return {
-		id = json.null, -- if the request couldn't be parsed, we don't know the id
+		id = null, -- if the request couldn't be parsed, we don't know the id
 
 		error = {
 			code = ErrorCodes.ParseError,
-			message = string.format("parse error: %s", msg or "unknown cause"),
+			message = msg and string.format("Parse Error: %s", msg)
+				or "Parse Error",
 		},
 	}
 end
@@ -27,14 +28,13 @@ end
 ---@return lsp.Response
 function errors.MethodNotFound(id, methodName)
 	return {
-		id = id or json.null,
+		id = id or null,
 
 		error = {
 			code = ErrorCodes.MethodNotFound,
-			message = string.format(
-				"invoked an unknown protocol '%s'",
-				methodName or ""
-			),
+			message = methodName
+					and string.format("Method Not Found: '%s'", methodName)
+				or "Method Not Found",
 		},
 	}
 end
@@ -44,14 +44,13 @@ end
 ---@return lsp.Response
 function errors.InvalidRequest(id, methodName)
 	return {
-		id = id or json.null,
+		id = id or null,
 
 		error = {
 			code = ErrorCodes.InvalidRequest,
-			message = string.format(
-				"cannot respond to protocol '%s'",
-				methodName or ""
-			),
+			message = methodName
+					and string.format("Invalid Request: '%s'", methodName)
+				or "Invalid Request",
 		},
 	}
 end
@@ -60,26 +59,27 @@ end
 ---@return lsp.Response
 function errors.ServerNotInitialized(id)
 	return {
-		id = id or json.null,
+		id = id or null,
 
 		error = {
 			code = ErrorCodes.ServerNotInitialized,
-			message = "the server is not yet initialized",
+			message = "Server Not Initialized",
 		},
 	}
 end
 
 ---This is treated as a fallback for any unhandled errors in a response.
 ---@param id? string | integer
----@param message? string
+---@param msg? string
 ---@return lsp.Response
-function errors.general(id, message)
+function errors.general(id, msg)
 	return {
-		id = id or json.null,
+		id = id or null,
 
 		error = {
 			code = ErrorCodes.InternalError,
-			message = message or "request failed",
+			message = msg and string.format("Internal Error: %s", msg)
+				or "Internal Error",
 		},
 	}
 end
