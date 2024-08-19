@@ -83,7 +83,7 @@ end
 local function handle_request_result(req, result)
 	if result ~= nil then
 		-- request handlers should always return a result on success
-		return { id = req.id, result = result }
+		return { jsonrpc = "2.0", id = req.id, result = result }
 	else
 		local msg = NO_RESPONSE_ERROR:format(req.method)
 		notify.log.error(msg)
@@ -97,7 +97,7 @@ end
 local function handle_request_error(req, err)
 	notify.log.error("request error: " .. tostring(err.msg))
 	if err.result then -- graceful error
-		return { id = req.id, error = err.result }
+		return { jsonrpc = "2.0", id = req.id, error = err.result }
 	else -- messy error
 		return errors.general(req.id, err.msg)
 	end

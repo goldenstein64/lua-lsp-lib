@@ -13,6 +13,7 @@ local errors = {}
 ---@return lsp.Response
 function errors.ParseError(msg)
 	return {
+		jsonrpc = "2.0",
 		id = null, -- if the request couldn't be parsed, we don't know the id
 
 		error = {
@@ -28,6 +29,7 @@ end
 ---@return lsp.Response
 function errors.MethodNotFound(id, methodName)
 	return {
+		jsonrpc = "2.0",
 		id = id or null,
 
 		error = {
@@ -44,6 +46,7 @@ end
 ---@return lsp.Response
 function errors.InvalidRequest(id, methodName)
 	return {
+		jsonrpc = "2.0",
 		id = id or null,
 
 		error = {
@@ -59,6 +62,7 @@ end
 ---@return lsp.Response
 function errors.ServerNotInitialized(id)
 	return {
+		jsonrpc = "2.0",
 		id = id or null,
 
 		error = {
@@ -74,6 +78,7 @@ end
 ---@return lsp.Response
 function errors.general(id, msg)
 	return {
+		jsonrpc = "2.0",
 		id = id or null,
 
 		error = {
