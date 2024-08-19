@@ -115,27 +115,25 @@ end
 ---@param req lsp.Request
 ---@param ok boolean
 ---@param result unknown
+---@return lsp.Response
 local function handle_request_route(req, ok, result)
-	local res ---@type lsp.Response
 	if ok then -- successful request
-		res = handle_request_result(req, result)
+		return handle_request_result(req, result)
 	else
 		---@cast result lsp*.RouteError
-		res = handle_request_error(req, result)
+		return handle_request_error(req, result)
 	end
-
-	io_lsp:write(res)
 end
 
 ---@param notif lsp.Notification
 ---@param ok boolean
 ---@param result unknown
 local function handle_notification_route(notif, ok, result)
-	if ok and result ~= nil then
-		notify.log.error(RESPONSE_ERROR:format(notif.method))
-	elseif not ok then
+	if not ok then
 		---@cast result lsp*.RouteError
 		notify.log.error(result.msg)
+	elseif result ~= nil then
+		notify.log.error(RESPONSE_ERROR:format(notif.method))
 	end
 end
 
@@ -157,7 +155,7 @@ local function execute_thread(req, thread, ...)
 		handle_async_route(ok, result)
 	elseif req.id then
 		---@cast req lsp.Request
-		handle_request_route(req, ok, result)
+		io_lsp:write(handle_request_route(req, ok, result))
 	else
 		---@cast req lsp.Notification
 		handle_notification_route(req, ok, result)
