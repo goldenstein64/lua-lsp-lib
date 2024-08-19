@@ -5,6 +5,11 @@ local request_state = require("lsp-lib.request.state")
 
 local errors = require("lsp-lib.listen.errors")
 
+local ERR_UNKNOWN_PROTOCOL = "invoked an unknown protocol '%s'"
+local NO_RESPONSE_ERROR = "request '%s' was not responded to"
+local RESPONSE_ERROR = "notification '%s' was responded to"
+local NO_THREAD_STORED_ERROR = "no thread found for response id '%s'"
+
 ---@alias lsp*.Listen.state "initialize" | "default" | "shutdown"
 
 ---manages messages read from input, routes them through its response handlers,
@@ -36,8 +41,6 @@ local function read_message()
 
 	return ok and req or nil
 end
-
-local ERR_UNKNOWN_PROTOCOL = "invoked an unknown protocol '%s'"
 
 ---@param req lsp.Request | lsp.Notification
 ---@return nil | fun(params: any): any
@@ -73,8 +76,6 @@ local function handle_route_error(result)
 		}
 	end
 end
-
-local NO_RESPONSE_ERROR = "request '%s' was not responded to"
 
 ---@param req lsp.Request
 ---@param result unknown
@@ -126,8 +127,6 @@ local function handle_request_route(req, ok, result)
 	io_lsp:write(res)
 end
 
-local RESPONSE_ERROR = "notification '%s' was responded to"
-
 ---@param notif lsp.Notification
 ---@param ok boolean
 ---@param result unknown
@@ -178,8 +177,6 @@ local function handle_route(route, req)
 	local thread = coroutine.create(xpcall)
 	execute_thread(req, thread, route, handle_route_error, req.params)
 end
-
-local NO_THREAD_STORED_ERROR = "no thread found for response id '%s'"
 
 ---@param res lsp.Response
 local function handle_response(res)
