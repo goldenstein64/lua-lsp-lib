@@ -4,5 +4,8 @@
 	],
 	"Lua.diagnostics.globals": [],
 	"Lua.workspace.checkThirdParty": false,
-	"Lua.runtime.version": "LuaJIT"
+	"Lua.runtime.version": "LuaJIT",
+	"[moonscript]": {
+		"files.trimTrailingWhitespace": true
+	}
 }
