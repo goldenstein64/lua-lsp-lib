@@ -56,7 +56,7 @@ local message_type_map = {
 ---```
 ---@class lsp*.Notify
 local notify = {
-	---sends a `window/logMessage` notification, where the message type as the
+	---sends a `window/logMessage` notification, where the message type is the
 	---key
 	---@class lsp*.Notify.log
 	---@field error fun(message: string)
@@ -66,7 +66,7 @@ local notify = {
 	---@field debug fun(message: string)
 	log = {},
 
-	---sends a `window/showMessage` notification, where the message type as the
+	---sends a `window/showMessage` notification, where the message type is the
 	---key
 	---@class lsp*.Notify.show
 	---@field error fun(message: string)
@@ -169,13 +169,13 @@ end
 ---@param params table
 function notify_mt:__call(method, params)
 	---@type lsp.Notification
-	local notif = {
+	local notification = {
 		jsonrpc = "2.0",
 		method = method,
 		params = params,
 	}
 
-	io_lsp:write(notif)
+	io_lsp:write(notification)
 end
 
 return setmetatable(notify, notify_mt)

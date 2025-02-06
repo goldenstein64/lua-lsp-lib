@@ -7,5 +7,10 @@
 	"Lua.runtime.version": "LuaJIT",
 	"[moonscript]": {
 		"files.trimTrailingWhitespace": true
-	}
+	},
+	"cSpell.words": [
+		"cjson",
+		"unregisters",
+		"Unregistration"
+	]
 }

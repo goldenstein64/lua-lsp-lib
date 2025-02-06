@@ -43,8 +43,8 @@ end
 ---writes `data` to its output source. It can be asynchronous but must be
 ---atomic.
 ---@field write fun(self: lsp*.io.Provider, data: string)
----describes what line ending to use for header fields and the header block
----separator.
+---describes what line ending to use for writing header fields and the header
+---block separator.
 ---@field line_ending string
 
 ---a mid-level interface that sends and receives Lua tables

@@ -13,10 +13,18 @@ local NO_THREAD_STORED_ERROR = "no thread found for response id '%s'"
 ---@alias lsp*.Listen.state "initialize" | "default" | "shutdown"
 
 ---manages messages read from input, routes them through its response handlers,
----and sends what they return to output.
+---and sends what they return to output
 ---
 ---This module also resumes requesting threads when receiving responses and
 ---logs errors to the client when a route errors.
+---
+---Calling this module starts a blocking I/O loop. It's dependent on
+---`lsp-lib.io` to read and write these messages.
+---
+---If the `exit` parameter is anything but `false`, `listen()` will call
+---`os.exit` after receiving the `exit` notification. `listen(false)` will
+---simply assert that the server was left in a finished state before returning.
+---This is used for writing tests.
 ---@class lsp*.Listen
 ---determines how requests and notifications are responded to
 ---@field routes { [string]: nil | fun(params: any): any }
@@ -287,10 +295,7 @@ end
 
 local listen_mt = {}
 
----starts listening for messages from `lsp.io:read`
----
----If `exit` is `false`, `listen()` will error if it was shut down improperly.
----Otherwise, `os.exit` will be called unconditionally.
+---@see lsp*.Listen
 ---@param exit? boolean
 function listen_mt:__call(exit)
 	listen.state = "initialize"
