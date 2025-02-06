@@ -1,10 +1,9 @@
 import concat from table
 
-json = require 'cjson'
-import null from json
+import null, array_mt from require 'cjson'
 
 import types from require 'tableshape'
-import shape from types
+import shape, array_contains from types
 
 lsp = require 'lsp-lib'
 io_lsp = require 'lsp-lib.io'
@@ -113,6 +112,42 @@ describe 'the system', ->
 			response_shape 3, null -- '$/noop' is responded to in the meantime
 			response_shape 2, { result: shape { test_prop: 'foo' } } -- $/asyncRequest
 			response_shape 4, null -- shutdown
+		}
+
+		assert.shape request_state.waiting_threads, shape {}
+		assert.shape request_state.waiting_requests, shape {}
+
+	it 'handles batch requests', ->
+		provider = set_provider {
+			initialize_request 1
+			setmetatable {
+				request_of 2, '$/foo', null
+				request_of 3, '$/bar', null
+				request_of 4, '$/baz', null
+			}, array_mt
+			shutdown_request 5
+			exit_notif
+		}
+
+		lsp.response['$/foo'] = (params) -> 'FOO RESPONSE'
+		lsp.response['$/bar'] = (params) -> 'BAR RESPONSE'
+		lsp.response['$/baz'] = (params) -> 'BAZ RESPONSE'
+
+		thread, ok, reason = listen_async!
+		assert.is_true ok, reason
+		assert.thread_dead thread
+
+		responses = provider\mock_output!
+		assert.shape responses, shape {
+			response_shape 1, { capabilities: shape {} } -- initialize
+			types.all_of {
+				array_contains response_shape 2, 'FOO RESPONSE'
+				array_contains response_shape 3, 'BAR RESPONSE'
+				array_contains response_shape 4, 'BAZ RESPONSE'
+				types.table\length types.literal 3
+				types.metatable_is types.literal array_mt
+			}
+			response_shape 5, null -- shutdown
 		}
 
 		assert.shape request_state.waiting_threads, shape {}

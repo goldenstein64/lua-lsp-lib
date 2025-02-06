@@ -32,16 +32,6 @@ local listen = {
 	running = true,
 }
 
----@return lsp*.AnyMessage?
-local function read_message()
-	local ok, req = pcall(io_lsp.read, io_lsp)
-	if not ok then
-		io_lsp:write(errors.ParseError(req --[[@as string?]]))
-	end
-
-	return ok and req or nil
-end
-
 ---@param req lsp.Request | lsp.Notification
 ---@return nil | fun(params: any): any
 local function get_route(req)
@@ -194,10 +184,7 @@ end
 ---`listen.handlers[listen.state]` runs while `listen()` is running.
 listen.handlers = {
 	initialize = function()
-		local msg = read_message()
-		if not msg then
-			return
-		end
+		local msg = io_lsp:read()
 
 		local method = msg.method
 		if not method then
@@ -223,10 +210,7 @@ listen.handlers = {
 	end,
 
 	default = function()
-		local msg = read_message()
-		if not msg then
-			return
-		end
+		local msg = io_lsp:read()
 
 		local method = msg.method
 		if not method then
@@ -249,10 +233,7 @@ listen.handlers = {
 	end,
 
 	shutdown = function()
-		local msg = read_message()
-		if not msg then
-			return
-		end
+		local msg = io_lsp:read()
 
 		local method = msg.method
 		if not method then

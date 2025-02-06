@@ -1,6 +1,8 @@
 import insert, concat from table
 
-json = require 'cjson'
+json = require('cjson').new!
+json.decode_array_with_array_mt true
+
 io_lsp = require 'lsp-lib.io'
 
 http_encode = (content) -> "Content-Length: #{#content}\n\n#{content}"
