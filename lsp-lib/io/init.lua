@@ -35,7 +35,7 @@ end
 ---Due to its push-only interface, it may not be powerful enough to support all
 ---modes of transport, which is why it may be good practice to redirect stdio
 ---externally instead of swapping the provider at runtime.
----@see lsp*.io.provider
+---@see lsp*.IO.provider
 ---@class lsp*.io.Provider
 ---reads `bytes` bytes from its input source and returns the data read. It must
 ---be synchronous.
@@ -48,7 +48,7 @@ end
 ---@field line_ending string
 
 ---a mid-level interface that sends and receives Lua tables
----@class lsp*.io
+---@class lsp*.IO
 ---the interface `lsp*.io` uses to read from and write to an I/O source
 ---
 ---`stdio` is the default provider, but it can be swapped with other providers
@@ -79,7 +79,7 @@ local io_lsp = {
 	write_callback = nil,
 }
 
----@param self lsp*.io
+---@param self lsp*.IO
 ---@return string
 local function read_header_line(self)
 	local buffer = {}
@@ -102,7 +102,7 @@ end
 ---@field ["content-length"] integer
 ---@field ["content-type"] string?
 
----@param self lsp*.io
+---@param self lsp*.IO
 ---@return lsp*.io.headers
 local function get_headers(self)
 	local headers = {}
@@ -132,7 +132,7 @@ local function get_headers(self)
 	return headers
 end
 
----@param self lsp*.io
+---@param self lsp*.IO
 ---@param len integer
 ---@return lsp*.AnyMessage | (lsp*.AnyMessage)[]
 local function get_data(self, len)
@@ -144,7 +144,7 @@ local function get_data(self, len)
 	return object
 end
 
----@param self lsp*.io
+---@param self lsp*.IO
 ---@param data lsp*.AnyMessage | lsp*.AnyMessage[]
 local function _write(self, data)
 	local content = json.encode(data)
@@ -160,7 +160,7 @@ end
 ---reads one raw header/content pair from the I/O provider and extracts all LSP
 ---messages from it, inserting them into the message queue. `io_lsp:read()`
 ---removes one message from the queue and returns it to the caller.
----@param self lsp*.io
+---@param self lsp*.IO
 local function _read(self)
 	local headers = get_headers(self)
 
