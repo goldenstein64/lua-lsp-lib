@@ -32,9 +32,10 @@ local requests = {
 	"workspace/codeLens/refresh", -- .refresh.code_lens
 }
 
----sends requests to the client. Requests block the current thread and return
----the response's result xor error object. `lsp-lib.async` is provided for
----sending requests asynchronously.
+---sends LSP requests to the client. Requests block the current thread and
+---return the response's result xor error object.
+---[`lsp-lib.async`](lua://lsp*.Async) is provided for sending requests
+---asynchronously.
 ---
 ---When in a response function, `assert`ing the request will echo the client's
 ---response back as-is, which is likely unintended behavior. Instead, take the
