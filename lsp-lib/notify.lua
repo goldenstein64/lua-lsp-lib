@@ -95,22 +95,28 @@ function notify.log_trace(message, verbose)
 	notify("$/logTrace", { message = message, verbose = verbose })
 end
 
----sends a `telemetry/event` notification
+---sends a
+---[`telemetry/event` notification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#telemetry_event)
+---to the client, which is meant to help monitor performance and other
+---statistics about the language server
 ---@param data lsp.LSPAny
 function notify.telemetry(data)
 	notify("telemetry/event", data)
 end
 
----sends a `$/progress` notification. The `value` argument is not type-checked
----respective to the request it is responding to, so extra safety measures
----should be taken.
+---reports progress on an arbitrary task by sending a
+---[`$/progress` notification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#progress)
 ---@param token lsp.ProgressToken
 ---@param value lsp.LSPAny
 function notify.progress(token, value)
 	notify("$/progress", { token = token, value = value })
 end
 
----sends a `$/cancelRequest` notification
+---cancels a request a client is currently processing with the given `id` by
+---sending a
+---[`$/cancelRequest` notification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#cancelRequest).
+---Should the client respect it, a response will be returned with either partial
+---data or an error message.
 ---
 ---Request id's can currently be retrieved by reading `request_state.id` right
 ---before sending a request.
@@ -134,7 +140,8 @@ function notify.cancel_request(id)
 	notify("$/cancelRequest", { id = id })
 end
 
----sends a `textDocument/publishDiagnostics` notification
+---publishes diagnostics about a particular file by sending a
+---[`textDocument/publishDiagnostics` notification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_publishDiagnostics)
 ---
 ---Note: It is recommended to send each diagnostic object's `range` field
 ---through `lsp-lib.transform.range`'s `to_lsp` function to create an
