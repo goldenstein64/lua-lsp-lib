@@ -331,6 +331,7 @@ request.capability = {
 }
 
 for _, method in ipairs(requests) do
+	---@diagnostic disable-next-line: assign-type-mismatch
 	request[method] = function(params)
 		return request(method, params)
 	end
