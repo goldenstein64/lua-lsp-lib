@@ -31,41 +31,59 @@ These examples showcase some of the functions exposed by this library.
 
 ```lua
 -- in Lua,
-local null = require('cjson').null
-local lsp = require('lsp-lib')
+local null = require("cjson").null
+local lsp = require("lsp-lib")
+local ErrorCodes = require("lsp-lib.enum.ErrorCodes")
+
+---@type lsp.ClientCapabilities
+local server_config
 
 -- this allows adding fields to the type
 ---@class lsp*.Request
 lsp.request = lsp.request
 
--- 'initialize' should auto-complete well enough under LuaLS
-lsp.response['initialize'] = function(params)
-
+-- "initialize" should auto-complete well enough under LuaLS
+lsp.response["initialize"] = function(params)
   -- annotation is needed here due to a shortcoming of LuaLS
   ---@type lsp.Response.initialize.result
   return { capabilities = {} }
 end
 
-lsp.response['initialized'] = function()
+lsp.response["initialized"] = function()
   -- utility notify functions are provided
   lsp.notify.log.info(os.date())
 
   -- make a blocking LSP request
-  lsp.config = assert(lsp.request.config())
+  local err
+  server_config, err = lsp.request.config()
+  if err then
+    -- errors in notification handlers are logged to the client
+    error("Error in `initialized` handler: " .. err.message)
+  end
 end
 
-lsp.response['shutdown'] = function()
+lsp.response["shutdown"] = function()
   -- notify the client of something
-  lsp.notify['$/cancelRequest'] { id = 0 }
+  lsp.notify["$/cancelRequest"] { id = 0 }
   -- there is also a library function for this
   lsp.notify.cancel_request(0)
+
+  local something_bad_happened = math.random() < 0.5
+  if something_bad_happened then
+    -- errors in response handlers send a response error and logs them to the
+    -- client
+    error({
+      code = ErrorCodes.InternalError,
+      message = "Something bad happened!",
+    })
+  end
 
   return null
 end
 
 -- define your own request function
 function lsp.request.custom_request(foo, bar)
-  return lsp.request('$/customRequest', { foo = foo, bar = bar })
+  return lsp.request("$/customRequest", { foo = foo, bar = bar })
 end
 
 -- turn on debugging
@@ -80,30 +98,47 @@ lsp.listen()
 -- in MoonScript,
 import null from require 'cjson'
 
+ErrorCodes = require 'lsp-lib.enum.ErrorCodes'
 lsp = require 'lsp-lib'
 import notify, request, listen from lsp
 
-class Response extends lsp.response
-  'initialize': (params) ->
-    { capabilities: {} }
+local server_config
 
-  'initialized': ->
-    -- utility notify functions are provided
-    notify.log.info os.date!
+class Routes extends lsp.response
+	'initialize': (params) ->
+		{ capabilities: {} }
 
-    -- make a blocking LSP request
-    lsp.config = assert request.config!
+	'initialized': ->
+		-- utility notify functions are provided
+		notify.log.info os.date!
 
-  'shutdown': ->
-    -- notify the client of something
-    notify.cancel_request 0
-    null
+		-- make a blocking LSP request
+		server_config, err = request.config { section: "server.config" }
+		if err
+			-- errors in notification handlers are logged to the client
+			error "Error in `initialized` handler: #{err.message}"
 
-listen.routes = Response!
+	'shutdown': ->
+		-- notify the client of something
+		notify["$/cancelRequest"] { id: 0 }
+		-- there is also a library function for this
+		notify.cancel_request 0
+
+		something_bad_happened = math.random! < 0.5
+		if something_bad_happened
+			-- errors in response handlers send a response error and logs them to the
+			-- client
+			error
+				code: ErrorCodes.InternalError
+				message: "Something bad happened!"
+
+		null
+
+listen.routes = Routes!
 
 -- define your own request function
 request.custom_request = (foo, bar) ->
-  request '$/customRequest', { :foo, :bar }
+	request '$/customRequest', { :foo, :bar }
 
 -- turn on debugging
 -- currently logs anything received by or sent from this server
