@@ -6,9 +6,9 @@ local request_state = require("lsp-lib.request.state")
 local errors = require("lsp-lib.listen.errors")
 
 local ERR_UNKNOWN_PROTOCOL = "invoked an unknown protocol '%s'"
-local NO_RESPONSE_ERROR = "request '%s' was not responded to"
-local RESPONSE_ERROR = "notification '%s' was responded to"
-local NO_THREAD_STORED_ERROR = "no thread found for response id '%s'"
+local ERR_NO_RESPONSE = "request '%s' was not responded to"
+local ERR_RESPONSE_FOUND = "notification '%s' was responded to"
+local ERR_NO_THREAD_STORED = "no thread found for response id '%s'"
 
 ---@alias lsp*.Listen.state "initialize" | "default" | "shutdown"
 
@@ -19,19 +19,46 @@ local NO_THREAD_STORED_ERROR = "no thread found for response id '%s'"
 ---logs errors to the client when a route errors.
 ---
 ---Calling this module starts a blocking I/O loop. It's dependent on
----`lsp-lib.io` to read and write these messages.
+---[`lsp-lib.io`](lua://lsp*.IO) to read and write these messages.
 ---
 ---If the `exit` parameter is anything but `false`, `listen()` will call
----`os.exit` after receiving the `exit` notification. `listen(false)` will
----simply assert that the server was left in a finished state before returning.
----This is used for writing tests.
+---`os.exit` after receiving the
+---[`exit` notification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#exit).
+---`listen(false)` will simply assert that the server was left in a finished
+---state before returning. This is used for writing tests.
 ---@class lsp*.Listen
----determines how requests and notifications are responded to
+---This table is indexed whenever a request or notification is read, and the
+---resulting method gets called with the received message's parameters. It holds
+---all methods implemented by the user, and defaults to the
+---[`lsp.response`](lua://lsp*.Response) module.
 ---@field routes { [string]: nil | fun(params: any): any }
----determines how messages are handled by `listen()`. This field
----automatically changes based on the messages `listen` receives.
+---describes how `listen()` handles messages as specified by the LSP. It
+---typically doesn't have to be modified by the user. This gets set to
+---`'initialize'` when `listen()` is called.
+---
+---- `"initialize"`: It transitions to the `default` state once an
+---  [`initialize` request](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#initialize)
+---  is received and stops running if an
+---  [`exit` notification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#exit)
+---  is received. These requests and notifications are propagated to its router,
+---  and any other request is responded to with a
+---  [`ServerNotInitialized` error](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#errorCodes).
+---
+---- `"default"`: It transitions to the `shutdown` state once a
+---  [`shutdown` request](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#shutdown)
+---  is received and stops running if an
+---  [`exit` notification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#exit)
+---  is received. All requests are propagated to its router.
+---
+---- `"shutdown"`: It stops running if an
+---  [`exit` notification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#exit)
+---  is received. This notification is propagated to its router, and all
+---  requests are responded to with an
+---  [`InvalidRequest` error](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#errorCodes).
 ---@field state lsp*.Listen.state
----a flag indicating whether `listen()` should stop listening for messages
+---a flag indicating whether `listen()` should keep listening for messages. It
+---typically doesn't have to be modified by the user. This gets set to `true`
+---when calling `listen()`.
 ---@field running boolean
 ---@overload fun(exit?: boolean)
 local listen = {
@@ -40,14 +67,15 @@ local listen = {
 	running = true,
 }
 
----@param req lsp.Request | lsp.Notification
+---@param msg lsp.Request | lsp.Notification
 ---@return nil | fun(params: any): any
-local function get_route(req)
-	local route = listen.routes[req.method]
+local function get_route(msg)
+	local route = listen.routes[msg.method]
 	if not route then
-		notify.log.error(ERR_UNKNOWN_PROTOCOL:format(req.method))
-		if req.id ~= nil then -- this is a request
-			io_lsp:write(errors.MethodNotFound(req.id, req.method))
+		notify.log.error(ERR_UNKNOWN_PROTOCOL:format(msg.method))
+		if msg.id ~= nil then
+			---@cast msg lsp.Request
+			io_lsp:write(errors.MethodNotFound(msg.id, msg.method))
 		end
 	end
 
@@ -83,7 +111,7 @@ local function handle_request_result(req, result)
 		-- request handlers should always return a result on success
 		return { jsonrpc = "2.0", id = req.id, result = result }
 	else
-		local msg = NO_RESPONSE_ERROR:format(req.method)
+		local msg = ERR_NO_RESPONSE:format(req.method)
 		notify.log.error(msg)
 		return errors.general(req.id, msg)
 	end
@@ -131,7 +159,7 @@ local function handle_notification_route(notif, ok, result)
 		---@cast result lsp*.RouteError
 		notify.log.error(result.msg)
 	elseif result ~= nil then
-		notify.log.error(RESPONSE_ERROR:format(notif.method))
+		notify.log.error(ERR_RESPONSE_FOUND:format(notif.method))
 	end
 end
 
@@ -178,7 +206,7 @@ end
 local function handle_response(res)
 	local thread = request_state.waiting_threads[res.id]
 	if not thread then
-		error(NO_THREAD_STORED_ERROR:format(res.id))
+		error(ERR_NO_THREAD_STORED:format(res.id))
 	end
 	request_state.waiting_threads[res.id] = nil
 
@@ -188,10 +216,10 @@ local function handle_response(res)
 	execute_thread(req, thread, res.result, res.error)
 end
 
----a map of states to state handlers. The handler at
----`listen.handlers[listen.state]` runs while `listen()` is running.
+---describes `listen()`'s behavior based on the value of `listen.state`. It
+---typically doesn't have to be modified by the user.
 listen.handlers = {
-	initialize = function()
+	["initialize"] = function()
 		local msg = io_lsp:read()
 
 		local method = msg.method
@@ -217,7 +245,7 @@ listen.handlers = {
 		end
 	end,
 
-	default = function()
+	["default"] = function()
 		local msg = io_lsp:read()
 
 		local method = msg.method
@@ -240,7 +268,7 @@ listen.handlers = {
 		end
 	end,
 
-	shutdown = function()
+	["shutdown"] = function()
 		local msg = io_lsp:read()
 
 		local method = msg.method
@@ -267,23 +295,9 @@ listen.handlers = {
 	end,
 }
 
----handles exactly one LSP message pulled from `lsp.io:read`
----
----The way the message is handled is determined by one of its three `state`
----values:
----
----- `"initialize"`: It transitions to the `default` state once an `initialize`
----  request is received and stops running if an `exit` notification is
----  received. These requests and notifications are propagated to its router,
----  and any other request is responded to with a `ServerNotInitialized` error.
----
----- `"default"`: It transitions to the `shutdown` state once a `shutdown`
----  request is received and stops running if an `exit` notification is
----  received. All requests are propagated to its router.
----
----- `"shutdown"`: It stops running if an `exit` notification is received. This
----  notification is propagated to its router, and all requests are responded
----  to with an `InvalidRequest` error.
+---handles exactly one iteration of the I/O loop, reading one LSP message pulled
+---from [`lsp.io:read`](lua://lsp*.IO.read) and propagating it to the
+---appropriate route.
 function listen.once()
 	local handler = listen.handlers[listen.state]
 	if not handler then
@@ -312,4 +326,4 @@ function listen_mt:__call(exit)
 end
 
 ---@diagnostic disable-next-line: param-type-mismatch
-return setmetatable(listen, listen_mt)
+return setmetatable(listen, listen_mt) --[[@as lsp*.Listen]]

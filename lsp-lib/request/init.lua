@@ -33,16 +33,36 @@ local requests = {
 }
 
 ---sends requests to the client. Requests block the current thread and return
----the response's result and error object. `lsp-lib.async` is provided for
+---the response's result xor error object. `lsp-lib.async` is provided for
 ---sending requests asynchronously.
+---
+---When in a response function, `assert`ing the request will echo the client's
+---response back as-is, which is likely unintended behavior. Instead, take the
+---message and wrap it in a meaningful `InternalError`.
+---
+---```lua
+---local ErrorCodes = require("lsp-lib.enum.ErrorCodes")
+---local lsp = require("lsp-lib")
+---
+---lsp.response["initialized"] = function(params)
+---  local config, err = lsp.request.config()
+---  if err then
+---    error({
+---      code = ErrorCodes.InternalError,
+---      message = "Error in `initialized` handler: " .. err.message,
+---    })
+---  end
+---
+---  -- process config safely
+---end
+---```
 ---
 ---When indexed with an LSP-specified method, it returns a function that takes
 ---a `params` argument. This form is entirely type-checked by LuaLS.
 ---
 ---When `request` is called, it takes an LSP-specified `method` argument and a
----`params` argument with fields specified in `lsp.d.lua`. This form is very
----loosely type-checked by LuaLS and is typically used by other request
----functions.
+---`params` argument. This form is very loosely type-checked by LuaLS and is
+---typically used by other request functions.
 ---
 ---This table also contains utility functions for all LSP-specified methods.
 ---
@@ -52,19 +72,20 @@ local requests = {
 ----- three ways to send a `workspace/configuration` request:
 ---
 ----- calling `request`, loosely typed
----local result = lsp.request('workspace/configuration', {
+---local config, err = lsp.request('workspace/configuration', {
 ---  items = { { section = "server.config" } },
 ---})
 ---
 ----- indexing `request`, strictly typed with Intellisense
----local result = lsp.request['workspace/configuration'] {
+---local config, err = lsp.request['workspace/configuration'] {
 ---  items = { { section = "server.config" } },
 ---}
 ---
 ----- calling `request.config`, strictly typed with Intellisense
----local result = lsp.request.config( { section = "server.config" } )
+---local config, err = lsp.request.config( { section = "server.config" } )
 ---```
 ---@class lsp*.Request
+---@field show lsp*.Request.show
 local request = {
 
 	---sends a `window/showMessageRequest`, where the message type is the key and

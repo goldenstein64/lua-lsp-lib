@@ -51,6 +51,11 @@ local io_lsp = require("lsp-lib.io")
 ---lsp.listen()
 ---```
 ---@class lsp*
+---@field notify lsp*.Notify
+---@field request lsp*.Request
+---@field response lsp*.Response
+---@field listen lsp*.Listen
+---@field async lsp*.Async
 local lsp = {
 	notify = require("lsp-lib.notify"),
 	request = require("lsp-lib.request"),

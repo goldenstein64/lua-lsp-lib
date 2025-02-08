@@ -1,10 +1,12 @@
 local null = require("cjson").null
 local ErrorCodes = require("lsp-lib.enum.ErrorCodes")
 
----a table of response object constructors
+---holds utility functions for generating LSP response errors that `listen()`
+---uses.
 ---
 ---It holds all the types of errors
----that may occur while listening to requests. See the `ErrorCodes` enum and
+---that may occur while listening to requests. See the
+---[`ErrorCodes`](lua://lsp.ErrorCodes) enum and
 ---[LSP specification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/)
 ---for more information.
 local errors = {}

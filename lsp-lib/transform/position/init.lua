@@ -61,8 +61,9 @@ local function get_line(text, position)
 	return line, line_start
 end
 
----helps with transforming LSP Position objects into byte positions and
----vice-versa
+---transforms LSP positions defined
+---[here](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#position)
+---to and from byte positions that can be passed into `string.sub`.
 local transform_position = {}
 
 ---finds the positional offset from a byte position. It also finds the byte
@@ -78,10 +79,12 @@ local transform_position = {}
 transform_position.encoder = require("lsp-lib.transform.position.utf16")
 
 ---takes an LSP Position and converts it to a byte position in the range of
----`[1, n + 1]`. It errors with a response error object if the given `position`
----is erroneous according to `text`.
+---`[1, #text + 1]`
 ---
----`n + 1` represents the end of the string.
+---`#text + 1` represents the end of the string.
+---
+---It may throw an LSP-compliant response error. This typically indicates an LSP
+---client error and can be propagated to the top level and handled gracefully.
 ---@param text string
 ---@param position lsp.Position
 ---@return integer position
@@ -117,11 +120,14 @@ function transform_position.from_lsp(text, position)
 	return byte_pos
 end
 
----takes a byte position in the range of `[1, n + 1]` and converts it to an LSP
----Position. It errors with a response error object if the given `position` is
----erroneous according to `text`.
+---takes a byte position in the range of `[1, #text + 1]` and converts it to an
+---LSP Position
 ---
----`n + 1` represents the end of the string.
+---`#text + 1` represents the end of the string.
+---
+---It may throw an LSP-compliant response error. This can indicate an LSP client
+---or LSP server error. It can be propagated to the top level and handled
+---gracefully, but internal errors should be tracked.
 ---@param text string
 ---@param position integer
 ---@return lsp.Position position

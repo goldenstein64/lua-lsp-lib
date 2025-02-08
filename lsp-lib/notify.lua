@@ -55,6 +55,8 @@ local message_type_map = {
 ---notify.log.info("server version: X.Y.Z")
 ---```
 ---@class lsp*.Notify
+---@field log lsp*.Notify.log
+---@field show lsp*.Notify.show
 local notify = {
 	---sends a `window/logMessage` notification, where the message type is the
 	---key

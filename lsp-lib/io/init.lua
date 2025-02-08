@@ -144,6 +144,9 @@ local function get_data(self, len)
 	return object
 end
 
+---JSON encodes a Lua table and writes it to the I/O provider as a
+---header/content pair. `io_lsp:write(message)` ensures that responses are sent
+---in the same batches their respective requests were received from.
 ---@param self lsp*.IO
 ---@param data lsp*.AnyMessage | lsp*.AnyMessage[]
 local function _write(self, data)
@@ -160,6 +163,9 @@ end
 ---reads one raw header/content pair from the I/O provider and extracts all LSP
 ---messages from it, inserting them into the message queue. `io_lsp:read()`
 ---removes one message from the queue and returns it to the caller.
+---
+---If an LSP message is malformed or could not be parsed, an `InvalidRequest`
+---response error is sent.
 ---@param self lsp*.IO
 local function _read(self)
 	local headers = get_headers(self)
@@ -209,8 +215,8 @@ local function _read(self)
 	end
 end
 
----reads a message from `lsp*.io`'s provider, validates it, and returns it as a
----Lua table
+---reads a message from [`lsp-lib.io`](lua://lsp*.IO)'s provider, validates it, and
+---returns it as a Lua table
 ---@return lsp*.AnyMessage
 function io_lsp:read()
 	while #self.message_queue <= 0 do
@@ -258,8 +264,9 @@ end
 
 ---@alias lsp*.io.MessageEnum "response" | "request" | "notification"
 
----determines whether a Lua table is a valid LSP message. It either returns a
----string determining the type of LSP message or `nil` and an error message.
+---determines whether the given `value` is a valid LSP message. It either
+---returns a string determining the type of LSP message or `nil` and an error
+---message.
 ---@param value unknown
 ---@return lsp*.io.MessageEnum? type, string? err_msg
 function io_lsp.type(value)

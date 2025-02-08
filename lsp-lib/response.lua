@@ -3,6 +3,7 @@ local null = require("cjson").null
 local noop = function() end
 
 ---@type lsp*.Response
+---@diagnostic disable-next-line: missing-fields
 local defaults = {}
 
 defaults["initialize"] = function(params)
