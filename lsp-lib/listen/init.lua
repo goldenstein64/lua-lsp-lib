@@ -321,7 +321,10 @@ function listen_mt:__call(exit)
 	if exit ~= false then
 		os.exit(listen.state == "shutdown" and 0 or 1)
 	else
-		assert(listen.state == "shutdown", "server left in unfinished state")
+		assert(
+			listen.state == "shutdown",
+			"server was left in an unfinished state"
+		)
 	end
 end
 
