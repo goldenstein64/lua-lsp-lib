@@ -2,6 +2,10 @@
 	"Lua.workspace.library": [
 		"$USERPROFILE/AppData/Roaming/Code/User/globalStorage/sumneko.lua/addonManager/addons/lua-cjson/module/library"
 	],
+	"Lua.workspace.ignoreDir": [
+		".vscode",
+		"doc"
+	],
 	"Lua.diagnostics.globals": [],
 	"Lua.workspace.checkThirdParty": false,
 	"Lua.runtime.version": "LuaJIT",
