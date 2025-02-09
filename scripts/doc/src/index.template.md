@@ -1,14 +1,14 @@
 # `lsp = require("lsp-lib")`
 
-<%= lsp_lib.desc %>
+<%- lsp_lib.desc %>
 
 <% for name, field in pairs(lsp_lib.fields) do %>
 ## `lsp.<%= name %>`
 
 ```
-<%= field.view %>
+<%- field.view %>
 ```
 
-<%= field.desc %>
+<%- field.desc %>
 
 <% end %>

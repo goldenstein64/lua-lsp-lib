@@ -4,15 +4,15 @@
 -->
 # `lsp = require("lsp-lib")`
 
-the &quot;Spring Boot&quot; of the API. It gives all the functionality needed to build
+the "Spring Boot" of the API. It gives all the functionality needed to build
 a typical LSP server.
 
 Example:
 
 ```lua
-local null = require(&quot;cjson&quot;).null
-local lsp = require(&quot;lsp-lib&quot;)
-local ErrorCodes = require(&quot;lsp-lib.enum.ErrorCodes&quot;)
+local null = require("cjson").null
+local lsp = require("lsp-lib")
+local ErrorCodes = require("lsp-lib.enum.ErrorCodes")
 
 ---@type lsp.ClientCapabilities
 local server_config
@@ -21,14 +21,14 @@ local server_config
 ---@class lsp-lib.Request
 lsp.request = lsp.request
 
--- &quot;initialize&quot; should auto-complete well enough under LuaLS
-lsp.response[&quot;initialize&quot;] = function(params)
+-- "initialize" should auto-complete well enough under LuaLS
+lsp.response["initialize"] = function(params)
   -- annotation is needed here due to a shortcoming of LuaLS
   ---@type lsp.Response.initialize.result
   return { capabilities = {} }
 end
 
-lsp.response[&quot;initialized&quot;] = function()
+lsp.response["initialized"] = function()
   -- utility notify functions are provided
   lsp.notify.log.info(os.date())
 
@@ -37,23 +37,23 @@ lsp.response[&quot;initialized&quot;] = function()
   server_config, err = lsp.request.config()
   if err then
     -- errors in notification handlers are logged to the client
-    error(&quot;Error in `initialized` handler: &quot; .. err.message)
+    error("Error in `initialized` handler: " .. err.message)
   end
 end
 
-lsp.response[&quot;shutdown&quot;] = function()
+lsp.response["shutdown"] = function()
   -- notify the client of something
-  lsp.notify[&quot;$/cancelRequest&quot;] { id = 0 }
+  lsp.notify["$/cancelRequest"] { id = 0 }
   -- there is also a library function for this
   lsp.notify.cancel_request(0)
 
-  local something_bad_happened = math.random() &lt; 0.5
+  local something_bad_happened = math.random() < 0.5
   if something_bad_happened then
     -- errors in response handlers send a response error and logs them to the
     -- client
     error({
       code = ErrorCodes.InternalError,
-      message = &quot;Something bad happened!&quot;,
+      message = "Something bad happened!",
     })
   end
 
@@ -62,7 +62,7 @@ end
 
 -- define your own request function
 function lsp.request.custom_request(foo, bar)
-  return lsp.request(&quot;$/customRequest&quot;, { foo = foo, bar = bar })
+  return lsp.request("$/customRequest", { foo = foo, bar = bar })
 end
 
 -- turn on debugging
@@ -71,77 +71,6 @@ lsp.debug(true)
 
 -- starts a loop that listens to stdio
 lsp.listen()
-```
-
-
-## `lsp.async`
-
-```
-fun(f: function, ...any):(thread: thread, ok: boolean, ...any)
-```
-
-a utility function for calling a function `f` asynchronously with arguments
-`...`. A `thread` object representing the call is returned.
-
-
-## `lsp.request`
-
-```
-lsp-lib.Request
-```
-
-sends LSP requests to the client. Requests block the current thread and
-return the response&#039;s result xor error object.
-[`lsp-lib.async`](lua://lsp-lib.Async) is provided for sending requests
-asynchronously.
-
-When in a response function, `assert`ing the request will echo the client&#039;s
-response back as-is, which is likely unintended behavior. Instead, take the
-message and wrap it in a meaningful `InternalError`.
-
-```lua
-local ErrorCodes = require(&quot;lsp-lib.enum.ErrorCodes&quot;)
-local lsp = require(&quot;lsp-lib&quot;)
-
-lsp.response[&quot;initialized&quot;] = function(params)
-  local config, err = lsp.request.config()
-  if err then
-    error({
-      code = ErrorCodes.InternalError,
-      message = &quot;Error in `initialized` handler: &quot; .. err.message,
-    })
-  end
-
-  -- process config safely
-end
-```
-
-When indexed with an LSP-specified method, it returns a function that takes
-a `params` argument. This form is entirely type-checked by LuaLS.
-
-When `request` is called, it takes an LSP-specified `method` argument and a
-`params` argument. This form is very loosely type-checked by LuaLS and is
-typically used by other request functions.
-
-This table also contains utility functions for all LSP-specified methods.
-
-Example:
-
-```lua
--- three ways to send a `workspace/configuration` request:
-
--- calling `request`, loosely typed
-local config, err = lsp.request(&#039;workspace/configuration&#039;, {
-  items = { { section = &quot;server.config&quot; } },
-})
-
--- indexing `request`, strictly typed with Intellisense
-local config, err = lsp.request[&#039;workspace/configuration&#039;] {
-  items = { { section = &quot;server.config&quot; } },
-}
-
--- calling `request.config`, strictly typed with Intellisense
-local config, err = lsp.request.config( { section = &quot;server.config&quot; } )
 ```
 
 
@@ -168,22 +97,103 @@ Example:
 ```lua
 -- three ways to send a `window/logMessage` notification:
 
-local MessageType = require(&#039;lsp-lib.enum.MessageType&#039;)
+local MessageType = require('lsp-lib.enum.MessageType')
 
 -- calling `notify`, loosely typed
-notify(&#039;window/logMessage&#039;, {
+notify('window/logMessage', {
   type = MessageType.Info,
-  message = &quot;server version: X.Y.Z&quot;,
+  message = "server version: X.Y.Z",
 })
 
 -- indexing `notify`, strictly typed with Intellisense
-notify[&#039;window/logMessage&#039;] {
+notify['window/logMessage'] {
   type = MessageType.Info,
-  message = &quot;server version: X.Y.Z&quot;,
+  message = "server version: X.Y.Z",
 }
 
 -- calling `notify.log.*`, strictly typed with Intellisense
-notify.log.info(&quot;server version: X.Y.Z&quot;)
+notify.log.info("server version: X.Y.Z")
+```
+
+
+## `lsp.debug`
+
+```
+function
+```
+
+sets debug mode to its boolean `setting` parameter. Right now, its only
+effect is logging all messages that are read from and written to the server.
+
+
+## `lsp.async`
+
+```
+fun(f: function, ...any):(thread: thread, ok: boolean, ...any)
+```
+
+a utility function for calling a function `f` asynchronously with arguments
+`...`. A `thread` object representing the call is returned.
+
+
+## `lsp.request`
+
+```
+lsp-lib.Request
+```
+
+sends LSP requests to the client. Requests block the current thread and
+return the response's result xor error object.
+[`lsp-lib.async`](lua://lsp-lib.Async) is provided for sending requests
+asynchronously.
+
+When in a response function, `assert`ing the request will echo the client's
+response back as-is, which is likely unintended behavior. Instead, take the
+message and wrap it in a meaningful `InternalError`.
+
+```lua
+local ErrorCodes = require("lsp-lib.enum.ErrorCodes")
+local lsp = require("lsp-lib")
+
+lsp.response["initialized"] = function(params)
+  local config, err = lsp.request.config()
+  if err then
+    error({
+      code = ErrorCodes.InternalError,
+      message = "Error in `initialized` handler: " .. err.message,
+    })
+  end
+
+  -- process config safely
+end
+```
+
+When indexed with an LSP-specified method, it returns a function that takes
+a `params` argument. This form is entirely type-checked by LuaLS.
+
+When `request` is called, it takes an LSP-specified `method` argument and a
+`params` argument. This form is very loosely type-checked by LuaLS and is
+typically used by other request functions.
+
+This table also contains utility functions for all LSP-specified methods.
+
+Example:
+
+```lua
+-- three ways to send a `workspace/configuration` request:
+
+-- calling `request`, loosely typed
+local config, err = lsp.request('workspace/configuration', {
+  items = { { section = "server.config" } },
+})
+
+-- indexing `request`, strictly typed with Intellisense
+local config, err = lsp.request['workspace/configuration'] {
+  items = { { section = "server.config" } },
+}
+
+-- calling `request.config`, strictly typed with Intellisense
+local config, err = lsp.request.config( { section = "server.config" } )
 ```
 
 
@@ -199,7 +209,7 @@ and sends what they return to output
 This module also resumes requesting threads when receiving responses and
 logs errors to the client when a route errors.
 
-Calling this module starts a blocking I/O loop. It&#039;s dependent on
+Calling this module starts a blocking I/O loop. It's dependent on
 [`lsp-lib.io`](lua://lsp-lib.IO) to read and write these messages.
 
 If the `exit` parameter is anything but `false`, `listen()` will call
@@ -221,10 +231,10 @@ This is the default table `lsp.listen` uses to query routes.
 Below is an example of a route implementation for the `initialize` request.
 
 ```lua
-local TextDocumentSyncKind = require(&quot;lsp-lib.enum.TextDocumentSyncKind&quot;)
-local lsp = require(&quot;lsp-lib&quot;)
+local TextDocumentSyncKind = require("lsp-lib.enum.TextDocumentSyncKind")
+local lsp = require("lsp-lib")
 
-lsp.response[&#039;initialize&#039;] = function(params)
+lsp.response['initialize'] = function(params)
 
   ---@type lsp.ServerCapabilities
   local capabilities = {
@@ -237,7 +247,7 @@ lsp.response[&#039;initialize&#039;] = function(params)
       interFileDependencies = true,
       workspaceDiagnostics = true,
       documentSelector = {
-        { language = &quot;plain&quot;, scheme = &quot;file&quot; },
+        { language = "plain", scheme = "file" },
       },
     },
 
@@ -248,8 +258,8 @@ lsp.response[&#039;initialize&#039;] = function(params)
   local response = {
     capabilities = capabilities,
     serverInfo = {
-      name = &quot;plain text language server&quot;,
-      version = &quot;0.0.1&quot;,
+      name = "plain text language server",
+      version = "0.0.1",
     },
   }
 
@@ -260,12 +270,12 @@ end
 And here is another example for the `textDocument/didOpen` notification.
 
 ```lua
-local lsp = require(&quot;lsp-lib&quot;)
+local lsp = require("lsp-lib")
 
 -- a module that holds a reference to all opened documents
-local documents = require(&quot;server.documents&quot;)
+local documents = require("server.documents")
 
-lsp.response[&quot;textDocument/didOpen&quot;] = function(params)
+lsp.response["textDocument/didOpen"] = function(params)
   local document = params.textDocument
 
   documents[document.uri] = document
@@ -275,7 +285,7 @@ end
 If a route throws an error, it could get handled in several ways based on the
 kind of error object that was passed:
 
-- When the error object is a table with a `message` and `code` field, it&#039;s
+- When the error object is a table with a `message` and `code` field, it's
   treated as a response error directly, and the `message` field is treated as
   an error message.
 - Otherwise, a response error with an `InternalError` code is generated with
@@ -294,14 +304,4 @@ notification implementation returns a value, an error is logged.
 All supported request and notification implementations are outlined in the
 [LSP 3.17 specification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/),
 and custom requests and notifications can be implemented.
-
-
-## `lsp.debug`
-
-```
-function
-```
-
-sets debug mode to its boolean `setting` parameter. Right now, its only
-effect is logging all messages that are read from and written to the server.
 
