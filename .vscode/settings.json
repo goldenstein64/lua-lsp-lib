@@ -1,12 +1,15 @@
 {
 	"Lua.workspace.library": [
-		"$USERPROFILE/AppData/Roaming/Code/User/globalStorage/sumneko.lua/addonManager/addons/lua-cjson/module/library"
+		"$USERPROFILE/AppData/Roaming/Code/User/globalStorage/sumneko.lua/addonManager/addons/lua-cjson/module/library",
+		"${addons}/luafilesystem/module/library"
 	],
 	"Lua.workspace.ignoreDir": [
 		".vscode",
 		"doc"
 	],
-	"Lua.diagnostics.globals": [],
+	"Lua.diagnostics.globals": [
+		"lfs"
+	],
 	"Lua.workspace.checkThirdParty": false,
 	"Lua.runtime.version": "LuaJIT",
 	"[moonscript]": {

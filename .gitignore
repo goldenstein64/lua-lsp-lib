@@ -4,4 +4,4 @@
 /.luarocks
 *.src.rock
 
-doc/out
+scripts/doc/out

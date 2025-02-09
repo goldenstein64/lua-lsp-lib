@@ -11,7 +11,7 @@ assert(
 
 os.execute(
 	string.format(
-		"%s --doc lsp-lib --doc_out_path ./doc/out",
+		"%s --doc lsp-lib --doc_out_path ./scripts/doc/out",
 		language_server_path
 	)
 )

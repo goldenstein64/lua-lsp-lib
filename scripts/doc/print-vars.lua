@@ -67,7 +67,7 @@ local table_view = {}
 
 for _, elem in ipairs(json) do
 	local name = elem.name ---@type string
-	if name:match("^lsp-lib") then
+	if name:match("^lsp%-lib") then
 		table.insert(
 			table_view,
 			{ tostring(name), tostring(elem.type), tostring(elem.view) }
