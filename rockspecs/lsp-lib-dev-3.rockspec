@@ -13,6 +13,10 @@ dependencies = {
    "lua-cjson ~> 2.1",
    "compat53 ~> 0.12",
 }
+build_dependencies = {
+   "etlua ~> 1.3",
+   "inspect ~> 3.1"
+}
 test_dependencies = {
    "busted ~> 2.2",
    "moonscript ~> 0.5",
