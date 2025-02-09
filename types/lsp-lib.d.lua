@@ -1,6 +1,6 @@
 ---@meta
 
----@class lsp*.Response
+---@class lsp-lib.Response
 local response = {}
 
 ---A request to resolve the implementation locations of a symbol at a given text
@@ -432,7 +432,7 @@ response["$/cancelRequest"] = nil
 ---@type fun(params: lsp.Notification._-progress.params)
 response["$/progress"] = nil
 
----@class lsp*.Request
+---@class lsp-lib.Request
 local request = {}
 
 ---The `workspace/workspaceFolders` is sent from the server to the client to fetch the open workspace folders.
@@ -535,7 +535,7 @@ request["workspace/codeLens/refresh"] = function(params) end
 ---@return lsp.Response.workspace-applyEdit.error? error
 request["workspace/applyEdit"] = function(params) end
 
----@class lsp*.Notify
+---@class lsp-lib.Notify
 local notify = {}
 
 ---The show message notification is sent from a server to a client to ask

@@ -2,7 +2,7 @@ local null = require("cjson").null
 
 local noop = function() end
 
----@type lsp*.Response
+---@type lsp-lib.Response
 ---@diagnostic disable-next-line: missing-fields
 local defaults = {}
 
@@ -97,7 +97,7 @@ defaults["exit"] = noop
 ---All supported request and notification implementations are outlined in the
 ---[LSP 3.17 specification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/),
 ---and custom requests and notifications can be implemented.
----@class lsp*.Response
+---@class lsp-lib.Response
 local response = {}
 
 setmetatable(response, { __index = defaults })

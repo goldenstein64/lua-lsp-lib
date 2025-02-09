@@ -7,7 +7,7 @@ local ErrorCodes = require("lsp-lib.enum.ErrorCodes")
 local server_config
 
 -- this allows adding fields to the type
----@class lsp*.Request
+---@class lsp-lib.Request
 lsp.request = lsp.request
 
 -- "initialize" should auto-complete well enough under LuaLS

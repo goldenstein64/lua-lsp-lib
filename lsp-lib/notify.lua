@@ -11,7 +11,7 @@ local notifications = {
 	"$/progress", -- .progress
 }
 
----@enum (key) lsp*.MessageType
+---@enum (key) lsp-lib.MessageType
 local message_type_map = {
 	error = MessageType.Error,
 	warn = MessageType.Warning,
@@ -54,13 +54,13 @@ local message_type_map = {
 ----- calling `notify.log.*`, strictly typed with Intellisense
 ---notify.log.info("server version: X.Y.Z")
 ---```
----@class lsp*.Notify
----@field log lsp*.Notify.log
----@field show lsp*.Notify.show
+---@class lsp-lib.Notify
+---@field log lsp-lib.Notify.log
+---@field show lsp-lib.Notify.show
 local notify = {
 	---sends a `window/logMessage` notification, where the message type is the
 	---key
-	---@class lsp*.Notify.log
+	---@class lsp-lib.Notify.log
 	---@field error fun(message: string)
 	---@field warn fun(message: string)
 	---@field info fun(message: string)
@@ -70,7 +70,7 @@ local notify = {
 
 	---sends a `window/showMessage` notification, where the message type is the
 	---key
-	---@class lsp*.Notify.show
+	---@class lsp-lib.Notify.show
 	---@field error fun(message: string)
 	---@field warn fun(message: string)
 	---@field info fun(message: string)

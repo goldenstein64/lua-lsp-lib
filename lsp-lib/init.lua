@@ -14,7 +14,7 @@ local io_lsp = require("lsp-lib.io")
 ---local server_config
 ---
 ----- this allows adding fields to the type
-------@class lsp*.Request
+------@class lsp-lib.Request
 ---lsp.request = lsp.request
 ---
 ----- "initialize" should auto-complete well enough under LuaLS
@@ -68,12 +68,12 @@ local io_lsp = require("lsp-lib.io")
 ----- starts a loop that listens to stdio
 ---lsp.listen()
 ---```
----@class lsp*
----@field notify lsp*.Notify
----@field request lsp*.Request
----@field response lsp*.Response
----@field listen lsp*.Listen
----@field async lsp*.Async
+---@class lsp-lib
+---@field notify lsp-lib.Notify
+---@field request lsp-lib.Request
+---@field response lsp-lib.Response
+---@field listen lsp-lib.Listen
+---@field async lsp-lib.Async
 local lsp = {
 	notify = require("lsp-lib.notify"),
 	request = require("lsp-lib.request"),

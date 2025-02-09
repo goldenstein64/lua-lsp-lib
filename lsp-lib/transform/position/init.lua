@@ -68,14 +68,14 @@ local transform_position = {}
 
 ---finds the positional offset from a byte position. It also finds the byte
 ---position from a positional offset.
----@class lsp*.transform_position.encoder
+---@class lsp-lib.transform_position.Encoder
 ---@field byte_of fun(text: string, i: integer, unit_pos: integer): (byte_pos: integer)
 ---@field unit_of fun(text: string, i: integer, byte_pos: integer): (unit_pos: integer)
 
 ---determines how LSP Positions are translated to byte positions. This is
 ---typically controlled by which `PositionEncodingKind` was selected on
 ---`'initialize'`.
----@type lsp*.transform_position.encoder
+---@type lsp-lib.transform_position.Encoder
 transform_position.encoder = require("lsp-lib.transform.position.utf16")
 
 ---takes an LSP Position and converts it to a byte position in the range of

@@ -25,7 +25,7 @@ local function e_invalid_request(id, methodName)
 end
 
 ---represents any message that can be sent or received by the server
----@alias lsp*.AnyMessage
+---@alias lsp-lib.AnyMessage
 ---| lsp.Request
 ---| lsp.Response
 ---| lsp.Notification
@@ -35,21 +35,21 @@ end
 ---Due to its push-only interface, it may not be powerful enough to support all
 ---modes of transport, which is why it may be good practice to redirect stdio
 ---externally instead of swapping the provider at runtime.
----@see lsp*.IO.provider
----@class lsp*.io.Provider
+---@see lsp-lib.IO.provider
+---@class lsp-lib.io.Provider
 ---reads `bytes` bytes from its input source and returns the data read. It must
 ---be synchronous.
----@field read fun(self: lsp*.io.Provider, bytes: integer): (data: string)
+---@field read fun(self: lsp-lib.io.Provider, bytes: integer): (data: string)
 ---writes `data` to its output source. It can be asynchronous but must be
 ---atomic.
----@field write fun(self: lsp*.io.Provider, data: string)
+---@field write fun(self: lsp-lib.io.Provider, data: string)
 ---describes what line ending to use for writing header fields and the header
 ---block separator.
 ---@field line_ending string
 
 ---a mid-level interface that sends and receives Lua tables
----@class lsp*.IO
----the interface `lsp*.io` uses to read from and write to an I/O source
+---@class lsp-lib.IO
+---the interface `lsp-lib.io` uses to read from and write to an I/O source
 ---
 ---`stdio` is the default provider, but it can be swapped with other providers
 ---for pipe and socket transport.
@@ -57,18 +57,18 @@ end
 ---Due to its push-only interface, it may not be powerful enough to support all
 ---modes of transport, which is why it may be good practice to redirect stdio
 ---externally instead of swapping the provider at runtime.
----@see lsp*.io.Provider
----@field provider lsp*.io.Provider
----a function that gets called after data is read from `lsp*.io`'s provider and
+---@see lsp-lib.io.Provider
+---@field provider lsp-lib.io.Provider
+---a function that gets called after data is read from `lsp-lib.io`'s provider and
 ---before it gets returned
----@field read_callback? fun(data: lsp*.AnyMessage)
+---@field read_callback? fun(data: lsp-lib.AnyMessage)
 ---a function that gets called after it receives data and gets it validated and
----before it gets written to `lsp*.io`'s provider
----@field write_callback? fun(data: lsp*.AnyMessage)
+---before it gets written to `lsp-lib.io`'s provider
+---@field write_callback? fun(data: lsp-lib.AnyMessage)
 ---a mapping from request id's to their respective batches
----@field request_to_batch { [lsp.Request]: lsp*.AnyMessage[] }
+---@field request_to_batch { [lsp.Request]: lsp-lib.AnyMessage[] }
 ---holds all messages that haven't been processed yet
----@field message_queue lsp*.AnyMessage[]
+---@field message_queue lsp-lib.AnyMessage[]
 local io_lsp = {
 	provider = require("lsp-lib.io.stdio"),
 
@@ -79,7 +79,7 @@ local io_lsp = {
 	write_callback = nil,
 }
 
----@param self lsp*.IO
+---@param self lsp-lib.IO
 ---@return string
 local function read_header_line(self)
 	local buffer = {}
@@ -98,12 +98,12 @@ local function read_header_line(self)
 end
 
 ---an internal interface used for decoding headers
----@class lsp*.io.headers
+---@class lsp-lib.io.headers
 ---@field ["content-length"] integer
 ---@field ["content-type"] string?
 
----@param self lsp*.IO
----@return lsp*.io.headers
+---@param self lsp-lib.IO
+---@return lsp-lib.io.headers
 local function get_headers(self)
 	local headers = {}
 	local header = read_header_line(self)
@@ -132,9 +132,9 @@ local function get_headers(self)
 	return headers
 end
 
----@param self lsp*.IO
+---@param self lsp-lib.IO
 ---@param len integer
----@return lsp*.AnyMessage | (lsp*.AnyMessage)[]
+---@return lsp-lib.AnyMessage | (lsp-lib.AnyMessage)[]
 local function get_data(self, len)
 	local content = assert(self.provider:read(len))
 
@@ -147,8 +147,8 @@ end
 ---JSON encodes a Lua table and writes it to the I/O provider as a
 ---header/content pair. `io_lsp:write(message)` ensures that responses are sent
 ---in the same batches their respective requests were received from.
----@param self lsp*.IO
----@param data lsp*.AnyMessage | lsp*.AnyMessage[]
+---@param self lsp-lib.IO
+---@param data lsp-lib.AnyMessage | lsp-lib.AnyMessage[]
 local function _write(self, data)
 	local content = json.encode(data)
 
@@ -166,7 +166,7 @@ end
 ---
 ---If an LSP message is malformed or could not be parsed, an `InvalidRequest`
 ---response error is sent.
----@param self lsp*.IO
+---@param self lsp-lib.IO
 local function _read(self)
 	local headers = get_headers(self)
 
@@ -178,7 +178,7 @@ local function _read(self)
 	end
 
 	if getmetatable(data) == array_mt then
-		---@cast data lsp*.AnyMessage[]
+		---@cast data lsp-lib.AnyMessage[]
 		if #data == 0 then
 			_write(self, e_invalid_request())
 			return
@@ -208,30 +208,30 @@ local function _read(self)
 			_write(self, batch)
 		end
 	elseif io_lsp.type(data) ~= nil then
-		---@cast data lsp*.AnyMessage
+		---@cast data lsp-lib.AnyMessage
 		table.insert(self.message_queue, data)
 	else
 		_write(self, e_invalid_request(data.id, data.method))
 	end
 end
 
----reads a message from [`lsp-lib.io`](lua://lsp*.IO)'s provider, validates it, and
+---reads a message from [`lsp-lib.io`](lua://lsp-lib.IO)'s provider, validates it, and
 ---returns it as a Lua table
----@return lsp*.AnyMessage
+---@return lsp-lib.AnyMessage
 function io_lsp:read()
 	while #self.message_queue <= 0 do
 		_read(self)
 	end
 
-	---@type lsp*.AnyMessage
+	---@type lsp-lib.AnyMessage
 	local message = table.remove(self.message_queue, 1)
 
 	return message
 end
 
 ---takes a Lua table representing an LSP message, validates it, and writes it to
----`lsp*.io`'s provider
----@param message lsp*.AnyMessage
+---`lsp-lib.io`'s provider
+---@param message lsp-lib.AnyMessage
 function io_lsp:write(message)
 	local msg_type = assert(io_lsp.type(message))
 
@@ -262,13 +262,13 @@ function io_lsp:write(message)
 	end
 end
 
----@alias lsp*.io.MessageEnum "response" | "request" | "notification"
+---@alias lsp-lib.io.MessageEnum "response" | "request" | "notification"
 
 ---determines whether the given `value` is a valid LSP message. It either
 ---returns a string determining the type of LSP message or `nil` and an error
 ---message.
 ---@param value unknown
----@return lsp*.io.MessageEnum? type, string? err_msg
+---@return lsp-lib.io.MessageEnum? type, string? err_msg
 function io_lsp.type(value)
 	if type(value) ~= "table" then
 		return nil, "not a table"

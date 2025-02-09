@@ -20,5 +20,5 @@ local function byte_of(text, i, unit_pos)
 	end
 end
 
----@type lsp*.transform_position.encoder
+---@type lsp-lib.transform_position.Encoder
 return { byte_of = byte_of, unit_of = unit_of }

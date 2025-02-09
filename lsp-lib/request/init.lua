@@ -34,7 +34,7 @@ local requests = {
 
 ---sends LSP requests to the client. Requests block the current thread and
 ---return the response's result xor error object.
----[`lsp-lib.async`](lua://lsp*.Async) is provided for sending requests
+---[`lsp-lib.async`](lua://lsp-lib.Async) is provided for sending requests
 ---asynchronously.
 ---
 ---When in a response function, `assert`ing the request will echo the client's
@@ -85,8 +85,8 @@ local requests = {
 ----- calling `request.config`, strictly typed with Intellisense
 ---local config, err = lsp.request.config( { section = "server.config" } )
 ---```
----@class lsp*.Request
----@field show lsp*.Request.show
+---@class lsp-lib.Request
+---@field show lsp-lib.Request.show
 local request = {
 
 	---shows a `message` to the user with the given message `[type]` by sending
@@ -114,7 +114,7 @@ local request = {
 	---  restart_the_language_server()
 	---end
 	---```
-	---@class lsp*.Request.show
+	---@class lsp-lib.Request.show
 	---@field log fun(message: string, ...: string): (result: lsp.Response.window-showMessageRequest.result?, error: lsp.Response.window-showMessageRequest.error?)
 	---@field info fun(message: string, ...: string): (result: lsp.Response.window-showMessageRequest.result?, error: lsp.Response.window-showMessageRequest.error?)
 	---@field error fun(message: string, ...: string): (result: lsp.Response.window-showMessageRequest.result?, error: lsp.Response.window-showMessageRequest.error?)
@@ -231,7 +231,7 @@ function request.create_work_done_progress(token)
 	return request("window/workDoneProgress/create", { token = token })
 end
 
----@class lsp*.Request.show_document.options
+---@class lsp-lib.request.show_document.Options
 ---Should this document be shown in an external program? e.g. display a website
 ---link in a browser instead of the editor.
 ---@field external? boolean
@@ -246,7 +246,7 @@ end
 ---asks the client to display a resource at the `uri` by sending a
 ---[`window/showDocument` request](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#window_showDocument)
 ---@param uri lsp.URI -- the URI to show
----@param options? lsp*.Request.show_document.options -- a table of options
+---@param options? lsp-lib.request.show_document.Options -- a table of options
 ---@return boolean? success -- whether the document was successfully shown
 ---@return lsp.Response.window-showDocument.error? error
 function request.show_document(uri, options)

@@ -1,5 +1,5 @@
 ---represents an I/O provider that reads from `stdin` and writes to `stdout`
----@class lsp*.io.StdIOProvider : lsp*.io.Provider
+---@class lsp-lib.io.StdIOProvider : lsp-lib.io.Provider
 local stdio = {
 	line_ending = "\n",
 }

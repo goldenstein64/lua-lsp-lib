@@ -10,7 +10,7 @@ local ERR_NO_RESPONSE = "request '%s' was not responded to"
 local ERR_RESPONSE_FOUND = "notification '%s' was responded to"
 local ERR_NO_THREAD_STORED = "no thread found for response id '%s'"
 
----@alias lsp*.Listen.state "initialize" | "default" | "shutdown"
+---@alias lsp-lib.Listen.state "initialize" | "default" | "shutdown"
 
 ---manages messages read from input, routes them through its response handlers,
 ---and sends what they return to output
@@ -19,18 +19,18 @@ local ERR_NO_THREAD_STORED = "no thread found for response id '%s'"
 ---logs errors to the client when a route errors.
 ---
 ---Calling this module starts a blocking I/O loop. It's dependent on
----[`lsp-lib.io`](lua://lsp*.IO) to read and write these messages.
+---[`lsp-lib.io`](lua://lsp-lib.IO) to read and write these messages.
 ---
 ---If the `exit` parameter is anything but `false`, `listen()` will call
 ---`os.exit` after receiving the
 ---[`exit` notification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#exit).
 ---`listen(false)` will simply assert that the server was left in a finished
 ---state before returning. This is used for writing tests.
----@class lsp*.Listen
+---@class lsp-lib.Listen
 ---This table is indexed whenever a request or notification is read, and the
 ---resulting method gets called with the received message's parameters. It holds
 ---all methods implemented by the user, and defaults to the
----[`lsp.response`](lua://lsp*.Response) module.
+---[`lsp.response`](lua://lsp-lib.Response) module.
 ---@field routes { [string]: nil | fun(params: any): any }
 ---describes how `listen()` handles messages as specified by the LSP. It
 ---typically doesn't have to be modified by the user. This gets set to
@@ -55,7 +55,7 @@ local ERR_NO_THREAD_STORED = "no thread found for response id '%s'"
 ---  is received. This notification is propagated to its router, and all
 ---  requests are responded to with an
 ---  [`InvalidRequest` error](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#errorCodes).
----@field state lsp*.Listen.state
+---@field state lsp-lib.Listen.state
 ---a flag indicating whether `listen()` should keep listening for messages. It
 ---typically doesn't have to be modified by the user. This gets set to `true`
 ---when calling `listen()`.
@@ -82,12 +82,12 @@ local function get_route(msg)
 	return route
 end
 
----@class lsp*.RouteError
+---@class lsp-lib.listen.RouteError
 ---@field result? lsp.ResponseError
 ---@field msg string
 
 ---@param result lsp.ResponseError | string
----@return lsp*.RouteError
+---@return lsp-lib.listen.RouteError
 local function handle_route_error(result)
 	if type(result) == "table" and result.message and result.code then
 		-- graceful error, leave it alone
@@ -118,7 +118,7 @@ local function handle_request_result(req, result)
 end
 
 ---@param req lsp.Request
----@param err lsp*.RouteError
+---@param err lsp-lib.listen.RouteError
 ---@return lsp.Response
 local function handle_request_error(req, err)
 	notify.log.error("request error: " .. tostring(err.msg))
@@ -133,7 +133,7 @@ end
 ---@param result unknown
 local function handle_async_route(ok, result)
 	if not ok then
-		---@cast result lsp*.RouteError
+		---@cast result lsp-lib.listen.RouteError
 		notify.log.error(tostring(result))
 	end
 end
@@ -146,7 +146,7 @@ local function handle_request_route(req, ok, result)
 	if ok then -- successful request
 		return handle_request_result(req, result)
 	else
-		---@cast result lsp*.RouteError
+		---@cast result lsp-lib.listen.RouteError
 		return handle_request_error(req, result)
 	end
 end
@@ -156,7 +156,7 @@ end
 ---@param result unknown
 local function handle_notification_route(notif, ok, result)
 	if not ok then
-		---@cast result lsp*.RouteError
+		---@cast result lsp-lib.listen.RouteError
 		notify.log.error(result.msg)
 	elseif result ~= nil then
 		notify.log.error(ERR_RESPONSE_FOUND:format(notif.method))
@@ -296,7 +296,7 @@ listen.handlers = {
 }
 
 ---handles exactly one iteration of the I/O loop, reading one LSP message pulled
----from [`lsp.io:read`](lua://lsp*.IO.read) and propagating it to the
+---from [`lsp.io:read`](lua://lsp-lib.IO.read) and propagating it to the
 ---appropriate route.
 function listen.once()
 	local handler = listen.handlers[listen.state]
@@ -309,7 +309,7 @@ end
 
 local listen_mt = {}
 
----@see lsp*.Listen
+---@see lsp-lib.Listen
 ---@param exit? boolean
 function listen_mt:__call(exit)
 	listen.state = "initialize"
@@ -329,4 +329,4 @@ function listen_mt:__call(exit)
 end
 
 ---@diagnostic disable-next-line: param-type-mismatch
-return setmetatable(listen, listen_mt) --[[@as lsp*.Listen]]
+return setmetatable(listen, listen_mt) --[[@as lsp-lib.Listen]]
