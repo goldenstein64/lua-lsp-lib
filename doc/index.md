@@ -73,12 +73,34 @@ lsp.debug(true)
 lsp.listen()
 ```
 
+## `lsp.async(f: function, ...any) -> (thread: thread, ok: boolean, ...any)`
 
-## `lsp.notify`
+a utility function for calling a function `f` asynchronously with arguments
+`...`. A `thread` object representing the call is returned.
 
-```
-lsp-lib.Notify
-```
+## `lsp.debug(setting: boolean)`
+
+sets debug mode to its boolean `setting` parameter. Right now, its only
+effect is logging all messages that are read from and written to the server.
+
+## `lsp.listen: lsp-lib.Listen`
+
+manages messages read from input, routes them through its response handlers,
+and sends what they return to output
+
+This module also resumes requesting threads when receiving responses and
+logs errors to the client when a route errors.
+
+Calling this module starts a blocking I/O loop. It's dependent on
+[`lsp-lib.io`](lua://lsp-lib.IO) to read and write these messages.
+
+If the `exit` parameter is anything but `false`, `listen()` will call
+`os.exit` after receiving the
+[`exit` notification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#exit).
+`listen(false)` will simply assert that the server was left in a finished
+state before returning. This is used for writing tests.
+
+## `lsp.notify: lsp-lib.Notify`
 
 sends notifications to the client. Unlike requests, notifications never
 block the current thread and return nothing.
@@ -115,32 +137,7 @@ notify['window/logMessage'] {
 notify.log.info("server version: X.Y.Z")
 ```
 
-
-## `lsp.debug`
-
-```
-function
-```
-
-sets debug mode to its boolean `setting` parameter. Right now, its only
-effect is logging all messages that are read from and written to the server.
-
-
-## `lsp.async`
-
-```
-fun(f: function, ...any):(thread: thread, ok: boolean, ...any)
-```
-
-a utility function for calling a function `f` asynchronously with arguments
-`...`. A `thread` object representing the call is returned.
-
-
-## `lsp.request`
-
-```
-lsp-lib.Request
-```
+## `lsp.request: lsp-lib.Request`
 
 sends LSP requests to the client. Requests block the current thread and
 return the response's result xor error object.
@@ -196,34 +193,7 @@ local config, err = lsp.request['workspace/configuration'] {
 local config, err = lsp.request.config( { section = "server.config" } )
 ```
 
-
-## `lsp.listen`
-
-```
-lsp-lib.Listen
-```
-
-manages messages read from input, routes them through its response handlers,
-and sends what they return to output
-
-This module also resumes requesting threads when receiving responses and
-logs errors to the client when a route errors.
-
-Calling this module starts a blocking I/O loop. It's dependent on
-[`lsp-lib.io`](lua://lsp-lib.IO) to read and write these messages.
-
-If the `exit` parameter is anything but `false`, `listen()` will call
-`os.exit` after receiving the
-[`exit` notification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#exit).
-`listen(false)` will simply assert that the server was left in a finished
-state before returning. This is used for writing tests.
-
-
-## `lsp.response`
-
-```
-lsp-lib.Response
-```
+## `lsp.response: lsp-lib.Response`
 
 a table that is meant to be populated with route implementations by the user.
 This is the default table `lsp.listen` uses to query routes.

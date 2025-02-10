@@ -2,12 +2,9 @@
 
 <%- lsp_lib.desc %>
 
-<% for name, field in pairs(lsp_lib.fields) do %>
-## `lsp.<%= name %>`
-
-```
-<%- field.view %>
-```
+<%
+for _, field in ipairs(lsp_lib.fields) do
+%>## `lsp.<%- field.name %><%- field.view %>`
 
 <%- field.desc %>
 

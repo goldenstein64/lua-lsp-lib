@@ -1,10 +1,6 @@
 -- usage:
 -- cat scripts/doc/src/example.template.md | lua scripts/doc/generate.lua > doc/example.md
 
-local function is_main()
-	return arg ~= nil and arg[-1] ~= nil
-end
-
 local cjson = require("cjson")
 local etlua = require("etlua")
 
@@ -54,7 +50,58 @@ for _, elem in ipairs(json) do
 		local fields = {}
 		if elem.fields then
 			for _, field in ipairs(elem.fields) do
-				fields[field.name] = { desc = field.desc, view = field.view }
+				local args, returns = field.view:match("fun(%b())%:(%b())")
+				local field_data = { desc = field.desc, name = field.name }
+				if args and returns then
+					field_data.view = string.format("%s -> %s", args, returns)
+				elseif
+					field.view == "function" and field.type == "setfield"
+				then
+					---@type string[]
+					local args_list = {}
+					if field.extends.args then
+						for _, arg in ipairs(field.extends.args) do
+							table.insert(
+								args_list,
+								string.format("%s: %s", arg.name, arg.view)
+							)
+						end
+					end
+
+					if field.extends.returns then
+						---@type string[]
+						local returns_list = {}
+						for _, return_val in ipairs(field.extends.returns) do
+							if
+								return_val.name
+								and return_val.name ~= return_val.view
+							then
+								table.insert(
+									returns_list,
+									string.format(
+										"%s: %s",
+										return_val.name,
+										return_val.view
+									)
+								)
+							else
+								table.insert(returns_list, return_val.view)
+							end
+						end
+						field_data.view = string.format(
+							"(%s) -> (%s)",
+							table.concat(args_list, ", "),
+							table.concat(returns_list, ", ")
+						)
+					else
+						field_data.view =
+							string.format("(%s)", table.concat(args_list, ", "))
+					end
+				else
+					field_data.view = string.format(": %s", field.view)
+				end
+
+				table.insert(fields, field_data)
 			end
 		end
 		t.fields = fields
@@ -68,7 +115,7 @@ local function generate(template_path)
 		text = template_file:read("a")
 		template_file:close()
 	end
-	local template = etlua.compile(text)
+	local template = assert(etlua.compile(text))
 
 	local content = template(env)
 	local buffer = {
