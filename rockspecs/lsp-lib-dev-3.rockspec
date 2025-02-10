@@ -15,12 +15,12 @@ dependencies = {
 }
 build_dependencies = {
    "etlua ~> 1.3",
-   "inspect ~> 3.1"
+   "inspect ~> 3.1",
 }
 test_dependencies = {
    "busted ~> 2.2",
    "moonscript ~> 0.5",
-   "tableshape ~> 2.6"
+   "tableshape ~> 2.6",
 }
 build = {
    type = "builtin",
@@ -85,5 +85,5 @@ build = {
 
       ["lsp-lib.init"] = "lsp-lib/init.lua",
    },
-   copy_directories = { "types" }
+   copy_directories = { "types" },
 }
