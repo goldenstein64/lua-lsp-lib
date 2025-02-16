@@ -1,35 +1,63 @@
--- in Lua,
 local null = require("cjson").null
 local lsp = require("lsp-lib")
 local ErrorCodes = require("lsp-lib.enum.ErrorCodes")
 
----@type lsp.ClientCapabilities
+local MSG_SERVER_STARTED = "[%s]: server started!"
+local ERR_CONFIG_NOT_FOUND = "[%s] error getting config: %s"
+
+---@class ServerConfig
+---@field hasFoo boolean
+
+---@type ServerConfig
 local server_config
 
--- this allows adding fields to the type
----@class lsp-lib.Request
-lsp.request = lsp.request
+-- make a blocking LSP request
+---@return ServerConfig
+local function get_server_config()
+  ---@type any?, lsp.ResponseError?
+  local config, err = lsp.request.config({ section = "test-server" })
+  if err then
+    -- errors are logged to the client
+    error({
+      code = ErrorCodes.InternalError,
+      message = "error getting config: " .. err.message,
+    })
+  end
+
+  -- config exists if err doesn't
+  return config[1]
+end
 
 -- "initialize" should auto-complete well enough under LuaLS
 lsp.response["initialize"] = function(params)
-  -- annotation is needed here due to a shortcoming of LuaLS
+  ---@type lsp.Request.initialize.params
+
+  -- annotation is needed here
   ---@type lsp.Response.initialize.result
   return { capabilities = {} }
 end
 
 lsp.response["initialized"] = function()
   -- utility notify functions are provided
-  lsp.notify.log.info(os.date())
+  lsp.notify.log.info(MSG_SERVER_STARTED:format(os.date()))
 
   -- make a blocking LSP request
-  local err
-  server_config, err = lsp.request.config()
-  if err then
-    -- errors are logged to the client
-    error({
-      code = ErrorCodes.InternalError,
-      message = "Error in `initialized` handler: " .. err.message,
-    })
+  server_config = get_server_config()
+
+  -- you can also make an async request instead using coroutines
+  local thread = coroutine.create(function()
+    server_config = get_server_config()
+  end)
+  local ok, err = coroutine.resume(thread)
+  assert(ok, err)
+end
+
+-- a custom request handler
+-- it won't have any auto-complete without specifying params/returns
+---@param params { doBar: boolean }
+lsp.response["$/foo"] = function(params)
+  if params.doBar and server_config.hasFoo then
+
   end
 end
 
@@ -51,6 +79,10 @@ lsp.response["shutdown"] = function()
 
   return null
 end
+
+-- this allows adding new requests to lsp.request
+---@class lsp-lib.Request
+lsp.request = lsp.request
 
 -- define your own request function
 function lsp.request.custom_request(foo, bar)
