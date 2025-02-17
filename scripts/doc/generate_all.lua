@@ -8,7 +8,7 @@ end
 
 ---@type fun(path: string): string
 local function to_out_path(path)
-	local out_path = path:gsub("%.template%.md$", ".md")
+	local out_path = path:gsub("%.etlua$", "")
 	return "doc/" .. out_path
 end
 
