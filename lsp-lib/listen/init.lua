@@ -202,6 +202,14 @@ local function handle_route(route, req)
 	execute_thread(req, thread, route, handle_route_error, req.params)
 end
 
+---@param msg lsp.Request | lsp.Notification
+local function try_route(msg)
+	local route = get_route(msg)
+	if route then
+		handle_route(route, msg)
+	end
+end
+
 ---@param res lsp.Response
 local function handle_response(res)
 	local thread = request_state.waiting_threads[res.id]
@@ -221,79 +229,82 @@ end
 listen.handlers = {
 	["initialize"] = function()
 		local msg = io_lsp:read()
+		local msg_type = io_lsp.type(msg) --[[@as lsp-lib.io.MessageEnum]]
 
-		local method = msg.method
-		if not method then
+		if msg_type == "response" then
 			---@cast msg lsp.Response
 			handle_response(msg)
 			return
 		end
+
 		---@cast msg lsp.Request | lsp.Notification
 
-		if method == "exit" then
-			listen.running = false
-		elseif method == "initialize" then
-			listen.state = "default"
-		else
-			if msg.id then
-				io_lsp:write(errors.ServerNotInitialized(msg.id))
+		if msg_type == "notification" then
+			---@cast msg lsp.Notification
+			if msg.method == "exit" then
+				listen.running = false
+			else
+				return
 			end
-			return
+		elseif msg_type == "request" then
+			---@cast msg lsp.Request
+			if msg.method == "initialize" then
+				listen.state = "default"
+			else
+				io_lsp:write(errors.ServerNotInitialized(msg.id))
+				return
+			end
 		end
 
-		local route = get_route(msg)
-		if route then
-			handle_route(route, msg)
-		end
+		try_route(msg)
 	end,
 
 	["default"] = function()
 		local msg = io_lsp:read()
+		local msg_type = io_lsp.type(msg) --[[@as lsp-lib.io.MessageEnum]]
 
-		local method = msg.method
-		if not method then
+		if msg_type == "response" then
 			---@cast msg lsp.Response
 			handle_response(msg)
 			return
 		end
+
 		---@cast msg lsp.Request | lsp.Notification
 
-		if method == "shutdown" then
+		if msg_type == "request" and msg.method == "shutdown" then
 			listen.state = "shutdown"
-		elseif method == "exit" then
+		elseif msg_type == "notification" and msg.method == "exit" then
 			listen.running = false
 		end
 
-		local route = get_route(msg)
-		if route then
-			handle_route(route, msg)
-		end
+		try_route(msg)
 	end,
 
 	["shutdown"] = function()
 		local msg = io_lsp:read()
+		local msg_type = io_lsp.type(msg) --[[@as lsp-lib.io.MessageEnum]]
 
-		local method = msg.method
-		if not method then
+		if msg_type == "response" then
 			---@cast msg lsp.Response
 			handle_response(msg)
 			return
 		end
+
 		---@cast msg lsp.Request | lsp.Notification
 
-		if method == "exit" then
-			listen.running = false
-		else
-			io_lsp:write(errors.InvalidRequest(msg.id, method))
+		if msg_type == "notification" then
+			if msg.method == "exit" then
+				listen.running = false
+			else
+				return
+			end
+		elseif msg_type == "request" then
+			---@cast msg lsp.Request
+			io_lsp:write(errors.InvalidRequest(msg.id, msg.method))
 			return
 		end
 
-		local route = get_route(msg)
-		if not route then
-			return
-		end
-
-		handle_route(route, msg)
+		try_route(msg)
 	end,
 }
 

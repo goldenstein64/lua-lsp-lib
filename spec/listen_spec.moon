@@ -183,6 +183,73 @@ describe 'lsp.listen', ->
 				responses = provider\mock_output!
 				assert.shape responses, shape {}
 
+		describe 'when in "shutdown" state', ->
+			before_each -> listen.state = 'shutdown'
+
+			it 'exits on "exit"', ->
+				provider = set_provider {
+					notif_of 'exit'
+				}
+
+				exit_handler = spy (params) -> nil
+				listen.routes = {
+					'exit': exit_handler
+				}
+
+				listen.once!
+
+				assert.is_false listen.running
+
+				assert.spy(exit_handler).called 1
+				assert.spy(exit_handler).called_with nil
+
+				responses = provider\mock_output!
+				assert.shape responses, shape {}
+
+			it 'sends a response error on any other request', ->
+				provider = set_provider {
+					request_of 1, '$/random', null
+				}
+
+				random_handler = spy () -> 'bar'
+				listen.routes = {
+					'$/random': random_handler
+				}
+
+				listen.once!
+
+				assert.is_true listen.running
+				assert.equal 'shutdown', listen.state
+
+				assert.spy(random_handler).not_called!
+
+				responses = provider\mock_output!
+				assert.shape responses, shape {
+					response_shape 1, nil, {
+						code: ErrorCodes.InvalidRequest
+						message: "Invalid Request: '$/random'"
+					}
+				}
+
+			it 'drops any other notification', ->
+				provider = set_provider {
+					notif_of '$/random', null
+				}
+
+				random_handler = spy () -> 'bar'
+				listen.routes = {
+					'$/random': random_handler
+				}
+
+				listen.once!
+
+				assert.is_true listen.running
+				assert.equal 'shutdown', listen.state
+
+				assert.spy(random_handler).not_called!
+
+				responses = provider\mock_output!
+				assert.shape responses, shape {}
 
 		describe 'when handling responses from routes', ->
 			it 'handles requests successfully', ->
