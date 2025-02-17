@@ -12,7 +12,7 @@ local ERR_NO_THREAD_STORED = "no thread found for response id '%s'"
 
 ---@alias lsp-lib.Listen.state "initialize" | "default" | "shutdown"
 
----manages messages read from input, routes them through its response handlers,
+---manages messages read from input, routes them through its message handlers,
 ---and sends what they return to output
 ---
 ---This module also resumes requesting threads when receiving responses and
@@ -40,7 +40,7 @@ local ERR_NO_THREAD_STORED = "no thread found for response id '%s'"
 ---  [`initialize` request](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#initialize)
 ---  is received and stops running if an
 ---  [`exit` notification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#exit)
----  is received. These requests and notifications are propagated to its router,
+---  is received. These requests and notifications are routed,
 ---  and any other request is responded to with a
 ---  [`ServerNotInitialized` error](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#errorCodes).
 ---
@@ -48,11 +48,11 @@ local ERR_NO_THREAD_STORED = "no thread found for response id '%s'"
 ---  [`shutdown` request](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#shutdown)
 ---  is received and stops running if an
 ---  [`exit` notification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#exit)
----  is received. All requests are propagated to its router.
+---  is received. All requests and notifications are routed.
 ---
 ---- `"shutdown"`: It stops running if an
 ---  [`exit` notification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#exit)
----  is received. This notification is propagated to its router, and all
+---  is received. This notification is routed, and all
 ---  requests are responded to with an
 ---  [`InvalidRequest` error](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#errorCodes).
 ---@field state lsp-lib.Listen.state
