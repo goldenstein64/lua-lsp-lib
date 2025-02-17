@@ -235,7 +235,9 @@ listen.handlers = {
 		elseif method == "initialize" then
 			listen.state = "default"
 		else
-			io_lsp:write(errors.ServerNotInitialized(msg.id))
+			if msg.id then
+				io_lsp:write(errors.ServerNotInitialized(msg.id))
+			end
 			return
 		end
 

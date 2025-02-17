@@ -85,6 +85,105 @@ describe 'lsp.listen', ->
 				response_shape 1, { returned: '97' }
 			}
 
+		describe 'when in "initialize" state', ->
+			before_each -> listen.state = 'initialize'
+
+			it 'transitions to "default" on "initialize"', ->
+				provider = set_provider {
+					request_of 1, 'initialize', {
+						processId: null
+						rootUri: null
+						capabilities: {}
+					}
+				}
+
+				init_handler = spy (params) -> { capabilities: {} }
+				listen.routes = {
+					'initialize': init_handler
+				}
+
+				listen.once!
+
+				assert.equal 'default', listen.state
+
+				assert.spy(init_handler).called 1
+				assert.spy(init_handler).called_with match.is_same {
+					processId: null
+					rootUri: null
+					capabilities: {}
+				}
+
+				responses = provider\mock_output!
+				assert.shape responses, shape {
+					response_shape 1, { capabilities: shape {} }
+				}
+
+			it 'exits on "exit"', ->
+				provider = set_provider {
+					notif_of 'exit'
+				}
+
+				exit_handler = spy (params) -> nil
+				listen.routes = {
+					'exit': exit_handler
+				}
+
+				listen.once!
+
+				assert.is_false listen.running
+
+				assert.spy(exit_handler).called 1
+				assert.spy(exit_handler).called_with nil
+
+				responses = provider\mock_output!
+				assert.shape responses, shape {}
+
+			it 'sends a response error on any other request', ->
+				provider = set_provider {
+					request_of 1, '$/random', null
+				}
+
+				random_handler = spy () -> 'bar'
+				listen.routes = {
+					'$/random': random_handler
+				}
+
+				listen.once!
+
+				assert.is_true listen.running
+				assert.equal 'initialize', listen.state
+
+				assert.spy(random_handler).not_called!
+
+				responses = provider\mock_output!
+				assert.shape responses, shape {
+					response_shape 1, nil, {
+						code: ErrorCodes.ServerNotInitialized
+						message: 'Server Not Initialized'
+					}
+				}
+
+			it 'drops any other notification', ->
+				provider = set_provider {
+					notif_of '$/random', null
+				}
+
+				random_handler = spy () -> 'bar'
+				listen.routes = {
+					'$/random': random_handler
+				}
+
+				listen.once!
+
+				assert.is_true listen.running
+				assert.equal 'initialize', listen.state
+
+				assert.spy(random_handler).not_called!
+
+				responses = provider\mock_output!
+				assert.shape responses, shape {}
+
+
 		describe 'when handling responses from routes', ->
 			it 'handles requests successfully', ->
 				provider = set_provider {
